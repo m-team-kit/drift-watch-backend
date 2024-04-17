@@ -18,6 +18,7 @@ class Settings(BaseSettings):
 
     API_TITLE: str = "Drift Detection Monitor API"
     API_VERSION: str = "1.0.0"
+    TESTING: bool = False
 
     OPENAPI_JSON_PATH: str = "api-spec.json"
     OPENAPI_URL_PREFIX: str = "/"

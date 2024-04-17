@@ -2,7 +2,6 @@
 
 # pylint: disable=redefined-outer-name
 import json
-import os
 import uuid
 
 import marshmallow as ma
@@ -12,32 +11,25 @@ from werkzeug.datastructures import Authorization
 
 from app import create_app, schemas
 from app.tools import authentication
+import mongomock
 
 
 @fixture(scope="session")
 def app():
     """Create and configure a new app instance for each test."""
     # See: https://flask.palletsprojects.com/en/3.0.x/testing/
-    app = create_app()
-    app.config.update({"TESTING": True})
+    app = create_app(TESTING=True)
+    app.config["db_client"] = mongomock.MongoClient()
     # other setup tasks can go here
     yield app
     # clean up after the test run
 
 
 @fixture(scope="module", autouse=True)
-def patch_database(app):
-    """Patch the database connection."""
-    db_client = app.config["db_client"]
-    db_name = f"test-db-{uuid.uuid4()}"
-    app.config.update({"db": db_client[db_name]})
-    yield
-    db_client.drop_database(app.config["db"])
-
-
-@fixture(scope="module")
 def database(app):
     """Return the database from the application."""
+    database_patch = f"test-{uuid.uuid4()}"
+    app.config["db"] = app.config["db_client"][database_patch]
     return app.config["db"]
 
 
@@ -45,8 +37,7 @@ def database(app):
 def with_database(request, database):
     """Loads the database with data from data file."""
     if hasattr(request, "param") and request.param:
-        sandbox_path = os.environ.get("TESTS_DATABASE_SANDBOX")
-        file_path = f"{sandbox_path}/{request.param}.json"
+        file_path = f"tests/fixtures/mongodb/{request.param}.json"
         with open(file_path, "r", encoding="utf-8") as file:
             for section in json.load(file):
                 load_section(section, database)

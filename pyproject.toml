@@ -5,11 +5,11 @@ testpaths = ["tests"]
 pythonpath = ["."]
 env_files = [".env"]
 env = [
-    'TESTS_DATABASE_SANDBOX=sandbox/databases',
     'APP_ADMIN_ENTITLEMENTS=["iam:admin","iam:dev"]',
     'APP_TRUSTED_OP_LIST=[]',
-    'APP_SECRETS_DIR=sandbox/secrets',
+    'APP_SECRETS_DIR=tests/fixtures/secrets',
 ]
+mongodb_fixture_dir = "tests/fixtures/mongodb"
 
 [tool.mypy]
 ignore_missing_imports = true

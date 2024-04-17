@@ -24,8 +24,9 @@ FROM build AS production
 USER root
 
 # Copy and install production requirements
-COPY --chown=sid:sid backend /srv/backend
-RUN python -m pip install -r backend/requirements.txt
+COPY --chown=sid:sid app /srv/app
+COPY --chown=sid:sid requirements.txt /srv
+RUN python -m pip install -r requirements.txt
 
 # Change to non root user and expose port
 USER sid
@@ -33,7 +34,7 @@ EXPOSE 8000
 
 # Define entrypoint and default command
 ENTRYPOINT [ "python" ]
-CMD [ "-m", "uvicorn", "backend.autoapp:app", "--proxy-headers", "--host", "0.0.0.0" ]
+CMD [ "-m", "uvicorn", "autoapp:app", "--proxy-headers", "--host", "0.0.0.0" ]
 
 # ================================= TESTING ====================================
 FROM production AS testing
@@ -44,12 +45,10 @@ COPY --chown=sid:sid requirements-test.txt /srv
 RUN python -m pip install -r requirements-test.txt
 
 # Copy the tests and sandbox for the application
-COPY --chown=sid:sid sandbox /srv/sandbox
 COPY --chown=sid:sid tests /srv/tests
 COPY --chown=sid:sid pyproject.toml /srv
 
 # Change to non root user and expose port
-RUN chown -R sid:sid /srv
 USER sid
 
 # Define entrypoint and default command

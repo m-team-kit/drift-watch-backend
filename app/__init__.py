@@ -10,10 +10,10 @@ from app.tools import openapi as api
 from flask import Flask
 
 
-def create_app():
+def create_app(**kwds):
     """Create and configure an instance of the Flask application."""
     # Application instantiation and configuration
-    settings = config.Settings()  # type: ignore
+    settings = config.Settings(**kwds)  # type: ignore
     app = Flask(__name__)
     app.config.from_object(settings)
     # Server modules init

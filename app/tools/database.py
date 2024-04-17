@@ -5,6 +5,8 @@ from pymongo import MongoClient, timeout
 
 def init_app(app):
     """Initialize the database connection."""
+    if app.config["TESTING"]:
+        return  # Testing fixtures will set up the database
     client = app.config["db_client"] = MongoClient(
         username=app.config["DATABASE_USERNAME"],
         password=app.config["DATABASE_PASSWORD"],
@@ -12,8 +14,8 @@ def init_app(app):
         port=app.config["DATABASE_PORT"],
         uuidRepresentation="standard",
     )
-    with timeout(seconds=3):
-        client.server_info()  # Check the connection
+    with timeout(seconds=3):  # Check the connection
+        app.config["db_info"] = client.server_info()
     app.config["db"] = client[app.config["DATABASE_NAME"]]
 
 
