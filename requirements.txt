@@ -1,0 +1,9 @@
+requests ~= 2.31.0
+Flask ~= 3.0.0
+Flask-HTTPAuth ~= 4.8.0
+flask-smorest ~= 0.43.0
+pymongo ~= 4.6.1
+jsonschema ~= 4.21.0
+pydantic-settings ~= 2.2.1
+uvicorn ~= 0.25.0
+flaat ~= 1.1.18

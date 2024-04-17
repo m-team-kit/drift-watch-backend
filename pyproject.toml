@@ -1,0 +1,16 @@
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--import-mode=importlib"
+testpaths = ["tests"]
+pythonpath = ["."]
+env_files = [".env"]
+env = [
+    'TESTS_DATABASE_SANDBOX=sandbox/databases',
+    'APP_ADMIN_ENTITLEMENTS=["iam:admin","iam:dev"]',
+    'APP_TRUSTED_OP_LIST=[]',
+    'APP_SECRETS_DIR=sandbox/secrets',
+]
+
+[tool.mypy]
+ignore_missing_imports = true
+disable_error_code = ["import-untyped"]
