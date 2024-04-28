@@ -19,52 +19,33 @@ RUN python -m pip install --upgrade pip
 WORKDIR /srv
 RUN useradd -m sid
 
+# Copy and install production requirements
+COPY --chown=sid:sid app /srv/app
+COPY --chown=sid:sid requirements.txt /srv
+COPY --chown=sid:sid autoapp.py /srv
+RUN python -m pip install -r requirements.txt
+
 # ================================= PRODUCTION =================================
 FROM build AS production
 USER root
 
 # Copy and install production requirements
-COPY --chown=sid:sid app /srv/app
-COPY --chown=sid:sid requirements.txt /srv
-RUN python -m pip install -r requirements.txt
+RUN pip install gunicorn~=21.2.0 gevent~=24.2.1
 
 # Change to non root user and expose port
 USER sid
 EXPOSE 8000
 
 # Define entrypoint and default command
-ENTRYPOINT [ "python" ]
-CMD [ "-m", "uvicorn", "autoapp:app", "--proxy-headers", "--host", "0.0.0.0" ]
-
-# ================================= TESTING ====================================
-FROM production AS testing
-USER root
-
-# Copy and install production requirements
-COPY --chown=sid:sid requirements-test.txt /srv
-RUN python -m pip install -r requirements-test.txt
-
-# Copy the tests and sandbox for the application
-COPY --chown=sid:sid tests /srv/tests
-COPY --chown=sid:sid pyproject.toml /srv
-
-# Change to non root user and expose port
-USER sid
-
-# Define entrypoint and default command
-ENTRYPOINT [ "python" ]
-CMD [ "-m", "pytest", "-n", "auto", "--dist", "loadfile", "tests" ]
+ENTRYPOINT [ "python", "-m", "gunicorn"]
+CMD [ "-k", "gevent", "autoapp:app", "--bind", "0.0.0.0" ]
 
 # ================================= DEVELOPMENT ================================
-FROM testing AS development
+FROM build AS development
 USER root
 
-# Copy and install development requirements
-COPY --chown=sid:sid requirements-dev.txt /srv
-RUN python -m pip install -r requirements-dev.txt
-
-# Copy the rest of the application
-COPY --chown=sid:sid .. /srv
+# Copy and install debugger requirements
+RUN pip install debugpy
 
 # Change to non root user and expose port
 USER sid
@@ -72,5 +53,5 @@ EXPOSE 5000
 EXPOSE 5678
 
 # Define entrypoint and default command
-ENTRYPOINT ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "--wait-for-client" ]
-CMD ["-m", "flask", "run", "--no-debugger", "--no-reload", "--host", "0.0.0.0" ]
+ENTRYPOINT ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "--wait-for-client", "-m", "flask" ]
+CMD [ "run", "--no-debugger", "--no-reload", "--host", "0.0.0.0" ]
