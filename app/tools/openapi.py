@@ -20,9 +20,7 @@ def init_app(app):
 
 OPTIONS = {
     "openapi_version": "3.1.0",
-    "security": [
-        {"bearerAuth": []},
-    ],
+    "security": [{"bearerAuth": []}],
     "components": {
         "securitySchemes": {
             "bearerAuth": {
