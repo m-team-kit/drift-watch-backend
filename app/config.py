@@ -18,14 +18,16 @@ class Settings(BaseSettings):
 
     API_TITLE: str = "Drift Detection Monitor API"
     API_VERSION: str = "1.0.0"
+    API_SPEC_OPTIONS: dict = {}
     TESTING: bool = False
 
-    OPENAPI_JSON_PATH: str = "api-spec.json"
+    OPENAPI_JSON_PATH: str = "specification.json"
     OPENAPI_URL_PREFIX: str = "/"
     OPENAPI_SWAGGER_UI_PATH: str = "/"
     OPENAPI_SWAGGER_UI_URL: str = (
         "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"  # noqa
     )
+    OPENAPI_SWAGGER_UI_CONFIG: dict = {}
 
     ADMIN_ENTITLEMENTS: list[str]
     TRUSTED_OP_LIST: list[str]
