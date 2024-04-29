@@ -34,11 +34,11 @@ RUN pip install gunicorn~=21.2.0 gevent~=24.2.1
 
 # Change to non root user and expose port
 USER sid
-EXPOSE 8000
+EXPOSE 5000
 
 # Define entrypoint and default command
 ENTRYPOINT [ "python", "-m", "gunicorn"]
-CMD [ "-k", "gevent", "autoapp:app", "--bind", "0.0.0.0" ]
+CMD [ "-k", "gevent", "autoapp:app", "--bind", "0.0.0.0:5000" ]
 
 # ================================= DEVELOPMENT ================================
 FROM build AS development
