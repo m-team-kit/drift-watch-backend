@@ -49,13 +49,13 @@ class TestGetUser(CommonTests):
         assert all(isinstance(x["email"], str) for x in response.json)
         assert all(isinstance(x["drift_ids"], list) for x in response.json)
 
-    @mark.parametrize("created_after", ["2020-01-10"], indirect=True)
+    @mark.parametrize("created_after", ["2021-01-10"], indirect=True)
     def test_after_date(self, response, after_dateiso):
         """Test the response items are after the indicated date."""
         for item in response.json:
             assert dt.fromisoformat(item["created_at"]) >= after_dateiso
 
-    @mark.parametrize("created_before", ["2020-01-20"], indirect=True)
+    @mark.parametrize("created_before", ["2021-01-20"], indirect=True)
     def test_before_date(self, response, before_dateiso):
         """Test the response items are before the indicated date."""
         for item in response.json:

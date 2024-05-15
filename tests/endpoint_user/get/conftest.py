@@ -29,7 +29,7 @@ def body(request, created_at, user_info, drift_ids):
     return kwds if kwds else None
 
 
-@fixture(scope="class", params=["2020-01-04", None])
+@fixture(scope="class", params=["2021-01-04", None])
 def created_after(request):
     """Inject and return a creation after date."""
     return request.param
@@ -43,7 +43,7 @@ def after_dateiso(created_after):
     return None
 
 
-@fixture(scope="class", params=["2020-01-08", None])
+@fixture(scope="class", params=["2021-01-08", None])
 def created_before(request):
     """Inject and return a creation before date."""
     return request.param

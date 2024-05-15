@@ -36,7 +36,7 @@ def schema_version(request):
     return request.param
 
 
-@fixture(scope="class", params=["2020-01-10", None])
+@fixture(scope="class", params=["2021-01-10", None])
 def start_date(request):
     """Inject and return a start date."""
     return request.param
@@ -50,7 +50,7 @@ def start_dateiso(start_date):
     return None
 
 
-@fixture(scope="class", params=["2020-01-20", None])
+@fixture(scope="class", params=["2021-01-20", None])
 def end_date(request):
     """Inject and return an end date."""
     return request.param

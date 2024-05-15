@@ -34,13 +34,13 @@ class DatetimeTests(CommonTests):
         """Test the response items contain a correct date."""
         assert all(dt.fromisoformat(x["datetime"]) for x in response.json)
 
-    @mark.parametrize("start_date", ["2020-01-10"], indirect=True)
+    @mark.parametrize("start_date", ["2021-01-10"], indirect=True)
     def test_after_date(self, response, start_dateiso):
         """Test the response items are after the indicated date."""
         for item in response.json:
             assert dt.fromisoformat(item["datetime"]) >= start_dateiso
 
-    @mark.parametrize("end_date", ["2020-01-20"], indirect=True)
+    @mark.parametrize("end_date", ["2021-01-20"], indirect=True)
     def test_before_date(self, response, end_dateiso):
         """Test the response items are before the indicated date."""
         for item in response.json:
