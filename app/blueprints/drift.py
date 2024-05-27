@@ -1,5 +1,5 @@
-"""Drift endpoint, edit on app>blueprints>drift.
-# TODO: Improve this endpoint description
+"""
+## API Methods to create, read, update and delete drift detection jobs.
 """
 
 import uuid
@@ -27,10 +27,21 @@ class Drifts(MethodView):
     @blp.response(200, schemas.DriftV100(many=True))
     @blp.paginate()
     def get(self, json, pagination_parameters):
-        """Method docs, edit app>blueprints>drift>Drifts.
+        """
+        Get a paginated list of drift Jobs based on the provided JSON query
+        and MongoDB format.
         ---
         Internal comment not meant to be exposed.
-        # TODO: improve this doc endpoint.
+
+        Args:
+            json: A JSON object representing the query parameters.
+            pagination_parameters: An object containing pagination parameters.
+
+        Returns:
+            A paginated list of drifts matching the query.
+
+        Raises:
+            None
         """
         drifts = current_app.config["db"]["app.blueprints.drift"]
         page = pagination_parameters.page
@@ -42,11 +53,20 @@ class Drifts(MethodView):
     @blp.arguments(schemas.DriftV100, location="json")
     @blp.response(201, schemas.DriftV100)
     def post(self, json, user_infos):
-        """Method docs, edit app>blueprints>drift>Drifts.
+        """Create a new drift Job record in the database.
         ---
         Internal comment not meant to be exposed.
-        # TODO: improve this doc endpoint.
-        # TODO: fix error messages, point to issues
+
+        Args:
+            json (dict): The JSON payload containing the drift information.
+            user_infos (dict): User information obtained from the
+                               authentication process.
+
+        Returns:
+            dict: The newly created drift record.
+
+        Raises:
+            None
         """
         drifts = current_app.config["db"]["app.blueprints.drift"]
         users = current_app.config["db"]["app.blueprints.user"]
@@ -68,10 +88,18 @@ class Drift(MethodView):
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(200, schemas.DriftV100)
     def get(self, drift_id):
-        """Method docs, edit app>blueprints>drift>Drift.
+        """Retrieve a drift job by its id from the database.
         ---
         Internal comment not meant to be exposed.
-        # TODO: improve this doc endpoint.
+
+        Args:
+            drift_id (str): The ID of the drift to retrieve.
+
+        Returns:
+            dict: The drift object.
+
+        Raises:
+            404: If the drift with the specified ID is not found.
         """
         drifts = current_app.config["db"]["app.blueprints.drift"]
         drift = drifts.find_one({"_id": str(drift_id)})
@@ -84,10 +112,20 @@ class Drift(MethodView):
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(200, schemas.DriftV100)
     def put(self, json, drift_id):
-        """Method docs, edit app>blueprints>drift>Drift.
+        """
+        Update a drift job record with the given JSON data.
         ---
         Internal comment not meant to be exposed.
-        # TODO: improve this doc endpoint.
+
+        Args:
+            json (dict): The JSON data containing the updated drift information.
+            drift_id (str): The ID of the drift record to be updated.
+
+        Returns:
+            dict: The updated drift record.
+
+        Raises:
+            404: If the drift record with the given ID is not found.
         """
         drifts = current_app.config["db"]["app.blueprints.drift"]
         drift = drifts.find_one({"_id": str(drift_id)})
@@ -101,10 +139,19 @@ class Drift(MethodView):
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(204)
     def delete(self, drift_id):
-        """Method docs, edit app>blueprints>drift>Drift.
+        """
+        Delete a drift job record from the database.
         ---
         Internal comment not meant to be exposed.
-        # TODO: improve this doc endpoint.
+
+        Args:
+            drift_id (str): The ID of the drift record to be deleted.
+
+        Returns:
+            None
+
+        Raises:
+            404: If the drift record with the given ID is not found.
         """
         drifts = current_app.config["db"]["app.blueprints.drift"]
         drift = drifts.find_one({"_id": str(drift_id)})
