@@ -1,5 +1,5 @@
-"""User endpoint, edit on app>blueprints>user.
-# TODO: Improve this endpoint description
+"""
+## API Methods to list, register and remove users.
 """
 
 import uuid
@@ -27,11 +27,19 @@ class Users(MethodView):
     @blp.response(200, schemas.User(many=True))
     @blp.paginate()
     def get(self, json, pagination_parameters):
-        """Method docs, edit app>blueprints>user>Users.
+        """Retrieve a paginated list of users based on the provided JSON query
+        and MongoDB format.
         ---
         Internal comment not meant to be exposed.
-        # TODO: improve this doc endpoint.
+
+        Args:
+            json: The JSON query used to filter the users.
+            pagination_parameters: The pagination parameters.
+
+        Returns:
+            A paginated list of users based on the provided query.
         """
+
         users = current_app.config["db"]["app.blueprints.user"]
         page = pagination_parameters.page
         page_size = pagination_parameters.page_size
@@ -43,11 +51,20 @@ class Users(MethodView):
     @blp.doc(responses={409: CONFLICT})
     @blp.response(201, schemas.User)
     def post(self, _json, user_infos):
-        """Method docs, edit app>blueprints>user>Users.
+        """Register and create the token owner as new user.
         ---
         Internal comment not meant to be exposed.
-        # TODO: improve this doc endpoint.
-        # TODO: fix error messages, point to issues
+
+        Args:
+            _json (dict): The JSON payload of the request.
+            user_infos (dict): User information obtained from the
+                               authentication process.
+
+        Returns:
+            dict: The newly created user.
+
+        Raises:
+            Conflict: If the user already exists.
         """
         users = current_app.config["db"]["app.blueprints.user"]
         sub, iss = user_infos["sub"], user_infos["iss"]
