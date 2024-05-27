@@ -47,5 +47,4 @@ OPTIONS = {
             }
         }
     },
-    # "info": {},  # TODO: add license
 }
