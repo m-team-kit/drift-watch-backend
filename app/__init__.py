@@ -1,7 +1,4 @@
-"""API Description, edit at backend>app>__init__.py.
-# TODO: Use description in Swagger documentation (__doc__)
-# TODO: Fix description
-"""
+"""Dfit Monitoring Backend Application."""
 
 from app import config
 from app.tools import authentication as auth
