@@ -21,6 +21,23 @@ def init_app(app):
 OPTIONS = {
     "openapi_version": "3.1.0",
     "security": [{"bearerAuth": []}],
+    "info": {
+        "summary": "A drift tracking server.",
+        "description": (
+            "This is server to track and monitor data and concept "
+            "drifts for machine learning models."
+        ),
+        "termsOfService": "TODO: Add terms of service",  # TODO
+        "contact": {  # TODO: add contact
+            "name": "API Support",
+            "url": "https://www.example.com/support",
+            "email": "support@example.com",
+        },
+        "license": {  # TODO: add link to license
+            "name": "MIT License",
+            "url": "https://www.example.com/support",
+        },
+    },
     "components": {
         "securitySchemes": {
             "bearerAuth": {
