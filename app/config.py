@@ -23,11 +23,6 @@ class Settings(BaseSettings):
 
     OPENAPI_JSON_PATH: str = "specification.json"
     OPENAPI_URL_PREFIX: str = "/"
-    OPENAPI_SWAGGER_UI_PATH: str = "/"
-    OPENAPI_SWAGGER_UI_URL: str = (
-        "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"  # noqa
-    )
-    OPENAPI_SWAGGER_UI_CONFIG: dict = {}
 
     ADMIN_ENTITLEMENTS: list[str]
     TRUSTED_OP_LIST: list[str]
