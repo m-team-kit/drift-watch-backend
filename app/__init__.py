@@ -17,5 +17,12 @@ def create_app(**kwds):
     auth.init_app(app)
     db.init_app(app)
     api.init_app(app)
+    # Add empty response to root route
+    app.add_url_rule("/", "empty_response", empty_response)
     # Return application object
     return app
+
+
+def empty_response():
+    """Add a ping route to the application."""
+    return ("", 204)
