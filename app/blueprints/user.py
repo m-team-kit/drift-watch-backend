@@ -6,13 +6,14 @@ import uuid
 from datetime import datetime as dt
 
 import marshmallow as ma
+from flask import current_app
+from flask.views import MethodView
+from flask_smorest import abort  # type: ignore
+
 from app import schemas
 from app.config import Blueprint
 from app.tools.authentication import Authentication
 from app.tools.database import CONFLICT
-from flask import current_app
-from flask.views import MethodView
-from flask_smorest import abort  # type: ignore
 
 blp = Blueprint("user", __name__, description=__doc__)
 auth = Authentication(blueprint=blp)
