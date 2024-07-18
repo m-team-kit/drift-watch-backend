@@ -14,7 +14,7 @@ def init_app(app):
     # Register Custom Path Parameter Converters
     pass
     # Register Blueprints
-    api.register_blueprint(blp.drift, url_prefix="/drift")
+    api.register_blueprint(blp.experiment, url_prefix="/experiment")
     api.register_blueprint(blp.user, url_prefix="/user")
 
 

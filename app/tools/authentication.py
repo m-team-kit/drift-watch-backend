@@ -31,26 +31,6 @@ def is_registered(user_infos):
     )
 
 
-def is_owner(user_infos):
-    """Assert the user is owner of the drift in the request."""
-    users = current_app.config["db"]["app.blueprints.user"]
-    user = users.find_one(
-        {
-            "subject": user_infos.subject,
-            "issuer": user_infos.issuer,
-        }
-    )
-    if not user:
-        return False
-    drift_id = str(request.view_args["drift_id"])
-    return any(
-        [
-            is_admin(user_infos),  # Admins are owners of all drifts
-            drift_id in user["drift_ids"],
-        ]
-    )
-
-
 def is_admin(user_infos):
     """Assert registration and entitlements."""
     if "eduperson_entitlement" in user_infos.user_info:
@@ -67,12 +47,12 @@ def is_admin(user_infos):
     )
 
 
+# TODO: Add permissions "Manage", "Edit", "Read" to the application
 # Define access levels for the application
 access_levels = [
     # AccessLevel("everyone", IsTrue(lambda x: True)),
     AccessLevel("new_user", IsTrue(valid_user_infos)),
     AccessLevel("registered", IsTrue(is_registered)),
-    AccessLevel("drift_owner", IsTrue(is_owner)),
     AccessLevel("admin", IsTrue(is_admin)),
 ]
 

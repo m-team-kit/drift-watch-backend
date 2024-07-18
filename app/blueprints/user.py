@@ -40,7 +40,7 @@ class Users(MethodView):
             A paginated list of users based on the provided query.
         """
 
-        users = current_app.config["db"]["app.blueprints.user"]
+        users = current_app.config["db"]["app.users"]
         page = pagination_parameters.page
         page_size = pagination_parameters.page_size
         return users.find(json).skip((page - 1) * page_size).limit(page_size)
@@ -66,7 +66,7 @@ class Users(MethodView):
         Raises:
             Conflict: If the user already exists.
         """
-        users = current_app.config["db"]["app.blueprints.user"]
+        users = current_app.config["db"]["app.user"]
         sub, iss = user_infos["sub"], user_infos["iss"]
         if users.find_one({"subject": sub, "issuer": iss}):
             abort(409, message="User already exists")
