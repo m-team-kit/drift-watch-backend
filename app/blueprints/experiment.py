@@ -70,7 +70,7 @@ class Experiments(MethodView):
             The newly created experiment record.
 
         Raises:
-            401: If the user is not registered.
+            401: If the user is not authenticated or registered.
         """
         # Check if the user is registered and retrieve the user object.
         user = utils.get_user(user_infos)
@@ -110,6 +110,8 @@ class Experiment(MethodView):
         """
         return utils.get_experiment(experiment_id)
 
+    # TODO: Add put and delete methods for the experiment API.
+
 
 @blp.route("/<uuid:experiment_id>/drift")
 class Drifts(MethodView):
@@ -136,7 +138,7 @@ class Drifts(MethodView):
             A paginated list of drifts matching the query.
 
         Raises:
-            401: If the user is not registered.
+            401: If the user is not authenticated or registered.
             403: If the user does not have the required permissions.
             404: If the experiment with the specified ID is not found.
         """
@@ -172,7 +174,7 @@ class Drifts(MethodView):
             dict: The newly created drift record.
 
         Raises:
-            401: If the user is not registered.
+            401: If the user is not authenticated or registered.
             403: If the user does not have the required permissions.
             404: If the experiment with the specified ID is not found.
         """
@@ -212,7 +214,7 @@ class Drift(MethodView):
             dict: The drift object.
 
         Raises:
-            401: If the user is not registered.
+            401: If the user is not authenticated or registered.
             403: If the user does not have the required permissions.
             404: If the drift or experiment specified are not found.
         """
@@ -244,7 +246,7 @@ class Drift(MethodView):
             dict: The updated drift record.
 
         Raises:
-            401: If the user is not registered.
+            401: If the user is not authenticated or registered.
             403: If the user does not have the required permissions.
             404: If the drift or experiment specified are not found.
         """
@@ -282,7 +284,7 @@ class Drift(MethodView):
             None
 
         Raises:
-            401: If the user is not registered.
+            401: If the user is not authenticated or registered.
             403: If the user does not have the required permissions.
             404: If the drift specified is not found.
         """
