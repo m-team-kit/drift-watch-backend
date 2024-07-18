@@ -1,4 +1,6 @@
-"""Module for experiment blueprint."""
+"""
+## API Methods to list, register, edit and remove experiments.
+"""
 
 import uuid
 from datetime import datetime as dt
