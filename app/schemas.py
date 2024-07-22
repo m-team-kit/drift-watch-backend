@@ -15,19 +15,23 @@ class Experiment(ma.Schema):
     _id = ma.fields.UUID(dump_only=True, data_key="id")
     created_at = ma.fields.String(dump_only=True)
     name = ma.fields.String(required=True)
-    permissions = ma.fields.List(ma.fields.Nested("Permission"), dump_only=True)
+    permissions = ma.fields.List(
+        ma.fields.Nested("Permission"),
+        required=True,
+        validate=validate.Length(min=1),
+        dump_only=True,
+    )
 
 
 class Permission(ma.Schema):
     """
     Permission is a pointer from a group.
     Should not point to the resource but be included in the resource.
-    It indicates the authorization level of the group.
+    It indicates the authorization role of the group.
     """
 
-    _id = ma.fields.UUID(dump_only=True, data_key="id")
     group_id = ma.fields.UUID(required=True)
-    permission = ma.fields.String(
+    role = ma.fields.String(
         validate=validate.OneOf(["Read", "Edit", "Manage"]),
         required=True,
     )
