@@ -5,7 +5,7 @@ from pytest import mark, fixture
 
 
 @mark.parametrize("auth", [None], indirect=True)
-class BaseClassForTests:
+class CommonBaseTests:
     """Common tests for the /drift endpoint."""
 
     @fixture(scope="class")
@@ -18,8 +18,7 @@ class BaseClassForTests:
         assert response.status_code == 422
 
 
-@mark.parametrize("body", ["string_body"], indirect=True)
-class TestBadBody(BaseClassForTests):
+class ErrorMessage:
     """Test the bad_key parameter."""
 
     def test_error_msg(self, response):
@@ -27,3 +26,8 @@ class TestBadBody(BaseClassForTests):
         assert "_schema" in response.json["errors"]["json"]
         error = response.json["errors"]["json"]["_schema"]
         assert error == ["Invalid input type."]
+
+
+@mark.parametrize("body", ["string_body"], indirect=True)
+class TestStringBody(ErrorMessage, CommonBaseTests):
+    """Test the response when body is a string."""
