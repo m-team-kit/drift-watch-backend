@@ -4,7 +4,17 @@ import marshmallow as ma
 from marshmallow import validate
 
 
-class Experiment(ma.Schema):
+class BaseSchema(ma.Schema):
+    """
+    BaseSchema is the base class for all schemas.
+    It includes the _id and created_at fields.
+    """
+
+    _id = ma.fields.UUID(dump_only=True, data_key="id")
+    created_at = ma.fields.String(dump_only=True)
+
+
+class Experiment(BaseSchema):
     """
     Experiment is a pointer to the collection of drifts.
     Authentication is carried by the groups that point here.
@@ -12,14 +22,11 @@ class Experiment(ma.Schema):
     Includes the list of permissions for the groups.
     """
 
-    _id = ma.fields.UUID(dump_only=True, data_key="id")
-    created_at = ma.fields.String(dump_only=True)
     name = ma.fields.String(required=True)
     permissions = ma.fields.List(
         ma.fields.Nested("Permission"),
-        required=True,
         validate=validate.Length(min=1),
-        dump_only=True,
+        load_default=[],
     )
 
 
@@ -36,32 +43,35 @@ class Permission(ma.Schema):
         required=True,
     )
 
+    @ma.post_load
+    def members_str(self, data, **kwds):
+        """Convert group_id uuid to string."""
+        data["group_id"] = str(data["group_id"])
+        return data
 
-class Group(ma.Schema):
+
+class Group(BaseSchema):
     """
     Group is a list of users that can access the API.
     A name is required for easy identification.
     """
 
-    _id = ma.fields.UUID(dump_only=True, data_key="id")
-    created_at = ma.fields.String(dump_only=True)
     name = ma.fields.String(required=True)
-    members = ma.fields.List(
-        ma.fields.Nested("User"),
-        required=True,
-        validate=validate.Length(min=1),
-        dump_only=True,
-    )
+    members = ma.fields.List(ma.fields.UUID, required=True)
+
+    @ma.post_load
+    def members_str(self, data, **kwds):
+        """Convert members uuid to string."""
+        data["members"] = [str(member) for member in data["members"]]
+        return data
 
 
-class User(ma.Schema):
+class User(BaseSchema):
     """
     User represent a person that access and uses the API.
     User's ids can also be used as group_ids.
     """
 
-    _id = ma.fields.UUID(dump_only=True, data_key="id")
-    created_at = ma.fields.String(dump_only=True)
     subject = ma.fields.String(dump_only=True)
     issuer = ma.fields.String(dump_only=True)
     email = ma.fields.Email(dump_only=True)
@@ -82,15 +92,13 @@ status = validate.OneOf(["Running", "Completed", "Failed"])
 no_drift = {"drift": False, "parameters": {}}
 
 
-class DriftV100(ma.Schema):
+class DriftV100(BaseSchema):
     """
     A drift is the basic unit of the API. It contains the drift
     information for a specific model and job.
     """
 
-    _id = ma.fields.UUID(dump_only=True, data_key="id")
     schema_version = ma.fields.Constant("1.0.0")
-    datetime = ma.fields.String(dump_only=True)
     job_status = ma.fields.String(required=True, validate=status)
     model = ma.fields.String()
     concept_drift = ma.fields.Nested(BaseDrift, load_default=no_drift)

@@ -4,7 +4,7 @@ from typing import Callable
 from flaat.config import AccessLevel  # type: ignore
 from flaat.flask import Flaat  # type: ignore
 from flaat.requirements import IsTrue  # type: ignore
-from flask import current_app, request
+from flask import current_app
 
 
 def valid_user_infos(user_infos):
@@ -17,17 +17,6 @@ def valid_user_infos(user_infos):
             "email_verified" in user_infos.user_info,
             user_infos["email_verified"],
         ]
-    )
-
-
-def is_registered(user_infos):
-    """Assert user is registered in the database."""
-    users = current_app.config["db"]["app.blueprints.user"]
-    return users.find_one(
-        {
-            "subject": user_infos.subject,
-            "issuer": user_infos.issuer,
-        }
     )
 
 
@@ -47,12 +36,9 @@ def is_admin(user_infos):
     )
 
 
-# TODO: Add permissions "Manage", "Edit", "Read" to the application
 # Define access levels for the application
 access_levels = [
-    # AccessLevel("everyone", IsTrue(lambda x: True)),
-    AccessLevel("new_user", IsTrue(valid_user_infos)),
-    AccessLevel("registered", IsTrue(is_registered)),
+    AccessLevel("user", IsTrue(valid_user_infos)),
     AccessLevel("admin", IsTrue(is_admin)),
 ]
 
@@ -105,9 +91,7 @@ class Authentication:
         match level:
             case "everyone":
                 return lambda f: f  # Return without modifications
-            case "new_user":
-                auth_docs = {k: extra_responses[k] for k in ["401"]}
-            case "registered" | "admin":
+            case "user" | "admin":
                 auth_docs = {k: extra_responses[k] for k in ["401", "403"]}
         auth_decorator = flaat.access_level(level)
         doc_decorator = self.blueprint.doc(responses=auth_docs)

@@ -75,7 +75,7 @@ class TestBetweenFilter(CreatedAfter, CreatedBefore, CommonBaseTests):
     """Test the response items created at."""
 
 
-GROUP_1 = "00000000-0000-0001-0002-000000000001"
+GROUP_1 = "00000000-0000-0002-0001-000000000001"
 
 
 @mark.parametrize("permissions", [(GROUP_1, "Manage")], indirect=True)

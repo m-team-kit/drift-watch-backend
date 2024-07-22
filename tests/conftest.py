@@ -138,7 +138,7 @@ def accept_authorization(class_mocker, subiss, email, entitlements):
 def db_user(response, database, subiss):
     """Returns user from database after response."""
     db_filter = {"subject": subiss[0], "issuer": subiss[1]}
-    user = database["app.blueprints.user"].find_one(db_filter)
+    user = database["app.users"].find_one(db_filter)
     if user is not None:
         user["id"] = user.pop("_id")
     return user

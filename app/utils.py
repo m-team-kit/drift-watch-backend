@@ -33,6 +33,8 @@ def get_drifts(experiment_id, drift_id):
     return drift or abort(404, msg="Drift not found.")
 
 
+# TODO: Possible to speed up if: Convert groups in resource to users
+# Check if user is in the final list
 def get_permission(user, resource):
     """Check if the user has the required permission on a resource."""
     groups = get_groups(user)

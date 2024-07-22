@@ -52,7 +52,7 @@ class Experiments(MethodView):
         page_size = pagination_parameters.page_size
         return search.skip((page - 1) * page_size).limit(page_size)
 
-    @auth.access_level("registered")
+    @auth.access_level("user")
     @auth.inject_user_infos()
     @blp.arguments(schemas.Experiment, location="json")
     @blp.response(201, schemas.Experiment)
@@ -78,9 +78,9 @@ class Experiments(MethodView):
         # Insert the experiment record into the database.
         experiments = current_app.config["db"]["app.experiments"]
         json["created_at"] = dt.now().isoformat()
-        json["_id"] = uuid.uuid4()
+        json["_id"] = str(uuid.uuid4())
         # pylint: disable=protected-access
-        json["permissions"] = [{"group_id": user._id, "permission": "Manage"}]
+        json["permissions"].append({"group_id": user["_id"], "role": "Manage"})
         experiments.insert_one(json)
 
         # Return the updated user object.
@@ -117,7 +117,7 @@ class Experiment(MethodView):
 class Drifts(MethodView):
     """Drifts API."""
 
-    @auth.access_level("registered")
+    @auth.access_level("user")
     @blp.arguments(ma.Schema(), location="json", unknown="include")
     @blp.response(200, schemas.DriftV100(many=True))
     @blp.paginate()
@@ -156,7 +156,7 @@ class Drifts(MethodView):
         page_size = pagination_parameters.page_size
         return search.skip((page - 1) * page_size).limit(page_size)
 
-    @auth.access_level("registered")
+    @auth.access_level("user")
     @auth.inject_user_infos()
     @blp.arguments(schemas.DriftV100, location="json")
     @blp.response(201, schemas.DriftV100)
@@ -197,7 +197,7 @@ class Drifts(MethodView):
 class Drift(MethodView):
     """Drift API."""
 
-    @auth.access_level("registered")
+    @auth.access_level("user")
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(200, schemas.DriftV100)
     def get(self, experiment_id, drift_id, user_infos):
@@ -226,7 +226,7 @@ class Drift(MethodView):
         # Retrieve and return the drift object from the database.
         return utils.get_drifts(experiment_id, drift_id)
 
-    @auth.access_level("registered")
+    @auth.access_level("user")
     @blp.arguments(schemas.DriftV100, location="json")
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(200, schemas.DriftV100)
@@ -266,7 +266,7 @@ class Drift(MethodView):
         # Return the updated drift record.
         return drift
 
-    @auth.access_level("registered")
+    @auth.access_level("user")
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(204)
     def delete(self, drift_id, experiment_id, user_infos):

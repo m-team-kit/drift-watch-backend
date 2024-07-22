@@ -53,7 +53,7 @@ class Groups(MethodView):
         page_size = pagination_parameters.page_size
         return search.skip((page - 1) * page_size).limit(page_size)
 
-    @auth.access_level("registered")
+    @auth.access_level("user")
     @auth.inject_user_infos()
     @blp.arguments(ma.Schema(), location="json", unknown="raise")
     @blp.doc(responses={409: CONFLICT})
