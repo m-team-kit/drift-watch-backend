@@ -15,7 +15,7 @@ class Experiment(ma.Schema):
     _id = ma.fields.UUID(dump_only=True, data_key="id")
     created_at = ma.fields.String(dump_only=True)
     name = ma.fields.String(required=True)
-    permissions = ma.fields.List("Permission", dump_only=True)
+    permissions = ma.fields.List(ma.fields.Nested("Permission"), dump_only=True)
 
 
 class Permission(ma.Schema):
@@ -42,7 +42,12 @@ class Group(ma.Schema):
     _id = ma.fields.UUID(dump_only=True, data_key="id")
     created_at = ma.fields.String(dump_only=True)
     name = ma.fields.String(required=True)
-    members = ma.fields.List("User", dump_only=True)
+    members = ma.fields.List(
+        ma.fields.Nested("User"),
+        required=True,
+        validate=validate.Length(min=1),
+        dump_only=True,
+    )
 
 
 class User(ma.Schema):
