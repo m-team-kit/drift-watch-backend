@@ -107,7 +107,7 @@ class Authentication:
                 return lambda f: f  # Return without modifications
             case "new_user":
                 auth_docs = {k: extra_responses[k] for k in ["401"]}
-            case "registered" | "drift_owner" | "admin":
+            case "registered" | "admin":
                 auth_docs = {k: extra_responses[k] for k in ["401", "403"]}
         auth_decorator = flaat.access_level(level)
         doc_decorator = self.blueprint.doc(responses=auth_docs)

@@ -266,7 +266,7 @@ class Drift(MethodView):
         # Return the updated drift record.
         return drift
 
-    @auth.access_level("drift_owner")
+    @auth.access_level("registered")
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(204)
     def delete(self, drift_id, experiment_id, user_infos):
