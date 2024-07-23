@@ -9,7 +9,7 @@ def get_user(user_infos):
     collection = current_app.config["db"]["app.users"]
     sub, iss = user_infos["sub"], user_infos["iss"]
     user = collection.find_one({"subject": sub, "issuer": iss})
-    return user or abort(401, msg="User not registered.")
+    return user or abort(403, msg="User not registered.")
 
 
 def get_experiment(experiment_id):
