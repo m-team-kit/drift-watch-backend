@@ -108,9 +108,8 @@ class Experiment(MethodView):
         Raises:
             404: If the experiment with the specified ID is not found.
         """
+        experiment_id = str(experiment_id)
         return utils.get_experiment(experiment_id)
-
-    # TODO: Add put and delete methods for the experiment API.
 
 
 @blp.route("/<uuid:experiment_id>/drift")
