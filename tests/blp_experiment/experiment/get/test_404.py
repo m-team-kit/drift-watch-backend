@@ -18,8 +18,8 @@ class NotFound:
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
-        assert response.json["code"] == 404
-        assert response.json["status"] == "Not Found"
+        assert response.json["error"] == "Not Found"
+        assert response.json["description"] == "Experiment not found."
 
 
 EXPERIMENT_X = "00000000-0000-0001-0001-999999999999"

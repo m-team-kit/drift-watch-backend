@@ -20,13 +20,10 @@ class NotRegistered:
     def test_error_msg(self, response):
         """Test message contains useful information."""
         assert response.json["error"] == "Forbidden"
-        description = response.json["error_description"]
-        assert description == "User user_1@issuer_1 does not meet requirements"
-        details = response.json["error_details"]
-        assert details == "Evaluation of: is_registered"
+        assert response.json["description"] == "User not registered."
 
 
 @mark.parametrize("auth", ["mock-token"], indirect=True)
 @mark.usefixtures("accept_authorization")
-class TestNotRegistered(CommonBaseTests):
+class TestNotRegistered(NotRegistered, CommonBaseTests):
     """Test the authentication response when user not registered."""

@@ -98,3 +98,7 @@ class Authentication:
         return lambda f: doc_decorator(auth_decorator(f))
 
     inject_user_infos = flaat.inject_user_infos
+
+
+
+

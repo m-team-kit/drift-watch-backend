@@ -1,7 +1,6 @@
 """Utilities for the application."""
 
-from flask import current_app
-from flask_smorest import abort
+from flask import abort, current_app
 
 
 def get_user(user_infos):
@@ -9,14 +8,14 @@ def get_user(user_infos):
     collection = current_app.config["db"]["app.users"]
     sub, iss = user_infos["sub"], user_infos["iss"]
     user = collection.find_one({"subject": sub, "issuer": iss})
-    return user or abort(403, msg="User not registered.")
+    return user or abort(403, "User not registered.")
 
 
 def get_experiment(experiment_id):
     """Retrieve an experiment from the database by its ID."""
     collection = current_app.config["db"]["app.experiments"]
     experiment = collection.find_one({"_id": experiment_id})
-    return experiment or abort(404, msg="Experiment not found.")
+    return experiment or abort(404, "Experiment not found.")
 
 
 def get_groups(user):
@@ -30,7 +29,7 @@ def get_drifts(experiment_id, drift_id):
     """Retrieve a drift from the database by its ID."""
     collection = current_app.config["db"][f"app.{experiment_id}"]
     drift = collection.find_one({"_id": drift_id})
-    return drift or abort(404, msg="Drift not found.")
+    return drift or abort(404, "Drift not found.")
 
 
 # TODO: Possible to speed up if: Convert groups in resource to users
@@ -57,4 +56,4 @@ def check_access(user, resource, level="Read"):
             return True
         case "Read" if level == "Read":
             return True
-    return abort(403, msg="Insufficient permissions.")
+    return abort(403, "Insufficient permissions.")
