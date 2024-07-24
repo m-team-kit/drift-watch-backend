@@ -22,7 +22,7 @@ def get_experiment(experiment_id):
 def get_groups(user):
     """Retrieve the groups a user belongs to."""
     collection = current_app.config["db"]["app.groups"]
-    groups = collection.find({"members": {"$in": user["_id"]}})
+    groups = collection.find({"members": {"$in": [user["_id"]]}})
     return set([group["_id"] for group in groups] + [user["_id"]])
 
 
@@ -38,7 +38,7 @@ def get_drifts(experiment_id, drift_id):
 def get_permission(user, resource):
     """Check if the user has the required permission on a resource."""
     groups = get_groups(user)
-    perms = [p["level"] for p in resource["permissions"] if p["group_id"] in groups]
+    perms = [p["role"] for p in resource["permissions"] if p["group_id"] in groups]
     if "Manage" in perms:  # Top level permission
         return "Manage"
     if "Edit" in perms:  # Second level permission

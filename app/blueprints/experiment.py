@@ -111,6 +111,47 @@ class Experiment(MethodView):
         experiment_id = str(experiment_id)
         return utils.get_experiment(experiment_id)
 
+    @auth.access_level("user")
+    @auth.inject_user_infos()
+    @blp.arguments(schemas.Experiment, location="json")
+    @blp.doc(responses={"404": NOT_FOUND})
+    @blp.response(200, schemas.Experiment)
+    # def put(self, json, user_infos, experiment_id, *args, **kwargs):
+    def put(self, json, experiment_id, user_infos):
+        """
+        Update a experiment record with the given JSON data.
+        ---
+        Internal comment not meant to be exposed.
+
+        Args:
+            json (dict): The JSON data containing the updated drift information.
+            experiment_id (str): The ID of the experiment to retrieve drifts from.
+            user_infos (dict): User information from the authentication token.
+
+        Returns:
+            dict: The updated experiment record.
+
+        Raises:
+            401: If the user is not authenticated or registered.
+            403: If the user does not have the required permissions.
+            404: If the drift or experiment specified are not found.
+        """
+        # Check if the user is registered and validate access level.
+        experiment_id = str(experiment_id)
+        user = utils.get_user(user_infos)
+        experiment = utils.get_experiment(experiment_id)
+        utils.check_access(user, experiment, level="Manage")
+
+        # Update the experiment record with the given JSON data.
+        experiment.update(json)
+
+        # Replace the drift record in the database.
+        experiments = current_app.config["db"]["app.experiments"]
+        experiments.replace_one({"_id": experiment_id}, experiment)
+
+        # Return the updated drift record.
+        return experiment
+
 
 @blp.route("/<uuid:experiment_id>/drift")
 class Drifts(MethodView):
