@@ -138,8 +138,8 @@ class Experiment(MethodView):
         """
         # Check if the user is registered and validate access level.
         experiment_id = str(experiment_id)
-        user = utils.get_user(user_infos)
         experiment = utils.get_experiment(experiment_id)
+        user = utils.get_user(user_infos)
         utils.check_access(user, experiment, level="Manage")
 
         # Update the experiment record with the given JSON data.
