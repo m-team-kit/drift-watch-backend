@@ -18,10 +18,10 @@ class CommonBaseTests:
         """Test the 201 response."""
         assert response.status_code == 201
 
-    def test_in_database(self, response, db_item):
+    def test_in_database(self, response, db_experiment):
         """Test the response items are in the database."""
-        assert db_item is not None
-        assert response.json == db_item
+        assert db_experiment is not None
+        assert response.json == db_experiment
 
     def test_experiment_id(self, response):
         """Test the response item have correct id."""

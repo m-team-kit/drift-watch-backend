@@ -41,7 +41,7 @@ class Experiments(MethodView):
             A paginated list of experiments matching the query.
 
         Raises:
-            None
+            422: If the JSON query is not in the correct format.
         """
         # Search for experiments based on the provided JSON query.
         experiments = current_app.config["db"]["app.experiments"]
@@ -71,6 +71,7 @@ class Experiments(MethodView):
 
         Raises:
             401: If the user is not authenticated or registered.
+            422: If the JSON query is not in the correct format.
         """
         # Check if the user is registered and retrieve the user object.
         user = utils.get_user(user_infos)
@@ -108,6 +109,7 @@ class Experiment(MethodView):
 
         Raises:
             404: If the experiment with the specified ID is not found.
+            422: If the JSON query is not in the correct format.
         """
         experiment_id = str(experiment_id)
         return utils.get_experiment(experiment_id)
@@ -135,6 +137,7 @@ class Experiment(MethodView):
             401: If the user is not authenticated or registered.
             403: If the user does not have the required permissions.
             404: If the drift or experiment specified are not found.
+            422: If the JSON query is not in the correct format.
         """
         # Check if the user is registered and validate access level.
         user = utils.get_user(user_infos)
@@ -152,6 +155,42 @@ class Experiment(MethodView):
 
         # Return the updated drift record.
         return experiment
+
+    @auth.access_level("user")
+    @auth.inject_user_infos()
+    @blp.doc(responses={"404": NOT_FOUND})
+    @blp.response(204)
+    def delete(self, experiment_id, user_infos):
+        """
+        Delete a experiment record from the database.
+        ---
+        Internal comment not meant to be exposed.
+
+        Args:
+            json (dict): The JSON data containing the updated drift information.
+            experiment_id (str): The ID of the experiment to retrieve drifts from.
+            user_infos (dict): User information from the authentication token.
+
+        Returns:
+            dict: The updated experiment record.
+
+        Raises:
+            401: If the user is not authenticated or registered.
+            403: If the user does not have the required permissions.
+            404: If the drift or experiment specified are not found.
+        """
+        # Check if the user is registered and validate access level.
+        user = utils.get_user(user_infos)
+        experiment_id = str(experiment_id)
+        experiment = utils.get_experiment(experiment_id)
+        utils.check_access(user, experiment, level="Manage")
+
+        # Replace the drift record in the database.
+        experiments = current_app.config["db"]["app.experiments"]
+        experiments.delete_one({"_id": experiment_id})
+
+        # Return empty response.
+        return None
 
 
 @blp.route("/<uuid:experiment_id>/drift")
