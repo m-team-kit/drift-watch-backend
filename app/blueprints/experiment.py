@@ -269,7 +269,7 @@ class Drifts(MethodView):
         # Insert the drift record into the database.
         drifts = current_app.config["db"][f"app.{experiment_id}"]
         json["created_at"] = dt.now().isoformat()
-        json["_id"] = uuid.uuid4()
+        json["_id"] = str(uuid.uuid4())
         drifts.insert_one(json)
 
         # Return the updated drift object.

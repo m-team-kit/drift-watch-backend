@@ -1,8 +1,8 @@
 """Testing module for endpoint methods /experiment."""
 
 # pylint: disable=redefined-outer-name
-import uuid
 from datetime import datetime as dt
+from uuid import UUID
 
 from pytest import mark
 
@@ -25,7 +25,7 @@ class CommonBaseTests:
 
     def test_experiment_id(self, response):
         """Test the response item have correct id."""
-        assert uuid.UUID(response.json["id"]).version == 4
+        assert UUID(response.json["id"]).version == 4
 
     def test_created_at(self, response):
         """Test the response item has a correct date."""

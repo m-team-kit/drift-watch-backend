@@ -99,6 +99,6 @@ class DriftV100(BaseSchema):
 
     schema_version = ma.fields.Constant("1.0.0")
     job_status = ma.fields.String(required=True, validate=status)
-    model = ma.fields.String()
+    model = ma.fields.String(required=True)
     concept_drift = ma.fields.Nested(BaseDrift, load_default=no_drift)
     data_drift = ma.fields.Nested(BaseDrift, load_default=no_drift)

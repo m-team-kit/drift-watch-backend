@@ -3,6 +3,7 @@
 # pylint: disable=redefined-outer-name
 from datetime import datetime as dt
 from datetime import timezone as tz
+from uuid import UUID
 
 from pytest import mark
 
@@ -21,6 +22,10 @@ class CommonBaseTests:
         """Test response data is delivered as list."""
         assert isinstance(response.json, list)
         assert len(response.json) != 0
+
+    def test_id_uuid(self, response):
+        """Test the response items have correct id."""
+        assert all(UUID(x["id"]) for x in response.json)
 
     def test_datetime(self, response):
         """Test the response items contain a correct date."""

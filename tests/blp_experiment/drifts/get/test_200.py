@@ -3,6 +3,7 @@
 # pylint: disable=redefined-outer-name
 from datetime import datetime as dt
 from datetime import timezone as tz
+from uuid import UUID
 
 from pytest import mark
 
@@ -10,8 +11,8 @@ EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
 
 
 @mark.parametrize("auth", ["mock-token"], indirect=True)
-@mark.parametrize("with_database", ["database_1"], indirect=True)
 @mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+@mark.parametrize("with_database", ["database_1"], indirect=True)
 @mark.usefixtures("with_context", "with_database")
 @mark.usefixtures("accept_authorization")
 class CommonBaseTests:
@@ -25,6 +26,10 @@ class CommonBaseTests:
         """Test response data is delivered as list."""
         assert isinstance(response.json, list)
         assert len(response.json) != 0
+
+    def test_id_uuid(self, response):
+        """Test the response items have correct id."""
+        assert all(UUID(x["id"]) for x in response.json)
 
     def test_versions(self, response, schema_version):
         """Test the response items contain the correct version."""
@@ -71,18 +76,12 @@ class V100Drift(CommonBaseTests):
 
     def test_minimal_keys(self, response):
         """Test the response items contain the minimal keys."""
-        assert all("id" in x for x in response.json)
-        assert all("schema_version" in x for x in response.json)
-        assert all("created_at" in x for x in response.json)
         assert all("model" in x for x in response.json)
         assert all("concept_drift" in x for x in response.json)
         assert all("data_drift" in x for x in response.json)
 
     def test_values_types(self, response):
         """Test the response items contain the correct types."""
-        assert all(isinstance(x["id"], str) for x in response.json)
-        assert all(isinstance(x["schema_version"], str) for x in response.json)
-        assert all(isinstance(x["created_at"], str) for x in response.json)
         assert all(isinstance(x["model"], str) for x in response.json)
         assert all(isinstance(x["concept_drift"], dict) for x in response.json)
         assert all(isinstance(x["data_drift"], dict) for x in response.json)
