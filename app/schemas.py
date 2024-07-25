@@ -14,6 +14,29 @@ class BaseSchema(ma.Schema):
     created_at = ma.fields.String(dump_only=True)
 
 
+class Permissions(ma.fields.Dict):
+    """
+    Permissions is a dictionary of group_id and role.
+    """
+
+    options = validate.OneOf(["Read", "Edit", "Manage"])
+
+    def __init__(self, **kwds):
+        super().__init__(
+            keys=ma.fields.UUID(required=True),
+            values=ma.fields.String(validate=self.options),
+            missing={},
+            **kwds,
+        )
+
+    def _deserialize(self, value, attr, data, **kwds):
+        """Convert group_id uuid to string."""
+        return {
+            str(item_id): role
+            for item_id, role in super()._deserialize(value, attr, data, **kwds).items()
+        }
+
+
 class Experiment(BaseSchema):
     """
     Experiment is a pointer to the collection of drifts.
@@ -23,31 +46,7 @@ class Experiment(BaseSchema):
     """
 
     name = ma.fields.String(required=True)
-    permissions = ma.fields.List(
-        ma.fields.Nested("Permission"),
-        validate=validate.Length(min=1),
-        load_default=[],
-    )
-
-
-class Permission(ma.Schema):
-    """
-    Permission is a pointer from a group.
-    Should not point to the resource but be included in the resource.
-    It indicates the authorization role of the group.
-    """
-
-    group_id = ma.fields.UUID(required=True)
-    role = ma.fields.String(
-        validate=validate.OneOf(["Read", "Edit", "Manage"]),
-        required=True,
-    )
-
-    @ma.post_load
-    def members_str(self, data, **kwds):
-        """Convert group_id uuid to string."""
-        data["group_id"] = str(data["group_id"])
-        return data
+    permissions = Permissions()
 
 
 class Group(BaseSchema):

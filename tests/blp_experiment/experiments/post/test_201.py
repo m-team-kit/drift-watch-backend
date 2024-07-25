@@ -35,10 +35,9 @@ class CommonBaseTests:
         """Test the response includes the body."""
         assert set(body).issubset(set(response.json))
 
-    def test_user_in_permissions(self, response, db_user):
-        """Test the user is in experiment permissions."""
-        owner_permissions = {"group_id": db_user["id"], "role": "Manage"}
-        assert owner_permissions in response.json["permissions"]
+    def test_user_role(self, response, db_user):
+        """Test the response item has the correct user role."""
+        assert response.json["permissions"][db_user["id"]] == "Manage"
 
     def test_name(self, response, name):
         """Test the response item has correct name."""
@@ -59,7 +58,8 @@ class TestSimpleExperiment(CommonBaseTests):
     """Test the /experiment endpoint with simple permissions."""
 
 
-PERMISSIONS_1 = [{"group_id": "00000000-0000-0002-0001-000000000001", "role": "Read"}]
+GROUP_1 = "00000000-0000-0002-0001-000000000001"
+PERMISSIONS_1 = {GROUP_1: "Read"}
 
 
 @mark.parametrize("permissions", [PERMISSIONS_1], indirect=True)

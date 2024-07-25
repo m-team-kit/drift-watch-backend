@@ -75,12 +75,13 @@ class Experiments(MethodView):
         # Check if the user is registered and retrieve the user object.
         user = utils.get_user(user_infos)
 
-        # Insert the experiment record into the database.
-        experiments = current_app.config["db"]["app.experiments"]
+        # Modify the JSON object to include the user ID and permissions.
         json["created_at"] = dt.now().isoformat()
         json["_id"] = str(uuid.uuid4())
-        # pylint: disable=protected-access
-        json["permissions"].append({"group_id": user["_id"], "role": "Manage"})
+        json["permissions"][user["_id"]] = "Manage"
+
+        # Insert it into the database.
+        experiments = current_app.config["db"]["app.experiments"]
         experiments.insert_one(json)
 
         # Return the updated user object.
@@ -141,8 +142,9 @@ class Experiment(MethodView):
         experiment = utils.get_experiment(experiment_id)
         utils.check_access(user, experiment, level="Manage")
 
-        # Update the experiment record with the given JSON data.
+        # Modify the JSON object to include the user ID and permissions.
         experiment.update(json)
+        json["permissions"][user["_id"]] = "Manage"
 
         # Replace the drift record in the database.
         experiments = current_app.config["db"]["app.experiments"]

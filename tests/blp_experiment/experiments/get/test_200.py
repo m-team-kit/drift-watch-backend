@@ -61,7 +61,7 @@ class Permission:
     def test_group_level(self, response, permissions):
         """Test which experiments group 'x' has permissions level 'y'."""
         for item in response.json:
-            assert permissions["$elemMatch"] in item["permissions"]
+            assert set(permissions).issubset(set(item["permissions"]))
 
 
 @mark.parametrize("name", ["experiment_1"], indirect=True)
@@ -76,8 +76,9 @@ class TestBetweenFilter(CreatedAfter, CreatedBefore, CommonBaseTests):
 
 
 GROUP_1 = "00000000-0000-0002-0001-000000000001"
+PERMISSIONS = {GROUP_1: "Manage"}
 
 
-@mark.parametrize("permissions", [(GROUP_1, "Manage")], indirect=True)
+@mark.parametrize("permissions", [PERMISSIONS], indirect=True)
 class TestPermissions(Permission, CommonBaseTests):
     """Test the response items permissions field."""

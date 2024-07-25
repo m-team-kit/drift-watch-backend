@@ -33,11 +33,10 @@ def get_drifts(experiment_id, drift_id):
 
 
 # TODO: Possible to speed up if: Convert groups in resource to users
-# Check if user is in the final list
 def get_permission(user, resource):
     """Check if the user has the required permission on a resource."""
     groups = get_groups(user)
-    perms = [p["role"] for p in resource["permissions"] if p["group_id"] in groups]
+    perms = set([r for k, r in resource["permissions"].items() if k in groups])
     if "Manage" in perms:  # Top level permission
         return "Manage"
     if "Edit" in perms:  # Second level permission

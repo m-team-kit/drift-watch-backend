@@ -1,4 +1,4 @@
-"""Testing module for endpoint methods /experiment."""
+"""Testing module for endpoint methods /drift."""
 
 # pylint: disable=redefined-outer-name
 from pytest import mark
@@ -7,7 +7,7 @@ from pytest import mark
 @mark.parametrize("auth", ["mock-token"], indirect=True)
 @mark.usefixtures("accept_authorization")
 class CommonBaseTests:
-    """Common tests for the /experiment endpoint."""
+    """Common tests for the /drift endpoint."""
 
     def test_status_code(self, response):
         """Test the 422 response."""
@@ -44,16 +44,22 @@ class InvalidMapping:
         assert ["Not a valid mapping type."] in errors
 
 
+EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
+
+
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.parametrize("body", [{"bad_key": "val"}], indirect=True)
 class TestBadBodyKey(UnknownField, CommonBaseTests):
     """Test the bad_key parameter in the body."""
 
 
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.parametrize("name", [1000], indirect=True)
 class TestBadExperiment(InvalidString, CommonBaseTests):
     """Test experiment name is not a string."""
 
 
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.parametrize("permissions", ["non_map"], indirect=True)
-class TestBadPermissions(InvalidList, CommonBaseTests):
-    """Test permissions is not a map."""
+class TestBadPermissions(InvalidMapping, CommonBaseTests):
+    """Test permissions is not a list."""

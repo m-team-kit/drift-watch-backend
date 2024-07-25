@@ -20,9 +20,9 @@ def body(request, created_at, name, permissions):
     for key, value in [
         ("created_at", created_at),
         ("name", name),
-        ("permissions", permissions),
     ]:
         kwds.update({key: value} if value else {})
+    kwds.update({f"permissions.{k}": r for k, r in permissions.items()})
     return kwds if kwds else None
 
 
@@ -56,7 +56,4 @@ def name(request):
 @fixture(scope="class")
 def permissions(request):
     """Inject and return a permissions filter."""
-    if not hasattr(request, "param"):
-        return None
-    match = {"group_id": request.param[0], "role": request.param[1]}
-    return {"$elemMatch": match}
+    return request.param if hasattr(request, "param") else {}

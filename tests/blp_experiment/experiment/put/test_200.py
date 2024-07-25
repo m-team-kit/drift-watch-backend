@@ -30,6 +30,10 @@ class CommonBaseTests:
         """Test the response includes the body."""
         assert set(body).issubset(set(response.json))
 
+    def test_user_role(self, response, db_user):
+        """Test the response item has the correct user role."""
+        assert response.json["permissions"][db_user["id"]] == "Manage"
+
 
 class EditName:
     """Test the response items."""
@@ -48,10 +52,9 @@ class EditPermissions:
 
 
 EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-PERMISSIONS_1 = [
-    {"group_id": "00000000-0000-0002-0001-000000000001", "role": "Read"},
-    {"group_id": "00000000-0000-0003-0001-000000000001", "role": "Manage"},
-]
+GROUP_1 = "00000000-0000-0002-0001-000000000001"
+GROUP_2 = "00000000-0000-0002-0001-000000000002"
+PERMISSIONS_1 = {GROUP_1: "Read", GROUP_2: "Edit"}
 
 
 @mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
