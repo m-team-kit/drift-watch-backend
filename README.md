@@ -15,10 +15,8 @@ Contains swagger documentation (openapi 3.1) for above APIs.
 Saves drift run data to a MongoDB database.
 Provides endpoints for saving job status and get data with multiple filters.
 
-- [ ] Add pagination to the endpoints to avoid overloading the server.
-- [ ] Test in production (call the API from the browser).
-- [ ] Test in development (run debugger attached to the container).
-- [ ] Add reverse proxy for https and expose API doc.
+- [ ] Add sentry_sdk for error tracking:
+      https://flask.palletsprojects.com/en/2.3.x/errorhandling/#error-logging-tools
 
 Create a conda environment, make sure conda is installed
 (https://conda.io/docs/user-guide/install/):
