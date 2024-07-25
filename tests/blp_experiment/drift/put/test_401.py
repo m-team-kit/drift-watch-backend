@@ -33,7 +33,7 @@ class TestMissingToken(DriftV100):
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
-        assert response.json["error"] == "Unauthenticated"
+        assert response.json["status"] == "Unauthenticated"
         description = response.json["error_description"]
         assert description == "No authorization header"
 
@@ -44,6 +44,6 @@ class TestInvalidToken(DriftV100):
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
-        assert response.json["error"] == "Unauthenticated"
+        assert response.json["status"] == "Unauthenticated"
         description = response.json["error_description"]
         assert description == "User identity could not be determined"

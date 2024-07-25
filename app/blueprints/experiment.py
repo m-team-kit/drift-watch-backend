@@ -116,7 +116,6 @@ class Experiment(MethodView):
     @blp.arguments(schemas.Experiment, location="json")
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(200, schemas.Experiment)
-    # def put(self, json, user_infos, experiment_id, *args, **kwargs):
     def put(self, json, experiment_id, user_infos):
         """
         Update a experiment record with the given JSON data.
@@ -137,9 +136,9 @@ class Experiment(MethodView):
             404: If the drift or experiment specified are not found.
         """
         # Check if the user is registered and validate access level.
+        user = utils.get_user(user_infos)
         experiment_id = str(experiment_id)
         experiment = utils.get_experiment(experiment_id)
-        user = utils.get_user(user_infos)
         utils.check_access(user, experiment, level="Manage")
 
         # Update the experiment record with the given JSON data.

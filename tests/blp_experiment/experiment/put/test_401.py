@@ -12,6 +12,7 @@ class CommonBaseTests:
     def test_status_code(self, response):
         """Test the 401 response."""
         assert response.status_code == 401
+        assert response.json["code"] == 401
 
 
 class NoAuthHeader:
@@ -19,9 +20,8 @@ class NoAuthHeader:
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
-        assert response.json["error"] == "Unauthenticated"
-        description = response.json["error_description"]
-        assert description == "No authorization header"
+        assert response.json["status"] == "Unauthorized"
+        assert response.json["message"] == "No authorization header"
 
 
 class UnknownIdentity:
@@ -29,9 +29,8 @@ class UnknownIdentity:
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
-        assert response.json["error"] == "Unauthenticated"
-        description = response.json["error_description"]
-        assert description == "User identity could not be determined"
+        assert response.json["status"] == "Unauthorized"
+        assert response.json["message"] == "User identity could not be determined"
 
 
 EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"

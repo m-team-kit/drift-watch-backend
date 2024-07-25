@@ -12,6 +12,7 @@ class CommonBaseTests:
     def test_status_code(self, response):
         """Test the 422 response."""
         assert response.status_code == 422
+        assert response.json["code"] == 422
 
 
 class UnknownField:
@@ -19,6 +20,7 @@ class UnknownField:
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
+        assert response.json["status"] == "Unprocessable Entity"
         errors = response.json["errors"]["json"].values()
         assert ["Unknown field."] in errors
 
@@ -28,6 +30,7 @@ class InvalidString:
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
+        assert response.json["status"] == "Unprocessable Entity"
         errors = response.json["errors"]["json"].values()
         assert ["Not a valid string."] in errors
 

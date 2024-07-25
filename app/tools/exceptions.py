@@ -14,8 +14,9 @@ def error_handler(error):
     response = error.get_response()
     response.data = json.dumps(
         {
-            "error": error.name,
-            "description": error.description,
+            "code": error.code,
+            "status": error.name,
+            "message": error.description,
         }
     )
     response.content_type = "application/json"

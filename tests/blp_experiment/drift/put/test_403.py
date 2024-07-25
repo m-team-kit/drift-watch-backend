@@ -34,7 +34,7 @@ class TestNotRegistered(DriftV100):
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
-        assert response.json["error"] == "Forbidden"
+        assert response.json["status"] == "Forbidden"
         description = response.json["error_description"]
         assert description == "User user_1@issuer_1 does not meet requirements"
 
@@ -56,7 +56,7 @@ class TestNotOwned(CommonTests):
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
-        assert response.json["error"] == "Forbidden"
+        assert response.json["status"] == "Forbidden"
         description = response.json["error_description"]
         assert description == "User user_1@issuer_1 does not meet requirements"
         error_details = response.json["error_details"]

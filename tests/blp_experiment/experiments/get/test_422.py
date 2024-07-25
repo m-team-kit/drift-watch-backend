@@ -1,21 +1,17 @@
 """Testing module for endpoint methods /drift."""
 
 # pylint: disable=redefined-outer-name
-from pytest import mark, fixture
+from pytest import mark
 
 
 @mark.parametrize("auth", [None], indirect=True)
 class CommonBaseTests:
     """Common tests for the /drift endpoint."""
 
-    @fixture(scope="class")
-    def body(self, request):
-        """Inject and return a request body."""
-        return request.param
-
     def test_status_code(self, response):
         """Test the 422 response."""
         assert response.status_code == 422
+        assert response.json["code"] == 422
 
 
 class ErrorMessage:

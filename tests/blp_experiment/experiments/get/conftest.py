@@ -14,14 +14,15 @@ def request(client, path, request_kwds):
 @fixture(scope="class")
 def body(request, created_at, name, permissions):
     """Inject and return a request body."""
-    kwds = {}  # Update the body with the test parameters
+    kwds = request.param if hasattr(request, "param") else {}
+    if not isinstance(kwds, dict):
+        return kwds  # Return the body as is
     for key, value in [
         ("created_at", created_at),
         ("name", name),
         ("permissions", permissions),
     ]:
         kwds.update({key: value} if value else {})
-    kwds.update(request.param if hasattr(request, "param") else {})
     return kwds if kwds else None
 
 

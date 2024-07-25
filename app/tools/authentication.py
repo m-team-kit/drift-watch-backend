@@ -1,10 +1,11 @@
 """Authentication module."""
 
 from typing import Callable
+
 from flaat.config import AccessLevel  # type: ignore
 from flaat.flask import Flaat  # type: ignore
 from flaat.requirements import IsTrue  # type: ignore
-from flask import current_app
+from flask import abort, current_app
 
 
 def valid_user_infos(user_infos):
@@ -93,12 +94,15 @@ class Authentication:
                 return lambda f: f  # Return without modifications
             case "user" | "admin":
                 auth_docs = {k: extra_responses[k] for k in ["401", "403"]}
-        auth_decorator = flaat.access_level(level)
+        auth_decorator = flaat.access_level(
+            access_level_name=level,
+            on_failure=self.raise_correct_error,
+        )
         doc_decorator = self.blueprint.doc(responses=auth_docs)
         return lambda f: doc_decorator(auth_decorator(f))
 
     inject_user_infos = flaat.inject_user_infos
 
-
-
-
+    def raise_correct_error(self, error, user_infos=None):
+        """Raises the correct flask error."""
+        abort(error.status_code, error.args[0])

@@ -12,6 +12,7 @@ class CommonBaseTests:
     def test_status_code(self, response):
         """Test the 403 response."""
         assert response.status_code == 403
+        assert response.json["code"] == 403
 
 
 class NotRegistered:
@@ -19,8 +20,8 @@ class NotRegistered:
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
-        assert response.json["error"] == "Forbidden"
-        assert response.json["description"] == "User not registered."
+        assert response.json["status"] == "Forbidden"
+        assert response.json["message"] == "User not registered."
 
 
 class PermissionDenied:
@@ -28,8 +29,8 @@ class PermissionDenied:
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
-        assert response.json["error"] == "Forbidden"
-        assert response.json["description"] == "Insufficient permissions."
+        assert response.json["status"] == "Forbidden"
+        assert response.json["message"] == "Insufficient permissions."
 
 
 EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
