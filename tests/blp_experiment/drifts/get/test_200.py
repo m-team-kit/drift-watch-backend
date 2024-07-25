@@ -2,14 +2,19 @@
 
 # pylint: disable=redefined-outer-name
 from datetime import datetime as dt
+from datetime import timezone as tz
 
 from pytest import mark
 
+EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
 
-@mark.parametrize("auth", [None], indirect=True)
+
+@mark.parametrize("auth", ["mock-token"], indirect=True)
 @mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.usefixtures("with_context", "with_database")
-class CommonTests:
+@mark.usefixtures("accept_authorization")
+class CommonBaseTests:
     """Common tests for the /drift endpoint."""
 
     def test_status_code(self, response):
@@ -26,49 +31,49 @@ class CommonTests:
         sv = schema_version
         assert all(x["schema_version"] == sv for x in response.json)
 
-
-class DatetimeTests(CommonTests):
-    """Test the response items datetime."""
-
     def test_datetime(self, response):
         """Test the response items contain a correct date."""
-        assert all(dt.fromisoformat(x["datetime"]) for x in response.json)
+        assert all(dt.fromisoformat(x["created_at"]) for x in response.json)
 
-    @mark.parametrize("start_date", ["2021-01-10"], indirect=True)
-    def test_after_date(self, response, start_dateiso):
+
+class CreatedAfter:
+    """Test the response items created at."""
+
+    def test_after_date(self, response, created_after):
         """Test the response items are after the indicated date."""
+        req_date = dt.fromisoformat(created_after).replace(tzinfo=tz.utc)
         for item in response.json:
-            assert dt.fromisoformat(item["datetime"]) >= start_dateiso
+            assert dt.fromisoformat(item["created_at"]) >= req_date
 
-    @mark.parametrize("end_date", ["2021-01-20"], indirect=True)
-    def test_before_date(self, response, end_dateiso):
+
+class CreatedBefore:
+    """Test the response items created at."""
+
+    def test_before_date(self, response, created_before):
         """Test the response items are before the indicated date."""
+        req_date = dt.fromisoformat(created_before).replace(tzinfo=tz.utc)
         for item in response.json:
-            assert dt.fromisoformat(item["datetime"]) <= end_dateiso
+            assert dt.fromisoformat(item["created_at"]) <= req_date
 
 
-class StatusTests(CommonTests):
+class ValidStatus:
     """Test the response items job status."""
 
-    @mark.parametrize(
-        argnames="job_status",
-        argvalues=["Running", "Completed", "Failed"],
-        indirect=True,
-    )
     def test_job_status(self, response, job_status):
         """Test the job status is correctly updated."""
         assert all(x["job_status"] == job_status for x in response.json)
 
 
 @mark.parametrize("schema_version", ["1.0.0"], indirect=True)
-class TestGetDriftV100(DatetimeTests, StatusTests, CommonTests):
-    """Test the responses items."""
+@mark.parametrize("model", ["model_1"], indirect=True)
+class V100Drift(CommonBaseTests):
+    """Tests for using V100 drift schema."""
 
     def test_minimal_keys(self, response):
         """Test the response items contain the minimal keys."""
         assert all("id" in x for x in response.json)
         assert all("schema_version" in x for x in response.json)
-        assert all("datetime" in x for x in response.json)
+        assert all("created_at" in x for x in response.json)
         assert all("model" in x for x in response.json)
         assert all("concept_drift" in x for x in response.json)
         assert all("data_drift" in x for x in response.json)
@@ -77,22 +82,51 @@ class TestGetDriftV100(DatetimeTests, StatusTests, CommonTests):
         """Test the response items contain the correct types."""
         assert all(isinstance(x["id"], str) for x in response.json)
         assert all(isinstance(x["schema_version"], str) for x in response.json)
-        assert all(isinstance(x["datetime"], str) for x in response.json)
+        assert all(isinstance(x["created_at"], str) for x in response.json)
         assert all(isinstance(x["model"], str) for x in response.json)
         assert all(isinstance(x["concept_drift"], dict) for x in response.json)
         assert all(isinstance(x["data_drift"], dict) for x in response.json)
 
-    @mark.parametrize("model", ["model_1"], indirect=True)
     def test_model(self, response, model):
         """Test the response items contain the correct model."""
         assert all(x["model"] == model for x in response.json)
 
-    @mark.parametrize("concept_drift", [{"$exists": True}], indirect=True)
+
+class ConceptDrift:
+    """Test the response items concept drift."""
+
     def test_concept_drift(self, response):
         """Test the response items concept drift."""
         assert all("concept_drift" in item for item in response.json)
 
-    @mark.parametrize("data_drift", [{"$exists": True}], indirect=True)
+
+class DataDrift:
+    """Test the response items data drift."""
+
     def test_data_drift(self, response):
         """Test the response items data drift."""
         assert all("data_drift" in item for item in response.json)
+
+
+ALL_STATUS = ["Running", "Completed", "Failed"]
+
+
+@mark.parametrize("job_status", ALL_STATUS, indirect=True)
+class TestV100StatusFilter(ValidStatus, V100Drift):
+    """Test the responses items."""
+
+
+@mark.parametrize("concept_drift", [{"$exists": True}], indirect=True)
+class TestV100ConceptFilter(ConceptDrift, V100Drift):
+    """Test the responses items."""
+
+
+@mark.parametrize("data_drift", [{"$exists": True}], indirect=True)
+class TestV100DataFilter(DataDrift, V100Drift):
+    """Test the responses items."""
+
+
+@mark.parametrize("created_after", ["2021-01-02"], indirect=True)
+@mark.parametrize("created_before", ["2021-01-03"], indirect=True)
+class TestBetweenFilter(CreatedAfter, CreatedBefore, V100Drift):
+    """Test the response items contain the correct drifts."""

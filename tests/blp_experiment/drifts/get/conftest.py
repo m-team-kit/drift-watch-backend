@@ -1,9 +1,6 @@
 """Testing module for endpoint methods /drift."""
 
 # pylint: disable=redefined-outer-name
-from datetime import datetime as dt
-from datetime import timezone as tz
-
 from pytest import fixture
 
 
@@ -14,12 +11,14 @@ def request(client, path, request_kwds):
 
 
 @fixture(scope="class")
-def body(request, schema_version, datetime, model_info, drifts):
+def body(request, schema_version, created_at, model_info, drifts):
     """Inject and return a request body."""
-    kwds = {}  # Update the body with the test parameters
+    kwds = request.param if hasattr(request, "param") else {}
+    if not isinstance(kwds, dict):
+        return kwds  # Return the body as is
     for key, value in [
         ("schema_version", schema_version),
-        ("datetime", datetime),
+        ("created_at", created_at),
         ("job_status", model_info["job_status"]),
         ("model", model_info["model"]),
         ("concept_drift", drifts["concept_drift"]),
@@ -33,56 +32,40 @@ def body(request, schema_version, datetime, model_info, drifts):
 @fixture(scope="class")
 def schema_version(request):
     """Inject and return a collection name."""
-    return request.param
-
-
-@fixture(scope="class", params=["2021-01-10", None])
-def start_date(request):
-    """Inject and return a start date."""
-    return request.param
+    return request.param if hasattr(request, "param") else None
 
 
 @fixture(scope="class")
-def start_dateiso(start_date):
-    """Return the start date in iso format."""
-    if start_date:
-        return dt.fromisoformat(start_date).replace(tzinfo=tz.utc)
-    return None
-
-
-@fixture(scope="class", params=["2021-01-20", None])
-def end_date(request):
-    """Inject and return an end date."""
-    return request.param
+def created_after(request):
+    """Inject and return the end date in iso format."""
+    return request.param if hasattr(request, "param") else None
 
 
 @fixture(scope="class")
-def end_dateiso(end_date):
-    """Return the end date in iso format."""
-    if end_date:
-        return dt.fromisoformat(end_date).replace(tzinfo=tz.utc)
-    return None
+def created_before(request):
+    """Inject and return the start date in iso format."""
+    return request.param if hasattr(request, "param") else None
 
 
 @fixture(scope="class")
-def datetime(request, start_date, end_date):
-    """Return a datetime filter."""
+def created_at(request, created_after, created_before):
+    """Inject and return a created_at filter."""
     datetime = request.param if hasattr(request, "param") else {}
-    datetime.update({"$gte": start_date} if start_date else {})
-    datetime.update({"$lte": end_date} if end_date else {})
+    datetime.update({"$gte": created_after} if created_after else {})
+    datetime.update({"$lte": created_before} if created_before else {})
     return datetime
 
 
-@fixture(scope="class", params=["Running", "Completed", "Failed", None])
+@fixture(scope="class")
 def job_status(request):
     """Inject and return a job status."""
-    return request.param
+    return request.param if hasattr(request, "param") else None
 
 
-@fixture(scope="class", params=["model_1", None])
+@fixture(scope="class")
 def model(request):
     """Inject and return a drift detection type."""
-    return request.param
+    return request.param if hasattr(request, "param") else None
 
 
 @fixture(scope="class")

@@ -198,10 +198,11 @@ class Drifts(MethodView):
     """Drifts API."""
 
     @auth.access_level("user")
+    @auth.inject_user_infos()
     @blp.arguments(ma.Schema(), location="json", unknown="include")
     @blp.response(200, schemas.DriftV100(many=True))
     @blp.paginate()
-    def get(self, json, user_infos, experiment_id, pagination_parameters):
+    def get(self, json, experiment_id, user_infos, pagination_parameters):
         """
         Get a paginated list of drift Jobs based on the provided JSON query
         and MongoDB format.
@@ -210,8 +211,8 @@ class Drifts(MethodView):
 
         Args:
             json: A JSON object representing the query parameters.
-            user_infos: User information obtained from the authentication process.
             experiment_id: The ID of the experiment to retrieve drifts from.
+            user_infos: User information obtained from the authentication process.
             pagination_parameters: An object containing pagination parameters.
 
         Returns:
@@ -224,6 +225,7 @@ class Drifts(MethodView):
         """
         # Check if the user is registered and validate access level.
         user = utils.get_user(user_infos)
+        experiment_id = str(experiment_id)
         experiment = utils.get_experiment(experiment_id)
         utils.check_access(user, experiment, level="Read")
 
@@ -260,12 +262,13 @@ class Drifts(MethodView):
         """
         # Check if the user is registered and validate access level.
         user = utils.get_user(user_infos)
+        experiment_id = str(experiment_id)
         experiment = utils.get_experiment(experiment_id)
         utils.check_access(user, experiment, level="Edit")
 
         # Insert the drift record into the database.
         drifts = current_app.config["db"][f"app.{experiment_id}"]
-        json["datetime"] = dt.now().isoformat()
+        json["created_at"] = dt.now().isoformat()
         json["_id"] = uuid.uuid4()
         drifts.insert_one(json)
 
@@ -300,6 +303,7 @@ class Drift(MethodView):
         """
         # Check if the user is registered and validate access level.
         user = utils.get_user(user_infos)
+        experiment_id = str(experiment_id)
         experiment = utils.get_experiment(experiment_id)
         utils.check_access(user, experiment, level="Edit")
 
@@ -332,6 +336,7 @@ class Drift(MethodView):
         """
         # Check if the user is registered and validate access level.
         user = utils.get_user(user_infos)
+        experiment_id = str(experiment_id)
         experiment = utils.get_experiment(experiment_id)
         utils.check_access(user, experiment, level="Edit")
 
@@ -370,6 +375,7 @@ class Drift(MethodView):
         """
         # Check if the user is registered and validate access level.
         user = utils.get_user(user_infos)
+        experiment_id = str(experiment_id)
         experiment = utils.get_experiment(experiment_id)
         utils.check_access(user, experiment, level="Edit")
 
