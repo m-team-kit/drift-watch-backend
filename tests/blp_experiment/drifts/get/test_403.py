@@ -5,8 +5,6 @@ from pytest import mark
 
 
 @mark.parametrize("auth", ["mock-token"], indirect=True)
-@mark.parametrize("name", ["experiment_a"], indirect=True)
-@mark.parametrize("permissions", [[]], indirect=True)
 @mark.parametrize("with_database", ["database_1"], indirect=True)
 @mark.usefixtures("with_context", "with_database")
 @mark.usefixtures("accept_authorization")
