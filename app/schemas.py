@@ -25,7 +25,7 @@ class Permissions(ma.fields.Dict):
         super().__init__(
             keys=ma.fields.UUID(required=True),
             values=ma.fields.String(validate=self.options),
-            missing={},
+            load_default={},
             **kwds,
         )
 
