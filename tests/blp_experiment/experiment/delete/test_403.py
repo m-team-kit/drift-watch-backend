@@ -1,20 +1,22 @@
-"""Testing module for endpoint methods /drift."""
+"""Testing module for endpoint methods /experiment."""
 
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
 
-@mark.parametrize("name", ["experiment_a"], indirect=True)
-@mark.parametrize("permissions", [[]], indirect=True)
 @mark.parametrize("with_database", ["database_1"], indirect=True)
 @mark.usefixtures("with_context", "with_database")
 class CommonBaseTests:
-    """Common tests for the /drift endpoint."""
+    """Common tests for the /experiment endpoint."""
 
     def test_status_code(self, response):
         """Test the 403 response."""
         assert response.status_code == 403
         assert response.json["code"] == 403
+
+    def test_in_database(self, db_experiment):
+        """Test the response items are in the database."""
+        assert db_experiment is not None
 
 
 class NotRegistered:
