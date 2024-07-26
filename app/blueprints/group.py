@@ -23,8 +23,8 @@ auth = Authentication(blueprint=blp)
 class Groups(MethodView):
     """Groups API."""
 
-    @auth.access_level("admin")
-    @blp.arguments(schemas.ma.Schema(), location="json", unknown="include")
+    @auth.access_level("user")
+    @blp.arguments(ma.Schema(), location="json", unknown="include")
     @blp.response(200, schemas.Group(many=True))
     @blp.paginate()
     def get(self, json, pagination_parameters):
@@ -42,7 +42,7 @@ class Groups(MethodView):
 
         Raises:
             401: If the user is not authenticated.
-            403: If the user does not have the required access level.
+            422: If the JSON query is not in the correct format.
         """
         # Search for groups based on the provided JSON query.
         groups = current_app.config["db"]["app.groups"]
@@ -72,6 +72,8 @@ class Groups(MethodView):
 
         Raises:
             401: If the user is not authenticated or registered.
+            403: If the user does not have the required permissions.
             409: If the group already exists.
+            422: If the JSON query is not in the correct format.
         """
         raise NotImplementedError("Not implemented yet.")
