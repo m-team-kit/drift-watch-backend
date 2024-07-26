@@ -109,7 +109,6 @@ class Experiment(MethodView):
 
         Raises:
             404: If the experiment with the specified ID is not found.
-            422: If the JSON query is not in the correct format.
         """
         experiment_id = str(experiment_id)
         return utils.get_experiment(experiment_id)
@@ -222,6 +221,7 @@ class Drifts(MethodView):
             401: If the user is not authenticated or registered.
             403: If the user does not have the required permissions.
             404: If the experiment with the specified ID is not found.
+            422: If the JSON query is not in the correct format.
         """
         # Check if the user is registered and validate access level.
         user = utils.get_user(user_infos)
@@ -259,6 +259,7 @@ class Drifts(MethodView):
             401: If the user is not authenticated or registered.
             403: If the user does not have the required permissions.
             404: If the experiment with the specified ID is not found.
+            422: If the JSON query is not in the correct format.
         """
         # Check if the user is registered and validate access level.
         user = utils.get_user(user_infos)
@@ -302,6 +303,7 @@ class Drift(MethodView):
             401: If the user is not authenticated or registered.
             403: If the user does not have the required permissions.
             404: If the drift or experiment specified are not found.
+            422: If the JSON query is not in the correct format.
         """
         # Check if the user is registered and validate access level.
         user = utils.get_user(user_infos)
