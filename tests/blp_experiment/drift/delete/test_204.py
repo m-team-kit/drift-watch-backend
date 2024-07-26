@@ -1,35 +1,31 @@
-"""Testing module for endpoint methods /drift."""
+"""Testing module for endpoint methods /experiment."""
 
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
+EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
+
 
 @mark.parametrize("auth", ["mock-token"], indirect=True)
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.parametrize("with_database", ["database_1"], indirect=True)
 @mark.usefixtures("with_context", "with_database")
 @mark.usefixtures("accept_authorization")
-class CommonTests:
+class CommonBaseTests:
     """Common tests for the /drift/<drift_id> endpoint."""
 
     def test_status_code(self, response):
         """Test the 204 response."""
         assert response.status_code == 204
 
-    def test_not_in_database(self, db_item):
+    def test_not_in_database(self, db_drift):
         """Test the response items are in the database."""
-        assert db_item is None
+        assert db_drift is None
 
 
-@mark.parametrize(
-    "drift_id",  # Parametrize by class to cluster tests in same group
-    [  # List of drift ids to test in this class
-        "00000000-0000-0001-0001-000000000001",
-    ],
-    indirect=True,
-)
-class DriftV100(CommonTests):
-    """Tests for V100 drift ids."""
+DRIFT_V100_1 = "00000000-0000-0004-0001-000000000001"
 
 
-class TestGetIdV100(DriftV100):
-    """Test the responses items."""
+@mark.parametrize("drift_id", [DRIFT_V100_1], indirect=True)
+class TestDelExperiment(CommonBaseTests):
+    """Tests for deleting an experiment."""
