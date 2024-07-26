@@ -281,9 +281,11 @@ class Drift(MethodView):
     """Drift API."""
 
     @auth.access_level("user")
+    @auth.inject_user_infos()
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(200, schemas.DriftV100)
     def get(self, experiment_id, drift_id, user_infos):
+        # def get(self, experiment_id, drift_id, user_infos):
         """Retrieve a drift job by its id from the database.
         ---
         Internal comment not meant to be exposed.
@@ -308,6 +310,7 @@ class Drift(MethodView):
         utils.check_access(user, experiment, level="Edit")
 
         # Retrieve and return the drift object from the database.
+        drift_id = str(drift_id)
         return utils.get_drifts(experiment_id, drift_id)
 
     @auth.access_level("user")
