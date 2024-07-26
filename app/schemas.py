@@ -60,8 +60,8 @@ class Group(BaseSchema):
 
     @ma.post_load
     def members_str(self, data, **kwds):
-        """Convert members uuid to string."""
-        data["members"] = [str(member) for member in data["members"]]
+        """Convert members uuid to string and ensure uniqueness."""
+        data["members"] = list(set(str(member) for member in data["members"]))
         return data
 
 

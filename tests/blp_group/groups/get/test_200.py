@@ -66,7 +66,8 @@ class Members:
 
     def test_members(self, response, members):
         """Test group members."""
-        assert all(x["members"] == members for x in response.json)
+        for member in members:
+            assert all(member in x["members"] for x in response.json)
 
 
 @mark.parametrize("name", ["group_1"], indirect=True)

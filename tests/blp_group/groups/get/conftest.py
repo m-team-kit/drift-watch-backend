@@ -20,9 +20,10 @@ def body(request, created_at, name, members):
     for key, value in [
         ("created_at", created_at),
         ("name", name),
-        ("members", members),
     ]:
         kwds.update({key: value} if value else {})
+    if members is not None:
+        kwds.update({"members": {"$in": members}})
     return kwds if kwds else None
 
 
@@ -56,4 +57,4 @@ def name(request):
 @fixture(scope="class")
 def members(request):
     """Inject and return a members filter."""
-    return request.param if hasattr(request, "param") else []
+    return request.param if hasattr(request, "param") else None
