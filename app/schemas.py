@@ -56,7 +56,10 @@ class Group(BaseSchema):
     """
 
     name = ma.fields.String(required=True)
-    members = ma.fields.List(ma.fields.UUID, required=True)
+    members = ma.fields.List(
+        ma.fields.UUID,
+        load_default=[],
+    )
 
     @ma.post_load
     def members_str(self, data, **kwds):

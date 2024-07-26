@@ -54,7 +54,7 @@ class Experiments(MethodView):
 
     @auth.access_level("user")
     @auth.inject_user_infos()
-    @blp.arguments(schemas.Experiment, location="json")
+    @blp.arguments(schemas.Experiment, location="json", unknown="raise")
     @blp.response(201, schemas.Experiment)
     def post(self, json, user_infos):
         """Create a new experiment record in the database.
@@ -115,7 +115,7 @@ class Experiment(MethodView):
 
     @auth.access_level("user")
     @auth.inject_user_infos()
-    @blp.arguments(schemas.Experiment, location="json")
+    @blp.arguments(schemas.Experiment, location="json", unknown="raise")
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(200, schemas.Experiment)
     def put(self, json, experiment_id, user_infos):
@@ -240,7 +240,7 @@ class Drifts(MethodView):
 
     @auth.access_level("user")
     @auth.inject_user_infos()
-    @blp.arguments(schemas.DriftV100, location="json")
+    @blp.arguments(schemas.DriftV100, location="json", unknown="raise")
     @blp.response(201, schemas.DriftV100)
     def post(self, json, experiment_id, user_infos):
         """Create a new drift Job record in the database.
@@ -317,7 +317,7 @@ class Drift(MethodView):
 
     @auth.access_level("user")
     @auth.inject_user_infos()
-    @blp.arguments(schemas.DriftV100, location="json")
+    @blp.arguments(schemas.DriftV100, location="json", unknown="raise")
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(200, schemas.DriftV100)
     def put(self, json, experiment_id, drift_id, user_infos):

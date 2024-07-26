@@ -7,6 +7,7 @@ def init_app(app):
     app.errorhandler(exceptions.Unauthorized)(error_handler)
     app.errorhandler(exceptions.Forbidden)(error_handler)
     app.errorhandler(exceptions.NotFound)(error_handler)
+    app.errorhandler(exceptions.Conflict)(error_handler)
 
 
 def error_handler(error):

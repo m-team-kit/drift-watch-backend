@@ -6,11 +6,10 @@ import uuid
 from datetime import datetime as dt
 
 import marshmallow as ma
-from flask import current_app
+from flask import abort, current_app
 from flask.views import MethodView
-from flask_smorest import abort  # type: ignore
 
-from app import schemas
+from app import schemas, utils
 from app.config import Blueprint
 from app.tools.authentication import Authentication
 from app.tools.database import CONFLICT
@@ -55,10 +54,10 @@ class Groups(MethodView):
 
     @auth.access_level("user")
     @auth.inject_user_infos()
-    @blp.arguments(ma.Schema(), location="json", unknown="raise")
+    @blp.arguments(schemas.Group, location="json", unknown="raise")
     @blp.doc(responses={409: CONFLICT})
     @blp.response(201, schemas.Group)
-    def post(self, _json, user_infos):
+    def post(self, json, user_infos):
         """Register and create the token owner as new group.
         ---
         Internal comment not meant to be exposed.
@@ -76,4 +75,20 @@ class Groups(MethodView):
             409: If the group already exists.
             422: If the JSON query is not in the correct format.
         """
-        raise NotImplementedError("Not implemented yet.")
+        # Check if the user is registered and retrieve the user object.
+        user = utils.get_user(user_infos)
+
+        # Modify the JSON object to include the user ID and permissions.
+        json["created_at"] = dt.now().isoformat()
+        json["_id"] = str(uuid.uuid4())
+        if user["_id"] not in json["members"]:
+            json["members"].append(user["_id"])
+
+        # Insert it into the database.
+        groups = current_app.config["db"]["app.groups"]
+        if groups.find_one({"name": json["name"]}):
+            abort(409, "Name conflict.")
+        groups.insert_one(json)
+
+        # Return the updated user object.
+        return json
