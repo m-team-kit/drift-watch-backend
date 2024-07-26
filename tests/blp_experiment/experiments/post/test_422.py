@@ -55,5 +55,5 @@ class TestBadExperiment(InvalidString, CommonBaseTests):
 
 
 @mark.parametrize("permissions", ["non_map"], indirect=True)
-class TestBadPermissions(InvalidList, CommonBaseTests):
+class TestBadPermissions(InvalidMapping, CommonBaseTests):
     """Test permissions is not a map."""
