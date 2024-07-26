@@ -30,7 +30,7 @@ def body(request, schema_version, model, job_status, drifts):
 @fixture(scope="class")
 def schema_version(request):
     """Inject and return a collection name."""
-    return request.param
+    return request.param if hasattr(request, "param") else None
 
 
 @fixture(scope="class")
