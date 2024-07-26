@@ -21,7 +21,7 @@ class CommonBaseTests:
         assert response.json["code"] == 422
 
 
-class ErrorMessage:
+class InvalidInput:
     """Test the bad_key parameter."""
 
     def test_error_msg(self, response):
@@ -32,5 +32,5 @@ class ErrorMessage:
 
 
 @mark.parametrize("body", ["string_body"], indirect=True)
-class TestStringBody(ErrorMessage, CommonBaseTests):
+class TestStringBody(InvalidInput, CommonBaseTests):
     """Test the response when body is a string."""

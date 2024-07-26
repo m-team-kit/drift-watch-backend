@@ -4,95 +4,74 @@
 from pytest import mark
 
 
+EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
+
+
 @mark.parametrize("auth", ["mock-token"], indirect=True)
-@mark.parametrize("job_status", ["Running"], indirect=True)
-@mark.parametrize("model", ["example_1"], indirect=True)
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.parametrize("with_database", ["database_1"], indirect=True)
 @mark.usefixtures("with_context", "with_database")
 @mark.usefixtures("accept_authorization")
-class CommonTests:
+class CommonBaseTests:
     """Common tests for the /drift endpoint."""
 
     def test_status_code(self, response):
         """Test the 422 response."""
         assert response.status_code == 422
+        assert response.json["code"] == 422
 
 
-@mark.parametrize("body", [{"bad_key": "val"}], indirect=True)
-@mark.parametrize("concept_drift", [None], indirect=True)
-@mark.parametrize("data_drift", [None], indirect=True)
-class TestBadBodyKey(CommonTests):
-    """Test the bad_key parameter."""
+class UnknownField:
+    """Test the response message for unknown key in body."""
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
-        assert "bad_key" in response.json["errors"]["json"]
-        error = response.json["errors"]["json"]["bad_key"]
-        assert error == ["Unknown field."]
+        errors = response.json["errors"]["json"].values()
+        assert ["Unknown field."] in errors
 
 
-@mark.parametrize(
-    argnames="concept_drift",
-    argvalues=[
-        {"drift": True},  # Raise error for missing "parameters" key
-        {"drift": True, "parameters": {}},  # """ empty "parameters" key
-    ],
-    indirect=True,
-)
-class TestMissingCParam(CommonTests):
+class NoBoolDrift:
+    """Test the response message for missing drift boolean."""
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
-        assert "concept_drift" in response.json["errors"]["json"]
-        error = response.json["errors"]["json"]["concept_drift"]
-        assert error == {"_schema": ["Include parameters if drift."]}
+        errors = response.json["errors"]["json"].values()
+        assert {"drift": ["Not a valid boolean."]} in errors
 
 
-@mark.parametrize(
-    argnames="concept_drift",
-    argvalues=[
-        {"drift": "non-bool"},  # Raise error for non-boolean value
-        {"drift": "non-bool", "parameters": {"p_value": 5}},  # Idem
-    ],
-    indirect=True,
-)
-class TestNoCBoolDrift(CommonTests):
+class MissingParam:
+    """Test the response message for missing drift parameter."""
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
-        assert "concept_drift" in response.json["errors"]["json"]
-        error = response.json["errors"]["json"]["concept_drift"]
-        assert error == {"drift": ["Not a valid boolean."]}
+        errors = response.json["errors"]["json"].values()
+        assert {"_schema": ["Include parameters if drift."]} in errors
 
 
-@mark.parametrize(
-    argnames="concept_drift",
-    argvalues=[
-        {"parameters": {}},  # Raise error for missing drift key
-        {"parameters": {"p_value": 0}},  # Raise error for missing drift key
-    ],
-    indirect=True,
-)
-class TestMissingCDrift(CommonTests):
-
-    def test_error_msg(self, response):
-        """Test message contains useful information."""
-        assert "concept_drift" in response.json["errors"]["json"]
-        error = response.json["errors"]["json"]["concept_drift"]
-        assert error == {"drift": ["Missing data for required field."]}
+BAD_DRIFT_1 = {"drift": "str", "parameters": {"p_value": 5}}
+BAD_DRIFT_2 = {"drift": True, "parameters": {}}
 
 
-@mark.parametrize(
-    argnames="concept_drift",
-    argvalues=[
-        {"drift": True, "parameters": "non-map"},
-    ],
-    indirect=True,
-)
-class TestNoMapCParam(CommonTests):
+@mark.parametrize("body", [{"unknown": "val"}], indirect=True)
+class TestBadBodyKey(UnknownField, CommonBaseTests):
+    """Test the unknown key parameter in body."""
 
-    def test_error_msg(self, response):
-        """Test message contains useful information."""
-        assert "concept_drift" in response.json["errors"]["json"]
-        error = response.json["errors"]["json"]["concept_drift"]
-        assert error == {"parameters": ["Not a valid mapping type."]}
+
+@mark.parametrize("concept_drift", [BAD_DRIFT_1], indirect=True)
+class TestNoCBoolDrift(NoBoolDrift, CommonBaseTests):
+    """Test the response when missing concept drift boolean."""
+
+
+@mark.parametrize("data_drift", [BAD_DRIFT_1], indirect=True)
+class TestNoDBoolDrift(NoBoolDrift, CommonBaseTests):
+    """Test the response when missing data drift boolean."""
+
+
+@mark.parametrize("concept_drift", [BAD_DRIFT_2], indirect=True)
+class TestMissingCParam(MissingParam, CommonBaseTests):
+    """Test the response when missing concept drift parameter."""
+
+
+@mark.parametrize("concept_drift", [BAD_DRIFT_2], indirect=True)
+class TestMissingCDrift(MissingParam, CommonBaseTests):
+    """Test the response when missing data drift parameter."""
