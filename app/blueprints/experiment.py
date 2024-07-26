@@ -314,10 +314,11 @@ class Drift(MethodView):
         return utils.get_drifts(experiment_id, drift_id)
 
     @auth.access_level("user")
+    @auth.inject_user_infos()
     @blp.arguments(schemas.DriftV100, location="json")
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(200, schemas.DriftV100)
-    def put(self, json, drift_id, user_infos, experiment_id):
+    def put(self, json, experiment_id, drift_id, user_infos):
         """
         Update a drift job record with the given JSON data.
         ---
@@ -325,9 +326,9 @@ class Drift(MethodView):
 
         Args:
             json (dict): The JSON data containing the updated drift information.
+            experiment_id (str): The ID of the experiment to retrieve drifts from.
             drift_id (str): The ID of the drift record to be updated.
             user_infos (dict): User information from the authentication token.
-            experiment_id (str): The ID of the experiment to retrieve drifts from.
 
         Returns:
             dict: The updated drift record.
@@ -344,6 +345,7 @@ class Drift(MethodView):
         utils.check_access(user, experiment, level="Edit")
 
         # Collect the drift record from the database and update it.
+        drift_id = str(drift_id)
         drift = utils.get_drifts(experiment_id, drift_id)
         drift.update(json)
 
@@ -355,17 +357,18 @@ class Drift(MethodView):
         return drift
 
     @auth.access_level("user")
+    @auth.inject_user_infos()
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(204)
-    def delete(self, drift_id, experiment_id, user_infos):
+    def delete(self, experiment_id, drift_id, user_infos):
         """
         Delete a drift job record from the database.
         ---
         Internal comment not meant to be exposed.
 
         Args:
-            drift_id (str): The ID of the drift record to be deleted.
             experiment_id (str): The ID of the experiment to retrieve drifts from.
+            drift_id (str): The ID of the drift record to be deleted.
             user_infos (dict): User information from the authentication token.
 
         Returns:
@@ -383,6 +386,7 @@ class Drift(MethodView):
         utils.check_access(user, experiment, level="Edit")
 
         # Collect the drift record from the database.
+        drift_id = str(drift_id)
         _drift = utils.get_drifts(experiment_id, drift_id)
 
         # Delete the drift record from the database.

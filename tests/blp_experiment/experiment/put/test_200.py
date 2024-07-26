@@ -35,30 +35,29 @@ class CommonBaseTests:
         assert response.json["permissions"][db_user["id"]] == "Manage"
 
 
-class EditName:
-    """Test the response items."""
-
-    def test_name(self, response, name):
-        """Test the response item has the correct name."""
-        assert response.json["name"] == name
-
-
-class EditPermissions:
-    """Test the response items."""
-
-    def test_permissions(self, response, permissions):
-        """Test the response item has the correct permissions."""
-        assert response.json["permissions"] == permissions
-
-
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
 GROUP_1 = "00000000-0000-0002-0001-000000000001"
 GROUP_2 = "00000000-0000-0002-0001-000000000002"
 PERMISSIONS_1 = {GROUP_1: "Read", GROUP_2: "Edit"}
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.parametrize("name", ["new_name"], indirect=True)
 @mark.parametrize("permissions", [PERMISSIONS_1], indirect=True)
-class TestEditExperiment1(EditName, CommonBaseTests):
+class EditValues:
+    """Test the item values match the request."""
+
+    def test_name(self, response, name):
+        """Test the response item has the correct name."""
+        assert response.json["name"] == name
+
+    def test_permissions(self, response, permissions, db_user):
+        """Test the response item has the correct permissions."""
+        permissions[db_user["id"]] = "Manage"  # Add the user to the permissions
+        assert response.json["permissions"] == permissions
+
+
+EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
+
+
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+class TestEditExperiment1(EditValues, CommonBaseTests):
     """Test the responses items."""
