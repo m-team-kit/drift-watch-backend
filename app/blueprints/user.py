@@ -6,9 +6,8 @@ import uuid
 from datetime import datetime as dt
 
 import marshmallow as ma
-from flask import current_app
+from flask import abort, current_app
 from flask.views import MethodView
-from flask_smorest import abort  # type: ignore
 
 from app import schemas
 from app.config import Blueprint
@@ -38,7 +37,9 @@ class Users(MethodView):
             pagination_parameters: The pagination parameters.
 
         Returns:
-            A paginated list of users based on the provided query.
+            401: If the user is not authenticated or registered.
+            403: If the user does not have the required permissions.
+            422: If the JSON query is not in the correct format.
         """
         # Search for users based on the provided JSON query.
         users = current_app.config["db"]["app.users"]
@@ -61,26 +62,31 @@ class Users(MethodView):
 
         Args:
             _json (dict): The JSON payload of the request.
-            user_infos (dict): User information obtained from the
-                               authentication process.
+            user_infos (dict): User information from the authentication token.
 
         Returns:
             dict: The newly created user.
 
         Raises:
-            Conflict: If the user already exists.
+            401: If the user is not authenticated with a valid token.
+            409: If the user already registered.
+            422: If a JSON is provided.
         """
-        users = current_app.config["db"]["app.user"]
+        # Check if the user already exists.
+        users = current_app.config["db"]["app.users"]
         sub, iss = user_infos["sub"], user_infos["iss"]
         if users.find_one({"subject": sub, "issuer": iss}):
-            abort(409, message="User already exists")
+            abort(409, "User already exists.")
+
+        # Create the new user from the token information.
         user = {
-            "_id": str(uuid.uuid4()),
-            "created_at": dt.now().isoformat(),
+            "email": user_infos["email"],
             "subject": user_infos["sub"],
             "issuer": user_infos["iss"],
-            "email": user_infos["email"],
-            "drift_ids": [],
+            "_id": str(uuid.uuid4()),
+            "created_at": dt.now().isoformat(),
         }
+
+        # Store the user and return it as response body.
         users.insert_one(user)
         return user
