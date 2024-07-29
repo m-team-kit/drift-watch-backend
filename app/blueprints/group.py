@@ -192,7 +192,7 @@ class Group(MethodView):
         user = utils.get_user(user_infos)
         group_id = str(group_id)
         group = utils.get_group(group_id)
-        utils.check_access(user, group, level="Manage")
+        utils.check_member(user, group)
 
         # Replace the drift record in the database.
         groups = current_app.config["db"]["app.groups"]
