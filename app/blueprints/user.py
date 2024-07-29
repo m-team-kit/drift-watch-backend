@@ -40,11 +40,14 @@ class Users(MethodView):
         Returns:
             A paginated list of users based on the provided query.
         """
-
+        # Search for users based on the provided JSON query.
         users = current_app.config["db"]["app.users"]
+        search = users.find(json)
+
+        # Return the paginated list of users.
         page = pagination_parameters.page
         page_size = pagination_parameters.page_size
-        return users.find(json).skip((page - 1) * page_size).limit(page_size)
+        return search.skip((page - 1) * page_size).limit(page_size)
 
     @auth.access_level("user")
     @auth.inject_user_infos()

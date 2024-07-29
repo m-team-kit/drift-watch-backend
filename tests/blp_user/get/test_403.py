@@ -5,25 +5,29 @@ from pytest import mark
 
 
 @mark.parametrize("auth", ["mock-token"], indirect=True)
-@mark.parametrize("created_before", [None], indirect=True)
-@mark.parametrize("created_after", [None], indirect=True)
-@mark.parametrize("issuer", [None], indirect=True)
-class CommonTests:
+@mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.usefixtures("with_context", "with_database")
+@mark.usefixtures("accept_authorization")
+class CommonBaseTests:
     """Common tests for the /drift endpoint."""
 
     def test_status_code(self, response):
         """Test the 403 response."""
         assert response.status_code == 403
+        assert response.json["code"] == 403
 
 
-@mark.usefixtures("accept_authorization")
-class TestNotAdmin(CommonTests):
-    """Test when user is not administrator parameter."""
+class NotAdmin:
+    """Tests for message response when user is not admin."""
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
         assert response.json["status"] == "Forbidden"
-        description = response.json["error_description"]
-        assert description == "User user_1@issuer_1 does not meet requirements"
-        details = response.json["error_details"]
-        assert details == "Evaluation of: is_admin"
+        assert (
+            response.json["message"]
+            == "User user_1@issuer_1 does not meet requirements"
+        )
+
+
+class TestPermission(NotAdmin, CommonBaseTests):
+    """Tests for message response when user has not the entitlements."""
