@@ -67,13 +67,13 @@ GROUP_1 = "00000000-0000-0002-0001-000000000001"
 MEMBERS_1 = ["00000000-0000-0003-0001-000000000002"]
 
 
-@mark.parametrize("name", ["group_a"], indirect=True)
+@mark.parametrize("name", ["group_b"], indirect=True)
 @mark.parametrize("members", [MEMBERS_1], indirect=True)
 class TestSharedGroup(Members, CommonBaseTests):
     """Test the /group endpoint with shared permissions."""
 
 
-@mark.parametrize("name", ["group_a"], indirect=True)
+@mark.parametrize("name", ["group_c"], indirect=True)
 @mark.parametrize("members", [MEMBERS_1 * 2], indirect=True)
 class TestRepeatedMembers(Members, CommonBaseTests):
     """Test the /group endpoint with repeated members."""
