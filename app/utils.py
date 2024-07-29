@@ -18,6 +18,13 @@ def get_experiment(experiment_id):
     return experiment or abort(404, "Experiment not found.")
 
 
+def get_group(group_id):
+    """Retrieve a group from the database by its ID."""
+    collection = current_app.config["db"]["app.groups"]
+    group = collection.find_one({"_id": group_id})
+    return group or abort(404, "Group not found.")
+
+
 def get_groups(user):
     """Retrieve the groups a user belongs to."""
     collection = current_app.config["db"]["app.groups"]
@@ -56,3 +63,10 @@ def check_access(user, resource, level="Read"):
         case "Read" if level == "Read":
             return True
     return abort(403, "Insufficient permissions.")
+
+
+def check_member(user, group):
+    """Check if the user is a member of the group."""
+    if user["_id"] in group["members"]:
+        return True
+    abort(403, "Not a member of the group.")
