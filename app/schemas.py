@@ -79,6 +79,26 @@ class User(BaseSchema):
     email = ma.fields.Email(dump_only=True)
 
 
+class UsersEmails(ma.Schema):
+    """Schema for a list of emails."""
+
+    emails = ma.fields.List(
+        ma.fields.Email(),
+        required=True,
+        validate=validate.Length(min=1, max=10),
+    )
+
+
+class UsersIds(ma.Schema):
+    """Schema for a list of ids."""
+
+    ids = ma.fields.List(
+        ma.fields.UUID(),
+        required=True,
+        validate=validate.Length(min=1, max=10),
+    )
+
+
 class BaseDrift(ma.Schema):
     drift = ma.fields.Bool(required=True)
     parameters = ma.fields.Dict()

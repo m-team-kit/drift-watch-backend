@@ -5,11 +5,10 @@
 import uuid
 from datetime import datetime as dt
 
-import marshmallow as ma
 from flask import abort, current_app
 from flask.views import MethodView
 
-from app import schemas
+from app import schemas, utils
 from app.config import Blueprint
 from app.tools.authentication import Authentication
 from app.tools.database import CONFLICT
@@ -52,7 +51,7 @@ class Users(MethodView):
 
     @auth.access_level("user")
     @auth.inject_user_infos()
-    @blp.arguments(ma.Schema(), location="json", unknown="raise")
+    @blp.arguments(schemas.ma.Schema(), location="json", unknown="raise")
     @blp.doc(responses={409: CONFLICT})
     @blp.response(201, schemas.User)
     def post(self, _json, user_infos):
@@ -90,3 +89,35 @@ class Users(MethodView):
         # Store the user and return it as response body.
         users.insert_one(user)
         return user
+
+
+@blp.route("/id")
+class Ids(MethodView):
+    """Users API."""
+
+    @auth.access_level("user")
+    @auth.inject_user_infos()
+    @blp.arguments(schemas.UsersEmails(), location="query", unknown="raise")
+    @blp.response(200, schemas.UsersIds())
+    def get(self, query, user_infos):
+        """Retrieve a paginated list of users ids based on the provided query
+        and MongoDB format. Note the response order is not guaranteed.
+        ---
+        Internal comment not meant to be exposed.
+
+        Args:
+            query: The JSON query used to filter the users.
+            user_infos (dict): User information from the authentication token.
+
+        Returns:
+            401: If the user is not authenticated or registered.
+            403: If the user does not have the required permissions.
+            422: If the JSON query is not in the correct format.
+        """
+        # Check if the user is registered and validate access level.
+        _user = utils.get_user(user_infos)
+
+        # Search for users based on the provided JSON query.
+        collection = current_app.config["db"]["app.users"]
+        users = list(collection.find({"email": {"$in": query["emails"]}}))
+        return {"ids": [user["_id"] for user in users]}

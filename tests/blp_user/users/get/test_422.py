@@ -13,6 +13,7 @@ class CommonBaseTests:
     def test_status_code(self, response):
         """Test the 422 response."""
         assert response.status_code == 422
+        assert response.json["code"] == 422
 
 
 class InvalidInput:
