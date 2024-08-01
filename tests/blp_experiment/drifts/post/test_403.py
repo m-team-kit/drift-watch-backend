@@ -37,6 +37,7 @@ class PermissionDenied:
 
 EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
 EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
+EXPERIMENT_3 = "00000000-0000-0001-0001-000000000003"
 
 
 @mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
@@ -46,5 +47,10 @@ class TestNotRegistered(NotRegistered, CommonBaseTests):
 
 
 @mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
-class TestPermission(PermissionDenied, CommonBaseTests):
+class TestPermissionPublic(PermissionDenied, CommonBaseTests):
+    """Tests for message response when user does not have manage permission."""
+
+
+@mark.parametrize("experiment_id", [EXPERIMENT_3], indirect=True)
+class TestPermissionPriv(PermissionDenied, CommonBaseTests):
     """Tests for message response when user does not have manage permission."""

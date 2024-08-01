@@ -110,6 +110,7 @@ class DataDrift:
 ALL_STATUS = ["Running", "Completed", "Failed"]
 
 
+@mark.parametrize("schema_version", ["1.0.0"], indirect=True)
 @mark.parametrize("experiment_id", [PUBLIC_EXP], indirect=True)
 class TestPublicExperiment(CommonBaseTests):
     """Test the responses items for public access."""

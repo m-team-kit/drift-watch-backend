@@ -26,6 +26,6 @@ class ConflictName:
         assert response.json["message"] == "Name conflict."
 
 
-@mark.parametrize("name", ["experiment_1"], indirect=True)
+@mark.parametrize("name", ["group_1"], indirect=True)
 class TestRepeatedName(ConflictName, CommonBaseTests):
     """Test the response when name exists in database."""
