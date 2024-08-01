@@ -44,6 +44,15 @@ class CommonBaseTests:
         assert response.json["name"] == name
 
 
+class WithDescription:
+    """Test the response items with description."""
+
+    def test_description(self, response, description):
+        """Test the response items have a description."""
+        assert response.json["description"] == description
+        assert isinstance(response.json["description"], str)
+
+
 class Permissions:
     """Test the response items with extra permissions."""
 
@@ -53,8 +62,23 @@ class Permissions:
             assert permission in response.json["permissions"]
 
 
+class IsPublic:
+    """Test the response items with public permissions."""
+
+    def test_public_permissions(self, response):
+        """Test the response items have public permissions."""
+        assert "public" in response.json
+        assert response.json["public"] is True
+
+
 @mark.parametrize("name", ["experiment_1"], indirect=True)
 class TestSimpleExperiment(CommonBaseTests):
+    """Test the /experiment endpoint with simple permissions."""
+
+
+@mark.parametrize("name", ["experiment_2"], indirect=True)
+@mark.parametrize("description", ["a_description"], indirect=True)
+class TestDescriptionExperiment(WithDescription, CommonBaseTests):
     """Test the /experiment endpoint with simple permissions."""
 
 
@@ -63,6 +87,12 @@ PERMISSIONS_1 = {GROUP_1: "Read"}
 
 
 @mark.parametrize("permissions", [PERMISSIONS_1], indirect=True)
-@mark.parametrize("name", ["experiment_1"], indirect=True)
+@mark.parametrize("name", ["experiment_3"], indirect=True)
 class TestSharedExperiment(Permissions, CommonBaseTests):
     """Test the /experiment endpoint with shared permissions."""
+
+
+@mark.parametrize("name", ["experiment_4"], indirect=True)
+@mark.parametrize("public", [True], indirect=True)
+class TestPublicExperiment(IsPublic, CommonBaseTests):
+    """Test the /experiment endpoint with simple permissions."""

@@ -8,10 +8,10 @@ from uuid import UUID
 from pytest import mark
 
 EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
+PUBLIC_EXP = "00000000-0000-0001-0001-000000000002"
 
 
 @mark.parametrize("auth", ["mock-token"], indirect=True)
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.parametrize("with_database", ["database_1"], indirect=True)
 @mark.usefixtures("with_context", "with_database")
 @mark.usefixtures("accept_authorization")
@@ -110,21 +110,30 @@ class DataDrift:
 ALL_STATUS = ["Running", "Completed", "Failed"]
 
 
+@mark.parametrize("experiment_id", [PUBLIC_EXP], indirect=True)
+class TestPublicExperiment(CommonBaseTests):
+    """Test the responses items for public access."""
+
+
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.parametrize("job_status", ALL_STATUS, indirect=True)
 class TestV100StatusFilter(ValidStatus, V100Drift):
     """Test the responses items."""
 
 
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.parametrize("concept_drift", [{"$exists": True}], indirect=True)
 class TestV100ConceptFilter(ConceptDrift, V100Drift):
     """Test the responses items."""
 
 
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.parametrize("data_drift", [{"$exists": True}], indirect=True)
 class TestV100DataFilter(DataDrift, V100Drift):
     """Test the responses items."""
 
 
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.parametrize("created_after", ["2021-01-02"], indirect=True)
 @mark.parametrize("created_before", ["2021-01-03"], indirect=True)
 class TestBetweenFilter(CreatedAfter, CreatedBefore, V100Drift):
