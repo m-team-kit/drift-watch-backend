@@ -17,10 +17,6 @@ Provides endpoints for saving job status and get data with multiple filters.
 
 - [ ] Add sentry_sdk for error tracking:
       https://flask.palletsprojects.com/en/2.3.x/errorhandling/#error-logging-tools
-- [ ] POST /user should not return 409 but rather update the user
-- [ ] Add description to the experiment schema as optional
-- [ ] Add an endpoint to exchange a user email for a user id
-- [ ] Add "everyone" as a special group that can be used to share experiments with everyone
 
 Create a conda environment, make sure conda is installed
 (https://conda.io/docs/user-guide/install/):
