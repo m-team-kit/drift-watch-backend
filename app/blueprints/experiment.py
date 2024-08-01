@@ -71,6 +71,7 @@ class Experiments(MethodView):
 
         Raises:
             401: If the user is not authenticated or registered.
+            409: If the a experiment with the same name already exists.
             422: If the JSON query is not in the correct format.
         """
         # Check if the user is registered and retrieve the user object.
