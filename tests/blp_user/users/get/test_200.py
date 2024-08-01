@@ -76,6 +76,6 @@ class TestBetweenFilter(CreatedAfter, CreatedBefore, CommonBaseTests):
     """Test the response items created before a date."""
 
 
-@mark.parametrize("issuer", ["issuer_1"], indirect=True)
+@mark.parametrize("issuer", ["issuer.1"], indirect=True)
 class TestIssuerFilter(CommonBaseTests):
     """Test the response items filtered by issuer."""

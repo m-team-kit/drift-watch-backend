@@ -95,7 +95,7 @@ def body(request):
 def subiss(request):
     """Inject and return a request subiss."""
     if not hasattr(request, "param"):
-        return "user_1", "issuer_1"
+        return "user_1", "issuer.1"
     return request.param
 
 

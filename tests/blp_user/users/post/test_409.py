@@ -26,6 +26,6 @@ class ConflictSubIss:
         assert response.json["message"] == "User already exists."
 
 
-@mark.parametrize("subiss", [("user_1", "issuer_1")], indirect=True)
+@mark.parametrize("subiss", [("user_1", "issuer.1")], indirect=True)
 class TestRegisterAgain(ConflictSubIss, CommonBaseTests):
     """Test the response if registering again parameter."""

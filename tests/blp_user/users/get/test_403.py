@@ -25,7 +25,7 @@ class NotAdmin:
         assert response.json["status"] == "Forbidden"
         assert (
             response.json["message"]
-            == "User user_1@issuer_1 does not meet requirements"
+            == "User user_1@issuer.1 does not meet requirements"
         )
 
 

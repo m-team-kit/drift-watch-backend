@@ -44,6 +44,6 @@ class CommonBaseTests:
         assert response.json["email"] == email
 
 
-@mark.parametrize("subiss", [("user_a", "issuer_a")], indirect=True)
+@mark.parametrize("subiss", [("user_a", "issuer.a")], indirect=True)
 class TestRegister(CommonBaseTests):
     """Test the responses items."""
