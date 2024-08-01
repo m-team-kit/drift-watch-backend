@@ -121,3 +121,58 @@ class Ids(MethodView):
         collection = current_app.config["db"]["app.users"]
         users = list(collection.find({"email": {"$in": query["emails"]}}))
         return {"ids": [user["_id"] for user in users]}
+
+
+@blp.route("/self")
+class Self(MethodView):
+    """Users API."""
+
+    @auth.access_level("user")
+    @auth.inject_user_infos()
+    @blp.arguments(schemas.ma.Schema(), location="query", unknown="raise")
+    @blp.response(200, schemas.User())
+    def get(self, _query, user_infos):
+        """Retrieves the user information based on the provided auth token.
+        ---
+        Internal comment not meant to be exposed.
+
+        Args:
+            user_infos (dict): User information from the authentication token.
+
+        Returns:
+            401: If the user is not authenticated or registered.
+            422: If the JSON query is not in the correct format.
+        """
+        # Check if the user is registered and validate access level.
+        # Return the user information.
+        return utils.get_user(user_infos)
+
+    @auth.access_level("user")
+    @auth.inject_user_infos()
+    @blp.arguments(schemas.ma.Schema(), location="query", unknown="raise")
+    @blp.response(200, schemas.User())
+    def put(self, _query, user_infos):
+        """Retrieve a paginated list of users ids based on the provided query
+        and MongoDB format. Note the response order is not guaranteed.
+        ---
+        Internal comment not meant to be exposed.
+
+        Args:
+            user_infos (dict): User information from the authentication token.
+
+        Returns:
+            401: If the user is not authenticated or registered.
+            422: If the JSON query is not in the correct format.
+        """
+        # Check if the user already exists.
+        user = utils.get_user(user_infos)
+
+        # Update the user email.
+        user["email"] = user_infos["email"]
+
+        # Update user in the database.
+        users = current_app.config["db"]["app.users"]
+        users.update_one({"_id": user["_id"]}, {"$set": user})
+
+        # Return the updated user.
+        return user
