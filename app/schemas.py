@@ -46,6 +46,8 @@ class Experiment(BaseSchema):
     """
 
     name = ma.fields.String(required=True)
+    description = ma.fields.String()
+    public = ma.fields.Boolean(load_default=False)
     permissions = Permissions()
 
 
@@ -56,10 +58,7 @@ class Group(BaseSchema):
     """
 
     name = ma.fields.String(required=True)
-    members = ma.fields.List(
-        ma.fields.UUID,
-        load_default=[],
-    )
+    members = ma.fields.List(ma.fields.UUID, load_default=[])
 
     @ma.post_load
     def members_str(self, data, **kwds):
