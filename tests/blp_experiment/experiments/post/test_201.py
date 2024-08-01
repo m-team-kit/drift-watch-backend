@@ -71,12 +71,12 @@ class IsPublic:
         assert response.json["public"] is True
 
 
-@mark.parametrize("name", ["experiment_1"], indirect=True)
+@mark.parametrize("name", ["experiment_a"], indirect=True)
 class TestSimpleExperiment(CommonBaseTests):
     """Test the /experiment endpoint with simple permissions."""
 
 
-@mark.parametrize("name", ["experiment_2"], indirect=True)
+@mark.parametrize("name", ["experiment_b"], indirect=True)
 @mark.parametrize("description", ["a_description"], indirect=True)
 class TestDescriptionExperiment(WithDescription, CommonBaseTests):
     """Test the /experiment endpoint with simple permissions."""
@@ -87,12 +87,12 @@ PERMISSIONS_1 = {GROUP_1: "Read"}
 
 
 @mark.parametrize("permissions", [PERMISSIONS_1], indirect=True)
-@mark.parametrize("name", ["experiment_3"], indirect=True)
+@mark.parametrize("name", ["experiment_c"], indirect=True)
 class TestSharedExperiment(Permissions, CommonBaseTests):
     """Test the /experiment endpoint with shared permissions."""
 
 
-@mark.parametrize("name", ["experiment_4"], indirect=True)
+@mark.parametrize("name", ["experiment_d"], indirect=True)
 @mark.parametrize("public", [True], indirect=True)
 class TestPublicExperiment(IsPublic, CommonBaseTests):
     """Test the /experiment endpoint with simple permissions."""

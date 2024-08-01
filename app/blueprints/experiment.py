@@ -6,7 +6,7 @@ import uuid
 from datetime import datetime as dt
 
 import marshmallow as ma
-from flask import current_app
+from flask import abort, current_app
 from flask.views import MethodView
 
 from app import schemas, utils
@@ -83,6 +83,8 @@ class Experiments(MethodView):
 
         # Insert it into the database.
         experiments = current_app.config["db"]["app.experiments"]
+        if experiments.find_one({"name": json["name"]}):
+            abort(409, "Name conflict.")
         experiments.insert_one(json)
 
         # Return the updated user object.
