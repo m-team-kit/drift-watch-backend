@@ -5,7 +5,6 @@ from pytest import mark
 
 
 @mark.parametrize("name", ["experiment_a"], indirect=True)
-@mark.parametrize("permissions", [[]], indirect=True)
 class CommonBaseTests:
     """Common tests for the /experiment endpoint."""
 
@@ -26,5 +25,19 @@ class NotRegistered:
 
 @mark.parametrize("auth", ["mock-token"], indirect=True)
 @mark.usefixtures("accept_authorization")
+@mark.parametrize("permissions", [[]], indirect=True)
 class TestNotRegistered(NotRegistered, CommonBaseTests):
     """Test the authentication response when user not registered."""
+
+
+GROUP_1 = "urn:mace:egi.eu:group:vo_example1:role=group1#aai.egi.eu"
+PERMISSIONS = {GROUP_1: "Read"}
+
+
+@mark.parametrize("auth", ["mock-token"], indirect=True)
+@mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.usefixtures("with_context", "with_database")
+@mark.usefixtures("accept_authorization")
+@mark.parametrize("permissions", [PERMISSIONS], indirect=True)
+class TestBadEntitlements(PermissionDenied, CommonBaseTests):
+    """Tests for message response when mismatch user's with new entitlements."""

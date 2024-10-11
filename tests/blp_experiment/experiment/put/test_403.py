@@ -46,17 +46,17 @@ class TestNotRegistered(NotRegistered, CommonBaseTests):
     """Test the authentication response when user not registered."""
 
 
-GROUP_X = "urn:mace:egi.eu:group:vo_example1:role=group1#aai.egi.eu"
-PERMISSIONS = {GROUP_X: "Read"}
+GROUP_1 = "urn:mace:egi.eu:group:vo_example1:role=group1#aai.egi.eu"
+PERMISSIONS = {GROUP_1: "Read"}
 
 
 @mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
 @mark.parametrize("permissions", [{}], indirect=True)
-class TestPermission(PermissionDenied, CommonBaseTests):
+class TestNoPermissions(PermissionDenied, CommonBaseTests):
     """Tests for message response when user does not have manage permission."""
 
 
 @mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
 @mark.parametrize("permissions", [PERMISSIONS], indirect=True)
-class TestPermission(PermissionDenied, CommonBaseTests):
-    """Tests for message response when user does not have manage permission."""
+class TestBadEntitlements(PermissionDenied, CommonBaseTests):
+    """Tests for message response when mismatch user's with new entitlements."""
