@@ -102,7 +102,7 @@ def subiss(request):
 @fixture(scope="class")
 def entitlements(request):
     """Inject and return a request entitlements."""
-    return request.param if hasattr(request, "param") else []
+    return request.param if hasattr(request, "param") else None
 
 
 @fixture(scope="class")
@@ -121,8 +121,9 @@ def accept_authorization(class_mocker, subiss, email, entitlements):
         "email_verified": bool(email) and email != "bad-email",
         "sub": subiss[0],
         "iss": subiss[1],
-        "eduperson_entitlement": entitlements,
     }
+    if entitlements is not None:
+        user_info["eduperson_entitlements"] = entitlements
     class_mocker.patch.object(
         authentication.flaat,
         "get_user_infos_from_access_token",
@@ -142,10 +143,3 @@ def db_user(response, database, subiss):
     if user is not None:
         user["id"] = user.pop("_id")
     return user
-
-
-@fixture(scope="class")
-def grant_admin(monkeypatch):
-    """Patch fixture to test function as admin user."""
-    admin_assert = authentication.flaat.access_levels[1].requirement
-    monkeypatch.setattr(admin_assert, "func", lambda *args: True)
