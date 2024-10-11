@@ -56,8 +56,10 @@ class EditValues:
 
 
 EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
+ENTITLEMENTS = [GROUP_1, GROUP_2]
 
 
 @mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+@mark.parametrize("entitlements", [ENTITLEMENTS], indirect=True)
 class TestEditExperiment1(EditValues, CommonBaseTests):
     """Test the responses items."""
