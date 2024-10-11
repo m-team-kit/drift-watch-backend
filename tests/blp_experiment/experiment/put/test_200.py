@@ -35,8 +35,8 @@ class CommonBaseTests:
         assert response.json["permissions"][db_user["id"]] == "Manage"
 
 
-GROUP_1 = "00000000-0000-0002-0001-000000000001"
-GROUP_2 = "00000000-0000-0002-0001-000000000002"
+GROUP_1 = "urn:mace:egi.eu:group:vo_example1:role=group1#aai.egi.eu"
+GROUP_2 = "urn:mace:egi.eu:group:vo_example1:role=group2#aai.egi.eu"
 PERMISSIONS_1 = {GROUP_1: "Read", GROUP_2: "Edit"}
 
 

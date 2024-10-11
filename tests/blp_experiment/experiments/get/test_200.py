@@ -80,7 +80,7 @@ class TestBetweenFilter(CreatedAfter, CreatedBefore, CommonBaseTests):
     """Test the response items created at."""
 
 
-GROUP_1 = "00000000-0000-0002-0001-000000000001"
+GROUP_1 = "urn:mace:egi.eu:group:vo_example1:role=group1#aai.egi.eu"
 PERMISSIONS = {GROUP_1: "Manage"}
 
 

@@ -8,10 +8,10 @@
                 "description": "Experiment 1 description",
                 "public": false,
                 "permissions": {
-                    "00000000-0000-0003-0001-000000000001": "Manage",
-                    "urn:mace:egi.eu:group:vo_example1:role=admins#aai.egi.eu": "Manage",
-                    "urn:mace:egi.eu:group:vo_example1:role=group1#aai.egi.eu": "Edit",
-                    "urn:mace:egi.eu:group:vo_example2:role=group1#aai.egi.eu": "Read"
+                    "urn:mace:egi.eu:group:vo_example1:role=group1#aai.egi.eu": "Manage",
+                    "urn:mace:egi.eu:group:vo_example1:role=group2#aai.egi.eu": "Edit",
+                    "urn:mace:egi.eu:group:vo_example1:role=group3#aai.egi.eu": "Read",
+                    "00000000-0000-0003-0001-000000000001": "Manage"
                 }
             },
             { "_id": "00000000-0000-0001-0001-000000000002", "created_at": "2021-01-02T00:00:00Z",
