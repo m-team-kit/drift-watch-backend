@@ -29,14 +29,13 @@ class Permissions(ma.fields.Dict):
             **kwds,
         )
 
-    def _deserialize(self, value, attr, data, **kwds):
-        """Convert group_id uuid to string."""
-        return {
-            str(item_id): access_rule
-            for item_id, access_rule in super()
-            ._deserialize(value, attr, data, **kwds)
-            .items()
-        }
+
+class Entitlements(ma.Schema):
+    """
+    Entitlement is a string of the form "vo#role".
+    """
+
+    items = ma.fields.List(ma.fields.String(), required=True)
 
 
 class Experiment(BaseSchema):
@@ -51,22 +50,6 @@ class Experiment(BaseSchema):
     description = ma.fields.String()
     public = ma.fields.Boolean(load_default=False)
     permissions = Permissions()
-
-
-class Group(BaseSchema):
-    """
-    Group is a list of users that can access the API.
-    A name is required for easy identification.
-    """
-
-    name = ma.fields.String(required=True)
-    members = ma.fields.List(ma.fields.UUID, load_default=[])
-
-    @ma.post_load
-    def members_str(self, data, **kwds):
-        """Convert members uuid to string and ensure uniqueness."""
-        data["members"] = list(set(str(member) for member in data["members"]))
-        return data
 
 
 class User(BaseSchema):
