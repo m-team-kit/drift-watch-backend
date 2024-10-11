@@ -23,7 +23,7 @@ class Permissions(ma.fields.Dict):
 
     def __init__(self, **kwds):
         super().__init__(
-            keys=ma.fields.UUID(required=True),
+            keys=ma.fields.String(required=True),
             values=ma.fields.String(validate=self.options),
             load_default={},
             **kwds,
@@ -32,8 +32,10 @@ class Permissions(ma.fields.Dict):
     def _deserialize(self, value, attr, data, **kwds):
         """Convert group_id uuid to string."""
         return {
-            str(item_id): role
-            for item_id, role in super()._deserialize(value, attr, data, **kwds).items()
+            str(item_id): access_rule
+            for item_id, access_rule in super()
+            ._deserialize(value, attr, data, **kwds)
+            .items()
         }
 
 
