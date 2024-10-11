@@ -15,7 +15,6 @@ def init_app(app):
     pass
     # Register Blueprints
     api.register_blueprint(blp.experiment, url_prefix="/experiment")
-    api.register_blueprint(blp.group, url_prefix="/group")
     api.register_blueprint(blp.user, url_prefix="/user")
 
 
