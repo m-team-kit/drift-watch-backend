@@ -4,7 +4,8 @@
 from pytest import mark
 
 
-@mark.parametrize("emails", [["user_1@issuer.1.com"]], indirect=True)
+@mark.parametrize("auth", ["mock-token"], indirect=True)
+@mark.usefixtures("accept_authorization")
 class CommonBaseTests:
     """Common tests for the /entitlement endpoint."""
 
@@ -14,7 +15,7 @@ class CommonBaseTests:
         assert response.json["code"] == 403
 
 
-class NotRegistered:
+class NotRegistered(CommonBaseTests):
     """Tests for message response when user is not registered."""
 
     def test_error_msg(self, response):
@@ -23,7 +24,5 @@ class NotRegistered:
         assert response.json["message"] == "User not registered."
 
 
-@mark.parametrize("auth", ["mock-token"], indirect=True)
-@mark.usefixtures("accept_authorization")
-class TestNotRegistered(NotRegistered, CommonBaseTests):
+class TestNotRegistered(NotRegistered):
     """Test the authentication response when user not registered."""

@@ -13,7 +13,8 @@ class CommonBaseTests:
         assert response.json["code"] == 401
 
 
-class NoAuthHeader:
+@mark.parametrize("auth", [None], indirect=True)
+class NoAuthHeader(CommonBaseTests):
     """Tests when missing authentication header."""
 
     def test_error_msg(self, response):
@@ -22,7 +23,8 @@ class NoAuthHeader:
         assert response.json["message"] == "No authorization header"
 
 
-class UnknownIdentity:
+@mark.parametrize("auth", ["invalid_token"], indirect=True)
+class UnknownIdentity(CommonBaseTests):
     """Test when identity provided is unknown."""
 
     def test_error_msg(self, response):
@@ -31,11 +33,9 @@ class UnknownIdentity:
         assert response.json["message"] == "User identity could not be determined"
 
 
-@mark.parametrize("auth", [None], indirect=True)
-class TestMissingToken(NoAuthHeader, CommonBaseTests):
+class TestMissingToken(NoAuthHeader):
     """Test the /entitlement endpoint with missing token."""
 
 
-@mark.parametrize("auth", ["invalid_token"], indirect=True)
-class TestInvalidToken(UnknownIdentity, CommonBaseTests):
+class TestInvalidToken(UnknownIdentity):
     """Test the /entitlement endpoint with invalid token."""
