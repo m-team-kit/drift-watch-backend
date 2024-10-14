@@ -69,7 +69,7 @@ class TestUserWithManage(ValidAuth, Registered, ManageUser):
     """Test when user has manage rights on the experiment."""
 
 
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
+@mark.parametrize("drift_id", [DRIFT_2], indirect=True)
 class TestUserWithEdit(ValidAuth, Registered, EditUser):
     """Test when user has edit rights on the experiment."""
 
@@ -79,6 +79,6 @@ class TestGroupWithManage(ValidAuth, Registered, ManageGroup):
     """Test when group has manage rights on the experiment."""
 
 
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
+@mark.parametrize("drift_id", [DRIFT_2], indirect=True)
 class TestGroupWithEdit(ValidAuth, Registered, EditGroup):
     """Test when group has edit rights on the experiment."""
