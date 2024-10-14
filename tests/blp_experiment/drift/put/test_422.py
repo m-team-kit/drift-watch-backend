@@ -48,7 +48,7 @@ class MissingParam:
         assert {"_schema": ["Include parameters if drift."]} in errors
 
 
-DRIFT_V100_1 = "00000000-0000-0004-0001-000000000001"
+DRIFT_V100_1 = "00000000-0000-0000-0000-000000000001"
 BAD_DRIFT_1 = {"drift": "str", "parameters": {"p_value": 5}}
 BAD_DRIFT_2 = {"drift": True, "parameters": {}}
 

@@ -61,7 +61,7 @@ class V100Drift(CommonBaseTests):
         assert isinstance(response.json["data_drift"], dict)
 
 
-DRIFT_V100_1 = "00000000-0000-0004-0001-000000000001"
+DRIFT_V100_1 = "00000000-0000-0000-0000-000000000001"
 
 
 @mark.parametrize("drift_id", [DRIFT_V100_1], indirect=True)

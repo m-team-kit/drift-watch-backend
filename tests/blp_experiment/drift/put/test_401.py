@@ -37,7 +37,7 @@ class UnknownIdentity:
         assert response.json["message"] == "User identity could not be determined"
 
 
-DRIFT_V100_1 = "00000000-0000-0004-0001-000000000001"
+DRIFT_V100_1 = "00000000-0000-0000-0000-000000000001"
 
 
 @mark.parametrize("auth", [None], indirect=True)

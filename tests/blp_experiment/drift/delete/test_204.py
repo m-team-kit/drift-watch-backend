@@ -60,25 +60,25 @@ class EditUser(CommonBaseTests):
     """Base class for user with manage entitlement tests."""
 
 
-DRIFT_V100_1 = "00000000-0000-0004-0001-000000000001"
+DRIFT_1 = "00000000-0000-0000-0000-000000000001"
+DRIFT_2 = "00000000-0000-0000-0000-000000000002"
 
 
-@mark.parametrize("drift_id", [DRIFT_V100_1], indirect=True)
-class V100Experiment(ValidAuth, Registered):
-    """Tests for deleting an experiment."""
-
-
-class TestUserWithManage(V100Experiment, ManageUser):
+@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
+class TestUserWithManage(ValidAuth, Registered, ManageUser):
     """Test when user has manage rights on the experiment."""
 
 
-class TestUserWithEdit(V100Experiment, EditUser):
+@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
+class TestUserWithEdit(ValidAuth, Registered, EditUser):
     """Test when user has edit rights on the experiment."""
 
 
-class TestGroupWithManage(V100Experiment, ManageGroup):
+@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
+class TestGroupWithManage(ValidAuth, Registered, ManageGroup):
     """Test when group has manage rights on the experiment."""
 
 
-class TestGroupWithEdit(V100Experiment, EditGroup):
+@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
+class TestGroupWithEdit(ValidAuth, Registered, EditGroup):
     """Test when group has edit rights on the experiment."""
