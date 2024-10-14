@@ -4,10 +4,6 @@
 from pytest import mark
 
 
-@mark.parametrize("auth", ["mock-token"], indirect=True)
-@mark.parametrize("with_database", ["database_1"], indirect=True)
-@mark.usefixtures("with_context", "with_database")
-@mark.usefixtures("accept_authorization")
 class CommonBaseTests:
     """Common tests for the /drift/<id> endpoint."""
 
@@ -17,7 +13,27 @@ class CommonBaseTests:
         assert response.json["code"] == 404
 
 
-class ExperimentNotFound:
+@mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.usefixtures("with_context", "with_database")
+class WithDatabase(CommonBaseTests):
+    """Base class for tests using database."""
+
+
+@mark.parametrize("auth", ["mock-token"], indirect=True)
+@mark.usefixtures("accept_authorization")
+class ValidAuth(CommonBaseTests):
+    """Base class for valid authenticated tests."""
+
+
+EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
+EXPERIMENT_X = "00000000-0000-0001-0001-999999999999"
+DRIFT_1 = "00000000-0000-0004-0001-000000000001"
+DRIFT_X = "00000000-0000-0001-0001-999999999999"
+
+
+@mark.parametrize("experiment_id", [EXPERIMENT_X], indirect=True)
+@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
+class ExperimentNotFound(WithDatabase):
     """Test the when experiment Id is not in database."""
 
     def test_error_msg(self, response):
@@ -26,7 +42,9 @@ class ExperimentNotFound:
         assert response.json["message"] == "Experiment not found."
 
 
-class DriftNotFound:
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+@mark.parametrize("drift_id", [DRIFT_X], indirect=True)
+class DriftNotFound(WithDatabase):
     """Test the when drift Id is not in database."""
 
     def test_error_msg(self, response):
@@ -35,20 +53,9 @@ class DriftNotFound:
         assert response.json["message"] == "Drift not found."
 
 
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-EXPERIMENT_X = "00000000-0000-0001-0001-999999999999"
-
-DRIFT_EXP1_X = "00000000-0000-0004-0001-999999999999"
-DRIFT_EXPX_X = "00000000-0000-0004-9999-999999999999"
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_X], indirect=True)
-@mark.parametrize("drift_id", [DRIFT_EXPX_X], indirect=True)
-class TestExperimentNotInDB(ExperimentNotFound, CommonBaseTests):
+class TestExperimentNotInDB(ValidAuth, ExperimentNotFound):
     """Test the when experiment Id is not in database."""
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-@mark.parametrize("drift_id", [DRIFT_EXP1_X], indirect=True)
-class TestDriftNotInDB(DriftNotFound, CommonBaseTests):
+class TestDriftNotInDB(ValidAuth, DriftNotFound):
     """Test the when drift Id is not in database."""
