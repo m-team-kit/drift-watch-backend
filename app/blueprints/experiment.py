@@ -306,13 +306,12 @@ class Drift(MethodView):
             401: If the user is not authenticated or registered.
             403: If the user does not have the required permissions.
             404: If the drift or experiment specified are not found.
-            422: If the JSON query is not in the correct format.
         """
         # Check if the user is registered and validate access level.
         user = utils.get_user(user_infos)
         experiment_id = str(experiment_id)
         experiment = utils.get_experiment(experiment_id)
-        utils.check_access(experiment, user["_id"], user_infos, level="Edit")
+        utils.check_access(experiment, user["_id"], user_infos, level="Read")
 
         # Retrieve and return the drift object from the database.
         drift_id = str(drift_id)
