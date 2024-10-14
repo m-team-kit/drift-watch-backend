@@ -11,6 +11,12 @@ class CommonBaseTests:
         """Test the 204 response."""
         assert response.status_code == 204
 
+
+@mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.usefixtures("with_context", "with_database")
+class WithDatabase(CommonBaseTests):
+    """Base class for registered user tests."""
+
     def test_not_in_database(self, db_drift):
         """Test the response items are in the database."""
         assert db_drift is None
@@ -20,12 +26,6 @@ class CommonBaseTests:
 @mark.usefixtures("accept_authorization")
 class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
-
-
-@mark.parametrize("with_database", ["database_1"], indirect=True)
-@mark.usefixtures("with_context", "with_database")
-class Registered(CommonBaseTests):
-    """Base class for registered user tests."""
 
 
 EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
@@ -65,20 +65,20 @@ DRIFT_2 = "00000000-0000-0000-0000-000000000002"
 
 
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestUserWithManage(ValidAuth, Registered, ManageUser):
+class TestUserWithManage(ValidAuth, WithDatabase, ManageUser):
     """Test when user has manage rights on the experiment."""
 
 
 @mark.parametrize("drift_id", [DRIFT_2], indirect=True)
-class TestUserWithEdit(ValidAuth, Registered, EditUser):
+class TestUserWithEdit(ValidAuth, WithDatabase, EditUser):
     """Test when user has edit rights on the experiment."""
 
 
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestGroupWithManage(ValidAuth, Registered, ManageGroup):
+class TestGroupWithManage(ValidAuth, WithDatabase, ManageGroup):
     """Test when group has manage rights on the experiment."""
 
 
 @mark.parametrize("drift_id", [DRIFT_2], indirect=True)
-class TestGroupWithEdit(ValidAuth, Registered, EditGroup):
+class TestGroupWithEdit(ValidAuth, WithDatabase, EditGroup):
     """Test when group has edit rights on the experiment."""
