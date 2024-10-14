@@ -39,12 +39,17 @@ class NotRegistered(ValidAuth):
         assert response.json["message"] == "User not registered."
 
 
+@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
+class Registered(ValidAuth):
+    """Tests for message response when user is  registered."""
+
+
 EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
+EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
 ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class PermissionDenied(ValidAuth):
+class PermissionDenied(Registered):
     """Tests for message response when user does not have permission."""
 
     def test_error_msg(self, response):
@@ -54,31 +59,43 @@ class PermissionDenied(ValidAuth):
 
 
 @mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+class IsPrivate(CommonBaseTests):
+    """Base class for group with public as false."""
+
+
+@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
+class IsPublic(CommonBaseTests):
+    """Base class for group with public as true."""
+
+
 @mark.parametrize("entitlements", [[ENT_READ]], indirect=True)
-class ReadGroup(PermissionDenied):
+class ReadGroup(IsPrivate):
     """Base class for group with read entitlement tests."""
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.parametrize("entitlements", [[]], indirect=True)
-class NoGroup(PermissionDenied):
+class NoGroup(IsPrivate):
     """Base class for group without entitlement tests."""
 
 
 DRIFT_1 = "00000000-0000-0000-0000-000000000001"
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestNotRegistered(NotRegistered, WithDatabase):
+class TestNotRegistered(NotRegistered, IsPublic, WithDatabase):
     """Test the authentication response when user not registered."""
 
 
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestReadAccess(ReadGroup, WithDatabase):
+class TestIsPublic(PermissionDenied, IsPublic, WithDatabase):
+    """Tests for message response for no permission."""
+
+
+@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
+class TestReadAccess(PermissionDenied, ReadGroup, WithDatabase):
     """Tests for message response for read permissions."""
 
 
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestNoAccess(NoGroup, WithDatabase):
+class TestNoAccess(PermissionDenied, NoGroup, WithDatabase):
     """Tests for message response for no permission."""
