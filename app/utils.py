@@ -18,20 +18,6 @@ def get_experiment(experiment_id):
     return experiment or abort(404, "Experiment not found.")
 
 
-def get_group(group_id):
-    """Retrieve a group from the database by its ID."""
-    collection = current_app.config["db"]["app.groups"]
-    group = collection.find_one({"_id": group_id})
-    return group or abort(404, "Group not found.")
-
-
-def get_groups(user):
-    """Retrieve the groups a user belongs to."""
-    collection = current_app.config["db"]["app.groups"]
-    groups = collection.find({"members": {"$in": [user["_id"]]}})
-    return set([group["_id"] for group in groups] + [user["_id"]])
-
-
 def get_drifts(experiment_id, drift_id):
     """Retrieve a drift from the database by its ID."""
     collection = current_app.config["db"][f"app.{experiment_id}"]
@@ -39,11 +25,11 @@ def get_drifts(experiment_id, drift_id):
     return drift or abort(404, "Drift not found.")
 
 
-# TODO: Possible to speed up if: Convert groups in resource to users
-def get_permission(user, resource):
+def get_permission(resource, user_id, user_infos):
     """Check if the user has the required permission on a resource."""
-    groups = get_groups(user)
-    perms = set([r for k, r in resource["permissions"].items() if k in groups])
+    entitlements_key = current_app.config["ENTITLEMENTS_FIELD"]
+    titles = user_infos.get(entitlements_key, []) + [user_id]
+    perms = set(r for k, r in resource["permissions"].items() if k in titles)
     if "Manage" in perms:  # Top level permission
         return "Manage"
     if "Edit" in perms:  # Second level permission
@@ -53,11 +39,11 @@ def get_permission(user, resource):
     return None  # No permission found
 
 
-def check_access(user, resource, level="Read"):
+def check_access(resource, user_id, user_infos, level="Read"):
     """Check if the user has the required permission on the resource."""
     if resource.get("public", False) and level == "Read":
         return True
-    match get_permission(user, resource):
+    match get_permission(resource, user_id, user_infos):
         case "Manage":
             return True
         case "Edit" if level in ["Read", "Edit"]:
@@ -65,10 +51,3 @@ def check_access(user, resource, level="Read"):
         case "Read" if level == "Read":
             return True
     return abort(403, "Insufficient permissions.")
-
-
-def check_member(user, group):
-    """Check if the user is a member of the group."""
-    if user["_id"] in group["members"]:
-        return True
-    abort(403, "Not a member of the group.")

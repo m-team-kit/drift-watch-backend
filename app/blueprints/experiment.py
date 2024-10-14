@@ -145,7 +145,7 @@ class Experiment(MethodView):
         user = utils.get_user(user_infos)
         experiment_id = str(experiment_id)
         experiment = utils.get_experiment(experiment_id)
-        utils.check_access(user, experiment, level="Manage")
+        utils.check_access(experiment, user["_id"], user_infos, level="Manage")
 
         # Modify the JSON object to include the user ID and permissions.
         experiment.update(json)
@@ -185,7 +185,7 @@ class Experiment(MethodView):
         user = utils.get_user(user_infos)
         experiment_id = str(experiment_id)
         experiment = utils.get_experiment(experiment_id)
-        utils.check_access(user, experiment, level="Manage")
+        utils.check_access(experiment, user["_id"], user_infos, level="Manage")
 
         # Replace the drift record in the database.
         experiments = current_app.config["db"]["app.experiments"]
@@ -230,7 +230,7 @@ class Drifts(MethodView):
         user = utils.get_user(user_infos)
         experiment_id = str(experiment_id)
         experiment = utils.get_experiment(experiment_id)
-        utils.check_access(user, experiment, level="Read")
+        utils.check_access(experiment, user["_id"], user_infos, level="Read")
 
         # Search for drifts based on the provided JSON query.
         drifts = current_app.config["db"][f"app.{experiment_id}"]
@@ -268,7 +268,7 @@ class Drifts(MethodView):
         user = utils.get_user(user_infos)
         experiment_id = str(experiment_id)
         experiment = utils.get_experiment(experiment_id)
-        utils.check_access(user, experiment, level="Edit")
+        utils.check_access(experiment, user["_id"], user_infos, level="Edit")
 
         # Insert the drift record into the database.
         drifts = current_app.config["db"][f"app.{experiment_id}"]
@@ -312,7 +312,7 @@ class Drift(MethodView):
         user = utils.get_user(user_infos)
         experiment_id = str(experiment_id)
         experiment = utils.get_experiment(experiment_id)
-        utils.check_access(user, experiment, level="Edit")
+        utils.check_access(experiment, user["_id"], user_infos, level="Edit")
 
         # Retrieve and return the drift object from the database.
         drift_id = str(drift_id)
@@ -347,7 +347,7 @@ class Drift(MethodView):
         user = utils.get_user(user_infos)
         experiment_id = str(experiment_id)
         experiment = utils.get_experiment(experiment_id)
-        utils.check_access(user, experiment, level="Edit")
+        utils.check_access(experiment, user["_id"], user_infos, level="Edit")
 
         # Collect the drift record from the database and update it.
         drift_id = str(drift_id)
@@ -388,7 +388,7 @@ class Drift(MethodView):
         user = utils.get_user(user_infos)
         experiment_id = str(experiment_id)
         experiment = utils.get_experiment(experiment_id)
-        utils.check_access(user, experiment, level="Edit")
+        utils.check_access(experiment, user["_id"], user_infos, level="Edit")
 
         # Collect the drift record from the database.
         drift_id = str(drift_id)
