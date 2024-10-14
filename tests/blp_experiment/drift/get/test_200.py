@@ -6,25 +6,13 @@ from uuid import UUID
 
 from pytest import mark
 
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
 
-
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-@mark.parametrize("auth", ["mock-token"], indirect=True)
-@mark.parametrize("with_database", ["database_1"], indirect=True)
-@mark.usefixtures("with_context", "with_database")
-@mark.usefixtures("accept_authorization")
 class CommonBaseTests:
-    """Common tests for the /drift/<drift_id> endpoint."""
+    """Common tests for the drift/<drift_id> endpoint."""
 
     def test_status_code(self, response):
         """Test the 200 response."""
         assert response.status_code == 200
-
-    def test_in_database(self, response, db_drift):
-        """Test the response items are in the database."""
-        assert db_drift is not None
-        assert response.json == db_drift
 
     def test_id(self, response):
         """Test the response items have an id."""
@@ -41,29 +29,52 @@ class CommonBaseTests:
         assert dt.fromisoformat(response.json["created_at"])
 
 
-class V100Drift(CommonBaseTests):
-    """Tests for using V100 drift schema."""
+@mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.usefixtures("with_context", "with_database")
+class WithDatabase(CommonBaseTests):
+    """Base class for tests using database."""
 
-    def test_correct_version(self, response):
-        """Test the response items contain the correct version."""
-        assert response.json["schema_version"] == "1.0.0"
-
-    def test_minimal_keys(self, response):
-        """Test the response items contain the minimal keys."""
-        assert "model" in response.json
-        assert "concept_drift" in response.json
-        assert "data_drift" in response.json
-
-    def test_values_types(self, response):
-        """Test the response items contain the correct types."""
-        assert isinstance(response.json["model"], str)
-        assert isinstance(response.json["concept_drift"], dict)
-        assert isinstance(response.json["data_drift"], dict)
+    def test_in_database(self, response, db_drift):
+        """Test the response items are in the database."""
+        assert db_drift is not None
+        assert response.json == db_drift
 
 
-DRIFT_V100_1 = "00000000-0000-0000-0000-000000000001"
+@mark.parametrize("auth", ["mock-token"], indirect=True)
+@mark.usefixtures("accept_authorization")
+class ValidAuth(CommonBaseTests):
+    """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("drift_id", [DRIFT_V100_1], indirect=True)
-class TestGetIdV100(V100Drift):
-    """Test the responses items."""
+EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
+EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
+ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
+ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
+ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
+ENT_LIST = [[ENT_MANAGE], [ENT_EDIT], [ENT_READ]]
+
+
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
+@mark.parametrize("entitlements", ENT_LIST, indirect=True)
+class ValidGroup(ValidAuth):
+    """Base class for group with manage entitlement tests."""
+
+
+@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
+@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
+class IsPublic(CommonBaseTests):
+    """Base class for group with manage entitlement tests."""
+
+
+DRIFT_1 = "00000000-0000-0000-0000-000000000001"
+
+
+@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
+class TestWithAccess(ValidGroup, WithDatabase):
+    """Test the responses item when user has access."""
+
+
+@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
+class TestPublic(IsPublic, ValidAuth, WithDatabase):
+    """Test the responses items when the drift is public."""
