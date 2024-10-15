@@ -4,12 +4,6 @@
 from pytest import mark
 
 
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-@mark.parametrize("with_database", ["database_1"], indirect=True)
-@mark.usefixtures("with_context", "with_database")
 class CommonBaseTests:
     """Common tests for the /experiment endpoint."""
 
@@ -19,6 +13,13 @@ class CommonBaseTests:
         assert response.json["code"] == 401
 
 
+@mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.usefixtures("with_context", "with_database")
+class WithDatabase(CommonBaseTests):
+    """Base class for registered user tests."""
+
+
+@mark.parametrize("auth", [None], indirect=True)
 class NoAuthHeader:
     """Tests when missing authentication header."""
 
@@ -28,6 +29,7 @@ class NoAuthHeader:
         assert response.json["message"] == "No authorization header"
 
 
+@mark.parametrize("auth", ["invalid_token"], indirect=True)
 class UnknownIdentity:
     """Test when identity provided is unknown."""
 
@@ -37,16 +39,17 @@ class UnknownIdentity:
         assert response.json["message"] == "User identity could not be determined"
 
 
-DRIFT_V100_1 = "00000000-0000-0000-0000-000000000001"
+EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
+DRIFT_1 = "00000000-0000-0000-0000-000000000001"
 
 
-@mark.parametrize("auth", [None], indirect=True)
-@mark.parametrize("drift_id", [DRIFT_V100_1], indirect=True)
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
 class TestMissingToken(NoAuthHeader, CommonBaseTests):
     """Test the /experiment endpoint with missing token."""
 
 
-@mark.parametrize("auth", ["invalid_token"], indirect=True)
-@mark.parametrize("drift_id", [DRIFT_V100_1], indirect=True)
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
 class TestInvalidToken(UnknownIdentity, CommonBaseTests):
     """Test the /experiment endpoint with invalid token."""
