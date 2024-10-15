@@ -69,7 +69,7 @@ class PermissionDenied(Registered):
 
 
 @mark.parametrize("entitlements", [[ENT_READ], []], indirect=True)
-class NoAccess(PermissionDenied):
+class NoEdit(PermissionDenied):
     """Base class for group without entitlement tests."""
 
 
@@ -82,10 +82,10 @@ class TestNotRegistered(NotRegistered, IsPublic, WithDatabase):
 
 
 @mark.parametrize("concept_drift", [DRIFT_1], indirect=True)
-class TestNoAccessPublic(NoAccess, IsPublic, WithDatabase):
+class TestNoAccessPublic(NoEdit, IsPublic, WithDatabase):
     """Tests for message response for no permission."""
 
 
 @mark.parametrize("concept_drift", [DRIFT_1], indirect=True)
-class TestNoAccessPrivate(NoAccess, IsPrivate, WithDatabase):
+class TestNoAccessPrivate(NoEdit, IsPrivate, WithDatabase):
     """Tests for message response for no permission."""
