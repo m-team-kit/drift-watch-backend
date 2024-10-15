@@ -1,2 +1,2 @@
 black ~= 23.3.0
-debugpy ~= 1.8.1
+debugpy ~= 1.8.0
