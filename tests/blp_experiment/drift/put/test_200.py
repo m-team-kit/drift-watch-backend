@@ -44,6 +44,11 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
+@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
+class Registered(ValidAuth):
+    """Tests for message response when user is  registered."""
+
+
 EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
 EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
 
@@ -63,9 +68,8 @@ ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
 ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
 @mark.parametrize("entitlements", [[ENT_MANAGE], [ENT_EDIT]], indirect=True)
-class EditGroup(ValidAuth):
+class EditGroup(Registered):
     """Base class for group with manage entitlement tests."""
 
 
