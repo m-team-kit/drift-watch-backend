@@ -7,14 +7,7 @@ from uuid import UUID
 
 from pytest import mark
 
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-PUBLIC_EXP = "00000000-0000-0001-0001-000000000002"
 
-
-@mark.parametrize("auth", ["mock-token"], indirect=True)
-@mark.parametrize("with_database", ["database_1"], indirect=True)
-@mark.usefixtures("with_context", "with_database")
-@mark.usefixtures("accept_authorization")
 class CommonBaseTests:
     """Common tests for the /drift endpoint."""
 
@@ -31,17 +24,56 @@ class CommonBaseTests:
         """Test the response items have correct id."""
         assert all(UUID(x["id"]) for x in response.json)
 
-    def test_versions(self, response, schema_version):
-        """Test the response items contain the correct version."""
-        sv = schema_version
-        assert all(x["schema_version"] == sv for x in response.json)
 
-    def test_datetime(self, response):
-        """Test the response items contain a correct date."""
-        assert all(dt.fromisoformat(x["created_at"]) for x in response.json)
+@mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.usefixtures("with_context", "with_database")
+class WithDatabase(CommonBaseTests):
+    """Base class for tests using database."""
 
 
-class CreatedAfter:
+@mark.parametrize("auth", ["mock-token"], indirect=True)
+@mark.usefixtures("accept_authorization")
+class ValidAuth(CommonBaseTests):
+    """Base class for valid authenticated tests."""
+
+
+@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
+class Registered(ValidAuth, WithDatabase):
+    """Tests for message response when user is  registered."""
+
+
+EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
+EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
+
+
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+class IsPrivate(Registered):
+    """Base class for group with public as false."""
+
+
+@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
+class IsPublic(Registered):
+    """Base class for group with public as true."""
+
+
+ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
+ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
+ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
+GROUPS_WITH_READ_RIGHTS = [[ENT_READ], [ENT_EDIT], [ENT_MANAGE]]
+
+
+@mark.parametrize("entitlements", GROUPS_WITH_READ_RIGHTS, indirect=True)
+class ReadGroup(Registered):
+    """Base class for group with manage entitlement tests."""
+
+
+@mark.parametrize("entitlements", [[]], indirect=True)
+class NoGroup(Registered):
+    """Base class for group with manage entitlement tests."""
+
+
+@mark.parametrize("created_after", ["2020-12-31"], indirect=True)
+class AfterFilter(CommonBaseTests):
     """Test the response items created at."""
 
     def test_after_date(self, response, created_after):
@@ -51,7 +83,8 @@ class CreatedAfter:
             assert dt.fromisoformat(item["created_at"]) >= req_date
 
 
-class CreatedBefore:
+@mark.parametrize("created_before", ["2021-12-31"], indirect=True)
+class BeforeFilter(CommonBaseTests):
     """Test the response items created at."""
 
     def test_before_date(self, response, created_before):
@@ -61,7 +94,11 @@ class CreatedBefore:
             assert dt.fromisoformat(item["created_at"]) <= req_date
 
 
-class ValidStatus:
+ALL_STATUS = ["Running", "Completed", "Failed"]
+
+
+@mark.parametrize("job_status", ALL_STATUS, indirect=True)
+class StatusFilter(CommonBaseTests):
     """Test the response items job status."""
 
     def test_job_status(self, response, job_status):
@@ -69,10 +106,37 @@ class ValidStatus:
         assert all(x["job_status"] == job_status for x in response.json)
 
 
+class TestPublicAccess(NoGroup, IsPublic, WithDatabase):
+    """Test the responses items for public access."""
+
+
+class TestReadAccess(ReadGroup, IsPrivate, WithDatabase):
+    """Test the responses items for private access."""
+
+
+class TestAfterFilter(AfterFilter, IsPublic, WithDatabase):
+    """Test the response items contain the correct drifts."""
+
+
+class TestBeforeFilter(BeforeFilter, IsPublic, WithDatabase):
+    """Test the response items contain the correct drifts."""
+
+
+class TestBetweenFilter(AfterFilter, BeforeFilter, IsPublic, WithDatabase):
+    """Test the response items contain the correct drifts."""
+
+
+class TestStatusFilter(StatusFilter, IsPublic, WithDatabase):
+    """Test the response items contain the correct drifts."""
+
+
 @mark.parametrize("schema_version", ["1.0.0"], indirect=True)
-@mark.parametrize("model", ["model_1"], indirect=True)
 class V100Drift(CommonBaseTests):
     """Tests for using V100 drift schema."""
+
+    def test_version(self, response):
+        """Test the response item has the correct version."""
+        assert all(x["schema_version"] == "1.0.0" for x in response.json)
 
     def test_minimal_keys(self, response):
         """Test the response items contain the minimal keys."""
@@ -86,12 +150,18 @@ class V100Drift(CommonBaseTests):
         assert all(isinstance(x["concept_drift"], dict) for x in response.json)
         assert all(isinstance(x["data_drift"], dict) for x in response.json)
 
+
+@mark.parametrize("model", ["model_1"], indirect=True)
+class ModelFilter(V100Drift):
+    """Test the response items model."""
+
     def test_model(self, response, model):
         """Test the response items contain the correct model."""
         assert all(x["model"] == model for x in response.json)
 
 
-class ConceptDrift:
+@mark.parametrize("concept_drift", [{"$exists": True}], indirect=True)
+class ConceptFilter(V100Drift):
     """Test the response items concept drift."""
 
     def test_concept_drift(self, response):
@@ -99,7 +169,8 @@ class ConceptDrift:
         assert all("concept_drift" in item for item in response.json)
 
 
-class DataDrift:
+@mark.parametrize("data_drift", [{"$exists": True}], indirect=True)
+class DataFilter(V100Drift):
     """Test the response items data drift."""
 
     def test_data_drift(self, response):
@@ -107,35 +178,13 @@ class DataDrift:
         assert all("data_drift" in item for item in response.json)
 
 
-ALL_STATUS = ["Running", "Completed", "Failed"]
-
-
-@mark.parametrize("schema_version", ["1.0.0"], indirect=True)
-@mark.parametrize("experiment_id", [PUBLIC_EXP], indirect=True)
-class TestPublicExperiment(CommonBaseTests):
-    """Test the responses items for public access."""
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-@mark.parametrize("job_status", ALL_STATUS, indirect=True)
-class TestV100StatusFilter(ValidStatus, V100Drift):
+class TestV100ModelFilter(StatusFilter, IsPublic, WithDatabase):
     """Test the responses items."""
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-@mark.parametrize("concept_drift", [{"$exists": True}], indirect=True)
-class TestV100ConceptFilter(ConceptDrift, V100Drift):
+class TestV100ConceptFilter(ConceptFilter, IsPublic, WithDatabase):
     """Test the responses items."""
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-@mark.parametrize("data_drift", [{"$exists": True}], indirect=True)
-class TestV100DataFilter(DataDrift, V100Drift):
+class TestV100DataFilter(DataFilter, IsPublic, WithDatabase):
     """Test the responses items."""
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-@mark.parametrize("created_after", ["2021-01-02"], indirect=True)
-@mark.parametrize("created_before", ["2021-01-03"], indirect=True)
-class TestBetweenFilter(CreatedAfter, CreatedBefore, V100Drift):
-    """Test the response items contain the correct drifts."""
