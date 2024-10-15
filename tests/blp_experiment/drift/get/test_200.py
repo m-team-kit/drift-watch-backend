@@ -48,22 +48,27 @@ class ValidAuth(CommonBaseTests):
 
 EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
 EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
+
+
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+class IsPrivate(CommonBaseTests):
+    """Base class for group with manage entitlement tests."""
+
+
+@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
+class IsPublic(CommonBaseTests):
+    """Base class for group with manage entitlement tests."""
+
+
 ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
 ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
 ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
 ENT_LIST = [[ENT_MANAGE], [ENT_EDIT], [ENT_READ]]
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
 @mark.parametrize("entitlements", ENT_LIST, indirect=True)
-class ValidGroup(ValidAuth):
-    """Base class for group with manage entitlement tests."""
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class IsPublic(CommonBaseTests):
+class ValidGroup(ValidAuth, IsPrivate):
     """Base class for group with manage entitlement tests."""
 
 

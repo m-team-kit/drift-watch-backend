@@ -5,29 +5,13 @@ from datetime import datetime as dt
 
 from pytest import mark
 
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
 
-
-@mark.parametrize("auth", ["mock-token"], indirect=True)
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-@mark.parametrize("with_database", ["database_1"], indirect=True)
-@mark.usefixtures("with_context", "with_database")
-@mark.usefixtures("accept_authorization")
 class CommonBaseTests:
     """Common tests for the /drift endpoint."""
 
     def test_status_code(self, response):
         """Test the 200 response."""
         assert response.status_code == 200
-
-    def test_in_database(self, response, db_drift):
-        """Test the response items are in the database."""
-        assert db_drift is not None
-        assert response.json == db_drift
-
-    def test_created_at(self, response):
-        """Test the response item has a correct date."""
-        assert dt.fromisoformat(response.json["created_at"])
 
     def test_versions(self, response):
         """Test the response items contain the correct version."""
@@ -37,9 +21,51 @@ class CommonBaseTests:
         """Test the response includes the body."""
         assert set(body).issubset(set(response.json))
 
+    def test_has_created_at(self, response):
+        """Test the response items have a created_at."""
+        assert "created_at" in response.json
+        assert dt.fromisoformat(response.json["created_at"])
+
+
+@mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.usefixtures("with_context", "with_database")
+class WithDatabase(CommonBaseTests):
+    """Base class for tests using database."""
+
+    def test_in_database(self, response, db_drift):
+        """Test the response items are in the database."""
+        assert db_drift is not None
+        assert response.json == db_drift
+
+
+@mark.parametrize("auth", ["mock-token"], indirect=True)
+@mark.usefixtures("accept_authorization")
+class ValidAuth(CommonBaseTests):
+    """Base class for valid authenticated tests."""
+
+
+EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
+EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
+
+
+@mark.parametrize("experiment_id", [EXPERIMENT_1, EXPERIMENT_2], indirect=True)
+class PrivAndPub(CommonBaseTests):
+    """Base class for group for private and public."""
+
+
+ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
+ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
+ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
+
+
+@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
+@mark.parametrize("entitlements", [[ENT_MANAGE], [ENT_EDIT]], indirect=True)
+class EditGroup(ValidAuth, PrivAndPub):
+    """Base class for group with manage entitlement tests."""
+
 
 @mark.parametrize("schema_version", ["1.0.0"], indirect=True)
-class V100Edit:
+class V100Edit(CommonBaseTests):
     """Test the response items."""
 
     def test_version(self, response):
@@ -79,13 +105,13 @@ DRIFT_1 = "00000000-0000-0000-0000-000000000001"
 
 
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestEditV100Drift(V100Edit, CommonBaseTests):
+class TestWithAccessV100Drift(V100Edit, EditGroup, WithDatabase):
     """Test the responses items."""
 
 
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
 @mark.parametrize("concept_drift", [None], indirect=True)
-class TestRMConceptDrift(V100Edit, CommonBaseTests):
+class TestWithAccessRMConceptDrift(V100Edit, EditGroup, WithDatabase):
     """Test concept drift removal."""
 
     def test_concept_drift(self, response, concept_drift):
@@ -96,7 +122,7 @@ class TestRMConceptDrift(V100Edit, CommonBaseTests):
 
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
 @mark.parametrize("data_drift", [None], indirect=True)
-class TestRMDataDrift(V100Edit, CommonBaseTests):
+class TestWithAccessRMDataDrift(V100Edit, EditGroup, WithDatabase):
     """Test concept drift removal."""
 
     def test_data_drift(self, response, data_drift):
