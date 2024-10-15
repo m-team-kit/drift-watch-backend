@@ -4,7 +4,6 @@
     "python.analysis.typeCheckingMode": "basic",
     "python.testing.pytestArgs": [
         // "--numprocesses=auto",  To run tests in parallel
-        "--timeout=4",
         "tests"
     ],
     "cSpell.words": [
