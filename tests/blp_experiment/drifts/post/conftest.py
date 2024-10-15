@@ -13,7 +13,7 @@ def request(client, path, request_kwds):
 @fixture(scope="class")
 def body(request, schema_version, model, job_status, drifts):
     """Inject and return a request body."""
-    kwds = request.param if hasattr(request, "param") else {}
+    kwds = request.param.copy() if hasattr(request, "param") else {}
     if not isinstance(kwds, dict):
         return kwds  # Return the body as is
     for key, value in [
