@@ -4,14 +4,6 @@
 from pytest import mark
 
 
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-
-
-@mark.parametrize("auth", ["mock-token"], indirect=True)
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-@mark.parametrize("with_database", ["database_1"], indirect=True)
-@mark.usefixtures("with_context", "with_database")
-@mark.usefixtures("accept_authorization")
 class CommonBaseTests:
     """Common tests for the /drift endpoint."""
 
@@ -21,7 +13,33 @@ class CommonBaseTests:
         assert response.json["code"] == 422
 
 
-class InvalidInput:
+@mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.usefixtures("with_context", "with_database")
+class WithDatabase(CommonBaseTests):
+    """Base class for tests using database."""
+
+
+@mark.parametrize("auth", ["mock-token"], indirect=True)
+@mark.usefixtures("accept_authorization")
+class ValidAuth(CommonBaseTests):
+    """Base class for valid authenticated tests."""
+
+
+@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
+class Registered(ValidAuth):
+    """Tests for message response when user is  registered."""
+
+
+EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
+
+
+@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
+class IsPublic(Registered):
+    """Base class for group with public as false."""
+
+
+@mark.parametrize("body", ["string_body"], indirect=True)
+class InvalidInput(CommonBaseTests):
     """Test the bad_key parameter."""
 
     def test_error_msg(self, response):
@@ -31,6 +49,5 @@ class InvalidInput:
         assert error == ["Invalid input type."]
 
 
-@mark.parametrize("body", ["string_body"], indirect=True)
-class TestStringBody(InvalidInput, CommonBaseTests):
+class TestStringBody(InvalidInput, IsPublic, WithDatabase):
     """Test the response when body is a string."""
