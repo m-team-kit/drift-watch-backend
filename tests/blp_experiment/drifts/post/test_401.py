@@ -1,17 +1,11 @@
-"""Testing module for endpoint methods /drift."""
+"""Testing module for endpoint methods /drifts."""
 
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
 
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-@mark.parametrize("with_database", ["database_1"], indirect=True)
-@mark.usefixtures("with_context", "with_database")
 class CommonBaseTests:
-    """Common tests for the /drift endpoint."""
+    """Common tests for the /drifts endpoint."""
 
     def test_status_code(self, response):
         """Test the 401 response."""
@@ -19,7 +13,14 @@ class CommonBaseTests:
         assert response.json["code"] == 401
 
 
-class NoAuthHeader:
+@mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.usefixtures("with_context", "with_database")
+class WithDatabase(CommonBaseTests):
+    """Base class for registered user tests."""
+
+
+@mark.parametrize("auth", [None], indirect=True)
+class NoAuthHeader(CommonBaseTests):
     """Tests when missing authentication header."""
 
     def test_error_msg(self, response):
@@ -28,7 +29,8 @@ class NoAuthHeader:
         assert response.json["message"] == "No authorization header"
 
 
-class UnknownIdentity:
+@mark.parametrize("auth", ["invalid_token"], indirect=True)
+class UnknownIdentity(CommonBaseTests):
     """Test when identity provided is unknown."""
 
     def test_error_msg(self, response):
@@ -37,11 +39,17 @@ class UnknownIdentity:
         assert response.json["message"] == "User identity could not be determined"
 
 
-@mark.parametrize("auth", [None], indirect=True)
-class TestMissingToken(NoAuthHeader, CommonBaseTests):
+EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
+
+
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+class IsPrivate(CommonBaseTests):
+    """Base class for group with public as false."""
+
+
+class TestMissingToken(NoAuthHeader, IsPrivate):
     """Test the /experiment endpoint with missing token."""
 
 
-@mark.parametrize("auth", ["invalid_token"], indirect=True)
-class TestInvalidToken(UnknownIdentity, CommonBaseTests):
+class TestInvalidToken(UnknownIdentity, IsPrivate):
     """Test the /experiment endpoint with invalid token."""

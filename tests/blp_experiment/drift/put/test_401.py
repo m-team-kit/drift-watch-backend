@@ -5,7 +5,7 @@ from pytest import mark
 
 
 class CommonBaseTests:
-    """Common tests for the /experiment endpoint."""
+    """Common tests for the /drift endpoint."""
 
     def test_status_code(self, response):
         """Test the 401 response."""
@@ -20,7 +20,7 @@ class WithDatabase(CommonBaseTests):
 
 
 @mark.parametrize("auth", [None], indirect=True)
-class NoAuthHeader:
+class NoAuthHeader(CommonBaseTests):
     """Tests when missing authentication header."""
 
     def test_error_msg(self, response):
@@ -30,7 +30,7 @@ class NoAuthHeader:
 
 
 @mark.parametrize("auth", ["invalid_token"], indirect=True)
-class UnknownIdentity:
+class UnknownIdentity(CommonBaseTests):
     """Test when identity provided is unknown."""
 
     def test_error_msg(self, response):
@@ -40,16 +40,21 @@ class UnknownIdentity:
 
 
 EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
+
+
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+class IsPrivate(CommonBaseTests):
+    """Base class for group with public as false."""
+
+
 DRIFT_1 = "00000000-0000-0000-0000-000000000001"
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestMissingToken(NoAuthHeader, CommonBaseTests):
+class TestMissingToken(NoAuthHeader, IsPrivate):
     """Test the /experiment endpoint with missing token."""
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestInvalidToken(UnknownIdentity, CommonBaseTests):
+class TestInvalidToken(UnknownIdentity, IsPrivate):
     """Test the /experiment endpoint with invalid token."""
