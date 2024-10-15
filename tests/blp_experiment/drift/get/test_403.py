@@ -18,10 +18,6 @@ class CommonBaseTests:
 class WithDatabase(CommonBaseTests):
     """Base class for tests using database."""
 
-    def test_in_database(self, db_drift):
-        """Test the response items are in the database."""
-        assert db_drift is not None
-
 
 @mark.parametrize("auth", ["mock-token"], indirect=True)
 @mark.usefixtures("accept_authorization")
@@ -69,7 +65,7 @@ class IsPublic(CommonBaseTests):
 
 
 @mark.parametrize("entitlements", [[]], indirect=True)
-class NoGroup(IsPrivate):
+class NoAccess(PermissionDenied):
     """Base class for group without entitlement tests."""
 
 
@@ -82,5 +78,5 @@ class TestNotRegistered(NotRegistered, IsPublic, WithDatabase):
 
 
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestNoAccess(PermissionDenied, NoGroup, WithDatabase):
+class TestNoAccessPrivate(NoAccess, IsPrivate, WithDatabase):
     """Tests for message response for no permission."""

@@ -48,9 +48,14 @@ EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
 EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_1, EXPERIMENT_2], indirect=True)
-class PrivAndPub(CommonBaseTests):
-    """Base class for group for private and public."""
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+class IsPrivate(CommonBaseTests):
+    """Base class for group with public as false."""
+
+
+@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
+class IsPublic(CommonBaseTests):
+    """Base class for group with public as true."""
 
 
 ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
@@ -60,7 +65,7 @@ ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
 
 @mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
 @mark.parametrize("entitlements", [[ENT_MANAGE], [ENT_EDIT]], indirect=True)
-class EditGroup(ValidAuth, PrivAndPub):
+class EditGroup(ValidAuth):
     """Base class for group with manage entitlement tests."""
 
 
@@ -105,13 +110,18 @@ DRIFT_1 = "00000000-0000-0000-0000-000000000001"
 
 
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestWithAccessV100Drift(V100Edit, EditGroup, WithDatabase):
+class TestPublicV100Drift(V100Edit, IsPublic, EditGroup, WithDatabase):
+    """Test the responses items."""
+
+
+@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
+class TestPrivateV100Drift(V100Edit, IsPrivate, EditGroup, WithDatabase):
     """Test the responses items."""
 
 
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
 @mark.parametrize("concept_drift", [None], indirect=True)
-class TestWithAccessRMConceptDrift(V100Edit, EditGroup, WithDatabase):
+class TestRMConceptDrift(V100Edit, IsPrivate, EditGroup, WithDatabase):
     """Test concept drift removal."""
 
     def test_concept_drift(self, response, concept_drift):
@@ -122,7 +132,7 @@ class TestWithAccessRMConceptDrift(V100Edit, EditGroup, WithDatabase):
 
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
 @mark.parametrize("data_drift", [None], indirect=True)
-class TestWithAccessRMDataDrift(V100Edit, EditGroup, WithDatabase):
+class TestRMDataDrift(V100Edit, IsPrivate, EditGroup, WithDatabase):
     """Test concept drift removal."""
 
     def test_data_drift(self, response, data_drift):
