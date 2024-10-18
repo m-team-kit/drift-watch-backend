@@ -1,4 +1,4 @@
-"""Testing module for endpoint methods /experiment."""
+"""Testing module for endpoint methods /drift."""
 
 # pylint: disable=redefined-outer-name
 from pytest import mark
@@ -28,59 +28,43 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
-EXPERIMENT_3 = "00000000-0000-0001-0001-000000000003"
-EXPERIMENT_4 = "00000000-0000-0001-0001-000000000004"
+@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
+class Registered(ValidAuth, WithDatabase):
+    """Tests for message response when user is  registered."""
+
+
+USER_1 = ("user_1", "issuer.1")
+USER_2 = ("user_2", "issuer.1")
+
+
+@mark.parametrize("subiss", [USER_1, USER_2], indirect=True)
+class CanEdit(ValidAuth, WithDatabase):
+    """Tests for message response when user is  registered."""
+
+
 ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
 ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
+ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-@mark.parametrize("entitlements", [[ENT_MANAGE]], indirect=True)
-class ManageGroup(CommonBaseTests):
+@mark.parametrize("entitlements", [[ENT_MANAGE], [ENT_EDIT]], indirect=True)
+class EditGroup(CommonBaseTests):
     """Base class for group with manage entitlement tests."""
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-@mark.parametrize("entitlements", [[ENT_EDIT]], indirect=True)
-class EditGroup(CommonBaseTests):
-    """Base class for group with edit entitlement tests."""
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_3], indirect=True)
-@mark.parametrize("subiss", [("user_1", "issuer.1")], indirect=True)
-class ManageUser(CommonBaseTests):
-    """Base class for user with manage entitlement tests."""
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_4], indirect=True)
-@mark.parametrize("subiss", [("user_2", "issuer.1")], indirect=True)
-class EditUser(CommonBaseTests):
-    """Base class for user with manage entitlement tests."""
-
+EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
+EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
 
 DRIFT_1 = "00000000-0000-0000-0000-000000000001"
-DRIFT_2 = "00000000-0000-0000-0000-000000000002"
 
 
+@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestUserWithManage(ValidAuth, WithDatabase, ManageUser):
-    """Test when user has manage rights on the experiment."""
-
-
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestUserWithEdit(ValidAuth, WithDatabase, EditUser):
+class TestUserWithEdit(CanEdit, WithDatabase):
     """Test when user has edit rights on the experiment."""
 
 
+@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestGroupWithManage(ValidAuth, WithDatabase, ManageGroup):
-    """Test when group has manage rights on the experiment."""
-
-
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestGroupWithEdit(ValidAuth, WithDatabase, EditGroup):
+class TestGroupWithEdit(EditGroup, Registered, WithDatabase):
     """Test when group has edit rights on the experiment."""
