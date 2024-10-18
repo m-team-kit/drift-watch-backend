@@ -96,7 +96,7 @@ class Experiments(MethodView):
 class Experiment(MethodView):
     """Experiment API."""
 
-    @auth.access_level("everyone")
+    @auth.access_level("user")
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(200, schemas.Experiment)
     def get(self, experiment_id):
