@@ -37,8 +37,13 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
+@mark.parametrize("auth", [None], indirect=True)
+class NoAuthHeader(CommonBaseTests):
+    """Tests when missing authentication header."""
+
+
 @mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class Registered(ValidAuth, WithDatabase):
+class Registered(ValidAuth):
     """Tests for message response when user is  registered."""
 
 
@@ -47,12 +52,12 @@ EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
 
 
 @mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-class IsPrivate(Registered):
+class IsPrivate(CommonBaseTests):
     """Base class for group with public as false."""
 
 
 @mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
-class IsPublic(Registered):
+class IsPublic(CommonBaseTests):
     """Base class for group with public as true."""
 
 
@@ -73,7 +78,7 @@ class NoGroup(Registered):
 
 
 @mark.parametrize("created_after", ["2020-12-31"], indirect=True)
-class AfterFilter(CommonBaseTests):
+class AfterFilter(WithDatabase):
     """Test the response items created at."""
 
     def test_after_date(self, response, created_after):
@@ -84,7 +89,7 @@ class AfterFilter(CommonBaseTests):
 
 
 @mark.parametrize("created_before", ["2021-12-31"], indirect=True)
-class BeforeFilter(CommonBaseTests):
+class BeforeFilter(WithDatabase):
     """Test the response items created at."""
 
     def test_before_date(self, response, created_before):
@@ -98,7 +103,7 @@ ALL_STATUS = ["Running", "Completed", "Failed"]
 
 
 @mark.parametrize("job_status", ALL_STATUS, indirect=True)
-class StatusFilter(CommonBaseTests):
+class StatusFilter(WithDatabase):
     """Test the response items job status."""
 
     def test_job_status(self, response, job_status):
@@ -106,7 +111,7 @@ class StatusFilter(CommonBaseTests):
         assert all(x["job_status"] == job_status for x in response.json)
 
 
-class TestPublicAccess(NoGroup, IsPublic, WithDatabase):
+class TestPublicAccess(NoAuthHeader, IsPublic, WithDatabase):
     """Test the responses items for public access."""
 
 
@@ -114,24 +119,24 @@ class TestReadAccess(ReadGroup, IsPrivate, WithDatabase):
     """Test the responses items for private access."""
 
 
-class TestAfterFilter(AfterFilter, IsPublic, WithDatabase):
+class TestAfterFilter(NoAuthHeader, IsPublic, AfterFilter):
     """Test the response items contain the correct drifts."""
 
 
-class TestBeforeFilter(BeforeFilter, IsPublic, WithDatabase):
+class TestBeforeFilter(NoAuthHeader, IsPublic, BeforeFilter):
     """Test the response items contain the correct drifts."""
 
 
-class TestBetweenFilter(AfterFilter, BeforeFilter, IsPublic, WithDatabase):
+class TestBetweenFilter(NoAuthHeader, BeforeFilter, IsPublic, AfterFilter):
     """Test the response items contain the correct drifts."""
 
 
-class TestStatusFilter(StatusFilter, IsPublic, WithDatabase):
+class TestStatusFilter(NoAuthHeader, IsPublic, StatusFilter):
     """Test the response items contain the correct drifts."""
 
 
 @mark.parametrize("schema_version", ["1.0.0"], indirect=True)
-class V100Drift(CommonBaseTests):
+class V100Drift(WithDatabase):
     """Tests for using V100 drift schema."""
 
     def test_version(self, response):
@@ -178,13 +183,13 @@ class DataFilter(V100Drift):
         assert all("data_drift" in item for item in response.json)
 
 
-class TestV100ModelFilter(StatusFilter, IsPublic, WithDatabase):
+class TestV100ModelFilter(NoAuthHeader, IsPublic, StatusFilter):
     """Test the responses items."""
 
 
-class TestV100ConceptFilter(ConceptFilter, IsPublic, WithDatabase):
+class TestV100ConceptFilter(NoAuthHeader, IsPublic, ConceptFilter):
     """Test the responses items."""
 
 
-class TestV100DataFilter(DataFilter, IsPublic, WithDatabase):
+class TestV100DataFilter(NoAuthHeader, IsPublic, DataFilter):
     """Test the responses items."""

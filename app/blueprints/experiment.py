@@ -209,12 +209,12 @@ class Experiment(MethodView):
 class Drifts(MethodView):
     """Drifts API."""
 
-    @auth.access_level("user")
-    @auth.inject_user_infos()
+    @auth.access_level("everyone")
+    @auth.inject_user_infos(strict=False)
     @blp.arguments(ma.Schema(), location="json", unknown="include")
     @blp.response(200, schemas.DriftV100(many=True))
     @blp.paginate()
-    def get(self, json, experiment_id, user_infos, pagination_parameters):
+    def get(self, json, experiment_id, pagination_parameters, user_infos=None):
         """
         Get a paginated list of drift Jobs based on the provided JSON query
         and MongoDB format.
@@ -231,16 +231,16 @@ class Drifts(MethodView):
             A paginated list of drifts matching the query.
 
         Raises:
-            401: If the user is not authenticated or registered.
             403: If the user does not have the required permissions.
             404: If the experiment with the specified ID is not found.
             422: If the JSON query is not in the correct format.
         """
         # Check if the user is registered and validate access level.
-        user = utils.get_user(user_infos)
+        user = utils.get_user(user_infos) if user_infos else None
+        user_id = user.get("_id") if user else None
         experiment_id = str(experiment_id)
         experiment = utils.get_experiment(experiment_id)
-        utils.check_access(experiment, user["_id"], user_infos, level="Read")
+        utils.check_access(experiment, user_id, user_infos, level="Read")
 
         # Search for drifts based on the provided JSON query.
         drifts = current_app.config["db"][f"app.{experiment_id}"]
@@ -294,11 +294,11 @@ class Drifts(MethodView):
 class Drift(MethodView):
     """Drift API."""
 
-    @auth.access_level("user")
-    @auth.inject_user_infos()
+    @auth.access_level("everyone")
+    @auth.inject_user_infos(strict=False)
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(200, schemas.DriftV100)
-    def get(self, experiment_id, drift_id, user_infos):
+    def get(self, experiment_id, drift_id, user_infos=None):
         """Retrieve a drift job by its id from the database.
         ---
         Internal comment not meant to be exposed.
@@ -312,15 +312,15 @@ class Drift(MethodView):
             dict: The drift object.
 
         Raises:
-            401: If the user is not authenticated or registered.
             403: If the user does not have the required permissions.
             404: If the drift or experiment specified are not found.
         """
         # Check if the user is registered and validate access level.
-        user = utils.get_user(user_infos)
+        user = utils.get_user(user_infos) if user_infos else None
+        user_id = user.get("_id") if user else None
         experiment_id = str(experiment_id)
         experiment = utils.get_experiment(experiment_id)
-        utils.check_access(experiment, user["_id"], user_infos, level="Read")
+        utils.check_access(experiment, user_id, user_infos, level="Read")
 
         # Retrieve and return the drift object from the database.
         drift_id = str(drift_id)

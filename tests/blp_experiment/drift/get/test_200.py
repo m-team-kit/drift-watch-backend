@@ -46,6 +46,11 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
+@mark.parametrize("auth", [None], indirect=True)
+class NoAuthHeader:
+    """Tests when missing authentication header."""
+
+
 EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
 EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
 
@@ -63,12 +68,12 @@ class IsPublic(CommonBaseTests):
 ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
 ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
 ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
-ENT_LIST = [[ENT_MANAGE], [ENT_EDIT], [ENT_READ]]
+GROUPS_WITH_READ_RIGHTS = [[ENT_READ], [ENT_EDIT], [ENT_MANAGE]]
 
 
 @mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-@mark.parametrize("entitlements", ENT_LIST, indirect=True)
-class ValidGroup(ValidAuth, IsPrivate):
+@mark.parametrize("entitlements", GROUPS_WITH_READ_RIGHTS, indirect=True)
+class CanRead(ValidAuth):
     """Base class for group with manage entitlement tests."""
 
 
@@ -76,10 +81,10 @@ DRIFT_1 = "00000000-0000-0000-0000-000000000001"
 
 
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestWithAccess(ValidGroup, WithDatabase):
+class TestWithAccess(IsPrivate, CanRead, WithDatabase):
     """Test the responses item when user has access."""
 
 
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestPublic(IsPublic, ValidAuth, WithDatabase):
+class TestPublic(IsPublic, NoAuthHeader, WithDatabase):
     """Test the responses items when the drift is public."""
