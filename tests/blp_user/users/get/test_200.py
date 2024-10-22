@@ -8,11 +8,6 @@ from uuid import UUID
 from pytest import mark
 
 
-@mark.parametrize("auth", ["mock-token"], indirect=True)
-@mark.parametrize("entitlements", [["iam:admin"]], indirect=True)
-@mark.parametrize("with_database", ["database_1"], indirect=True)
-@mark.usefixtures("with_context", "with_database")
-@mark.usefixtures("accept_authorization")
 class CommonBaseTests:
     """Common tests for the /user endpoint."""
 
@@ -46,7 +41,35 @@ class CommonBaseTests:
         assert all(isinstance(x["email"], str) for x in response.json)
 
 
-class CreatedAfter:
+@mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.usefixtures("with_context", "with_database")
+class WithDatabase(CommonBaseTests):
+    """Base class for tests using database."""
+
+
+@mark.parametrize("auth", ["mock-token"], indirect=True)
+@mark.usefixtures("accept_authorization")
+class ValidAuth(CommonBaseTests):
+    """Base class for valid authenticated tests."""
+
+
+@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
+class Registered(ValidAuth):
+    """Tests for message response when user is  registered."""
+
+
+@mark.parametrize("subiss", [("unknown", "issuer.1")], indirect=True)
+class NotRegistered(ValidAuth):
+    """Tests for message response when user is not registered."""
+
+
+@mark.parametrize("entitlements", [["iam:admin"]], indirect=True)
+class IsAdmin(CommonBaseTests):
+    """Base class for group with admin entitlement tests."""
+
+
+@mark.parametrize("created_after", ["2020-12-31"], indirect=True)
+class AfterFilter(WithDatabase):
     """Test the response items created at."""
 
     def test_after_date(self, response, created_after):
@@ -56,7 +79,8 @@ class CreatedAfter:
             assert dt.fromisoformat(item["created_at"]) >= req_date
 
 
-class CreatedBefore:
+@mark.parametrize("created_before", ["2021-12-31"], indirect=True)
+class BeforeFilter(WithDatabase):
     """Test the response items created at."""
 
     def test_before_date(self, response, created_before):
@@ -66,16 +90,17 @@ class CreatedBefore:
             assert dt.fromisoformat(item["created_at"]) <= req_date
 
 
-class TestNoFilter(CommonBaseTests):
+class TestRegisteredAdmin(Registered, IsAdmin, WithDatabase):
     """Test the responses items for full query."""
 
 
-@mark.parametrize("created_after", ["2021-01-02"], indirect=True)
-@mark.parametrize("created_before", ["2021-01-03"], indirect=True)
-class TestBetweenFilter(CreatedAfter, CreatedBefore, CommonBaseTests):
-    """Test the response items created before a date."""
+class TestUnknownAdmin(NotRegistered, IsAdmin, WithDatabase):
+    """Test the response items contain the correct users."""
 
 
-@mark.parametrize("issuer", ["issuer.1"], indirect=True)
-class TestIssuerFilter(CommonBaseTests):
-    """Test the response items filtered by issuer."""
+class TestAfterFilter(Registered, IsAdmin, AfterFilter):
+    """Test the response items contain the correct users."""
+
+
+class TestBeforeFilter(Registered, IsAdmin, BeforeFilter):
+    """Test the response items contain the correct users."""
