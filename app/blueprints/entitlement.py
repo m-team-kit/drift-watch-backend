@@ -20,9 +20,8 @@ class Entitlements(MethodView):
 
     @auth.access_level("user")
     @auth.inject_user_infos()
-    @blp.arguments(schemas.ma.Schema(), location="json", unknown="raise")
     @blp.response(200, schemas.Entitlements)
-    def get(self, _json, user_infos):
+    def get(self, user_infos):
         """Return list of entitlements based on the provided OIDC token.
         ---
         Internal comment not meant to be exposed.

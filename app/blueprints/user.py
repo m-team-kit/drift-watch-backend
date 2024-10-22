@@ -51,16 +51,14 @@ class Users(MethodView):
 
     @auth.access_level("user")
     @auth.inject_user_infos()
-    @blp.arguments(schemas.ma.Schema(), location="json", unknown="raise")
     @blp.doc(responses={409: CONFLICT})
     @blp.response(201, schemas.User)
-    def post(self, _json, user_infos):
+    def post(self, user_infos):
         """Register and create the token owner as new user.
         ---
         Internal comment not meant to be exposed.
 
         Args:
-            _json (dict): The JSON payload of the request.
             user_infos (dict): User information from the authentication token.
 
         Returns:
@@ -69,7 +67,6 @@ class Users(MethodView):
         Raises:
             401: If the user is not authenticated with a valid token.
             409: If the user already registered.
-            422: If a JSON is provided.
         """
         # Check if the user already exists.
         users = current_app.config["db"]["app.users"]
@@ -97,9 +94,8 @@ class Self(MethodView):
 
     @auth.access_level("user")
     @auth.inject_user_infos()
-    @blp.arguments(schemas.ma.Schema(), location="query", unknown="raise")
     @blp.response(200, schemas.User())
-    def get(self, _query, user_infos):
+    def get(self, user_infos):
         """Retrieves the user information based on the provided auth token.
         ---
         Internal comment not meant to be exposed.
@@ -109,7 +105,6 @@ class Self(MethodView):
 
         Returns:
             401: If the user is not authenticated or registered.
-            422: If the JSON query is not in the correct format.
         """
         # Check if the user is registered and validate access level.
         # Return the user information.
