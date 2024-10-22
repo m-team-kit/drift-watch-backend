@@ -89,11 +89,7 @@ class TestPublicExperiment(IsPublic, ManageGroup, WithDatabase):
     """Test the responses items."""
 
 
-class TestPrivateExperiment(IsPrivate, ManageGroup, WithDatabase):
-    """Test the responses items."""
-
-
-@mark.parametrize("name", ["new name"], indirect=True)
+@mark.parametrize("name", ["new name 1"], indirect=True)
 class TestChangeName(IsPrivate, ManageGroup, WithDatabase):
     """Test changing the name of the experiment."""
 
@@ -102,6 +98,7 @@ class TestChangeName(IsPrivate, ManageGroup, WithDatabase):
         assert response.json["name"] == name
 
 
+@mark.parametrize("name", ["new name 2"], indirect=True)
 @mark.parametrize("description", ["new description"], indirect=True)
 class TestChangeDescription(IsPrivate, ManageGroup, WithDatabase):
     """Test changing the description of the experiment."""
@@ -111,6 +108,7 @@ class TestChangeDescription(IsPrivate, ManageGroup, WithDatabase):
         assert response.json["description"] == description
 
 
+@mark.parametrize("name", ["new name 3"], indirect=True)
 @mark.parametrize("public", [True], indirect=True)
 class TestChangePublic(IsPrivate, ManageGroup, WithDatabase):
     """Test changing the public status of the experiment."""
@@ -120,7 +118,8 @@ class TestChangePublic(IsPrivate, ManageGroup, WithDatabase):
         assert response.json["public"] == True
 
 
-@mark.parametrize("permissions", [{ENT_READ: "Edit"}, {}], indirect=True)
+@mark.parametrize("name", ["new name 4"], indirect=True)
+@mark.parametrize("permissions", [{ENT_READ: "Edit"}], indirect=True)
 class TestChangePerm(IsPrivate, AllEntitlements, WithDatabase):
     """Test changing the permissions of the experiment."""
 
