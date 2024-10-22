@@ -4,9 +4,6 @@
 from pytest import mark
 
 
-@mark.parametrize("auth", ["mock-token"], indirect=True)
-@mark.parametrize("name", ["experiment_a"], indirect=True)
-@mark.usefixtures("accept_authorization")
 class CommonBaseTests:
     """Common tests for the /experiment endpoint."""
 
@@ -16,7 +13,20 @@ class CommonBaseTests:
         assert response.json["code"] == 403
 
 
-class NotRegistered:
+@mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.usefixtures("with_context", "with_database")
+class WithDatabase(CommonBaseTests):
+    """Base class for tests using database."""
+
+
+@mark.parametrize("auth", ["mock-token"], indirect=True)
+@mark.usefixtures("accept_authorization")
+class ValidAuth(CommonBaseTests):
+    """Base class for valid authenticated tests."""
+
+
+@mark.parametrize("subiss", [("unknown", "issuer.1")], indirect=True)
+class NotRegistered(ValidAuth):
     """Tests for message response when user is not registered."""
 
     def test_error_msg(self, response):
@@ -25,17 +35,5 @@ class NotRegistered:
         assert response.json["message"] == "User not registered."
 
 
-GROUP_1 = "urn:mace:egi.eu:group:vo_example1:role=group1#aai.egi.eu"
-PERMISSIONS = {GROUP_1: "Read"}
-
-
-@mark.parametrize("with_database", ["database_1"], indirect=True)
-@mark.usefixtures("with_context", "with_database")
-@mark.parametrize("permissions", [PERMISSIONS], indirect=True)
-class TestBadEntitlements(CommonBaseTests):
-    """Tests for message response when mismatch user's with new entitlements."""
-
-
-@mark.parametrize("permissions", [[]], indirect=True)
-class TestNotRegistered(NotRegistered, CommonBaseTests):
+class TestNotRegistered(NotRegistered, WithDatabase):
     """Test the authentication response when user not registered."""
