@@ -11,13 +11,15 @@ def request(client, path, request_kwds):
 
 
 @fixture(scope="class")
-def body(request, name, permissions):
+def body(request, name, description, public, permissions):
     """Inject and return a request body."""
     kwds = request.param if hasattr(request, "param") else {}
     if not isinstance(kwds, dict):
         return kwds  # Return the body as is
     for key, value in [
         ("name", name),
+        ("description", description),
+        ("public", public),
         ("permissions", permissions),
     ]:
         kwds.update({key: value} if value else {})
@@ -26,11 +28,23 @@ def body(request, name, permissions):
 
 @fixture(scope="class")
 def name(request):
-    """Inject and return a name filter."""
+    """Inject and return a name field."""
     return request.param if hasattr(request, "param") else "new_name"
 
 
 @fixture(scope="class")
+def description(request):
+    """Inject and return a description field."""
+    return request.param if hasattr(request, "param") else None
+
+
+@fixture(scope="class")
+def public(request):
+    """Inject and return a public field."""
+    return request.param if hasattr(request, "param") else None
+
+
+@fixture(scope="class")
 def permissions(request):
-    """Inject and return a permissions filter."""
+    """Inject and return a permissions field."""
     return request.param if hasattr(request, "param") else []
