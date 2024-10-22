@@ -1,13 +1,11 @@
-"""Testing module for endpoint methods /experiment."""
+"""Testing module for endpoint methods /users."""
 
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
 
-@mark.parametrize("with_database", ["database_1"], indirect=True)
-@mark.usefixtures("with_context", "with_database")
 class CommonBaseTests:
-    """Common tests for the /experiment endpoint."""
+    """Common tests for the /users endpoint."""
 
     def test_status_code(self, response):
         """Test the 401 response."""
@@ -15,7 +13,14 @@ class CommonBaseTests:
         assert response.json["code"] == 401
 
 
-class NoAuthHeader:
+@mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.usefixtures("with_context", "with_database")
+class WithDatabase(CommonBaseTests):
+    """Base class for registered user tests."""
+
+
+@mark.parametrize("auth", [None], indirect=True)
+class NoAuthHeader(CommonBaseTests):
     """Tests when missing authentication header."""
 
     def test_error_msg(self, response):
@@ -24,7 +29,8 @@ class NoAuthHeader:
         assert response.json["message"] == "No authorization header"
 
 
-class UnknownIdentity:
+@mark.parametrize("auth", ["invalid_token"], indirect=True)
+class UnknownIdentity(CommonBaseTests):
     """Test when identity provided is unknown."""
 
     def test_error_msg(self, response):
@@ -33,11 +39,9 @@ class UnknownIdentity:
         assert response.json["message"] == "User identity could not be determined"
 
 
-@mark.parametrize("auth", [None], indirect=True)
-class TestMissingToken(NoAuthHeader, CommonBaseTests):
+class TestMissingToken(NoAuthHeader):
     """Test the /experiment endpoint with missing token."""
 
 
-@mark.parametrize("auth", ["invalid_token"], indirect=True)
-class TestInvalidToken(UnknownIdentity, CommonBaseTests):
+class TestInvalidToken(UnknownIdentity):
     """Test the /experiment endpoint with invalid token."""
