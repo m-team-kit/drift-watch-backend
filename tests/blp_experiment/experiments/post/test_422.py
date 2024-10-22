@@ -4,8 +4,6 @@
 from pytest import mark
 
 
-@mark.parametrize("auth", ["mock-token"], indirect=True)
-@mark.usefixtures("accept_authorization")
 class CommonBaseTests:
     """Common tests for the /experiment endpoint."""
 
@@ -15,45 +13,60 @@ class CommonBaseTests:
         assert response.json["code"] == 422
 
 
-class UnknownField:
-    """Test response message contains unknown field."""
+@mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.usefixtures("with_context", "with_database")
+class WithDatabase(CommonBaseTests):
+    """Base class for tests using database."""
+
+
+@mark.parametrize("auth", ["mock-token"], indirect=True)
+@mark.usefixtures("accept_authorization")
+class ValidAuth(CommonBaseTests):
+    """Base class for valid authenticated tests."""
+
+
+@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
+class Registered(ValidAuth):
+    """Tests for message response when user is  registered."""
+
+
+@mark.parametrize("body", [{"unknown": "val"}], indirect=True)
+class UnknownField(WithDatabase):
+    """Test the response message for unknown key in body."""
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
-        assert response.json["status"] == "Unprocessable Entity"
         errors = response.json["errors"]["json"].values()
         assert ["Unknown field."] in errors
 
 
-class InvalidString:
-    """Test response message contains invalid field."""
+@mark.parametrize("public", ["str"], indirect=True)
+class NoBoolPublic(WithDatabase):
+    """Test the response message for missing experiment boolean."""
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
-        assert response.json["status"] == "Unprocessable Entity"
-        errors = response.json["errors"]["json"].values()
-        assert ["Not a valid string."] in errors
+        errors = response.json["errors"]["json"]
+        assert "Not a valid boolean." in errors["public"]
 
 
-class InvalidMapping:
-    """Test response message contains invalid list."""
+@mark.parametrize("permissions", ["str"], indirect=True)
+class NoListPerm(WithDatabase):
+    """Test the response message for missing experiment parameter."""
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
-        errors = response.json["errors"]["json"].values()
-        assert ["Not a valid mapping type."] in errors
+        errors = response.json["errors"]["json"]
+        assert "Not a valid mapping type." in errors["permissions"]
 
 
-@mark.parametrize("body", [{"bad_key": "val"}], indirect=True)
-class TestBadBodyKey(UnknownField, CommonBaseTests):
-    """Test the bad_key parameter in the body."""
+class TestBadBodyKey(Registered, UnknownField):
+    """Test the unknown key parameter in body."""
 
 
-@mark.parametrize("name", [1000], indirect=True)
-class TestBadExperiment(InvalidString, CommonBaseTests):
-    """Test experiment name is not a string."""
+class TestNoBoolPublic(Registered, NoBoolPublic):
+    """Test the response when missing concept experiment boolean."""
 
 
-@mark.parametrize("permissions", ["non_map"], indirect=True)
-class TestBadPermissions(InvalidMapping, CommonBaseTests):
-    """Test permissions is not a map."""
+class TestNoListPerm(Registered, NoListPerm):
+    """Test the response when missing concept experiment parameter."""
