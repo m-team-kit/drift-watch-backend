@@ -23,18 +23,10 @@ def valid_user_infos(user_infos):
 
 def is_admin(user_infos):
     """Assert registration and entitlements."""
-    if "eduperson_entitlement" in user_infos.user_info:
-        entitlements = set(user_infos.user_info["eduperson_entitlement"])
-    else:
-        entitlements = set()
-    return all(
-        [
-            (
-                entitlements & set(current_app.config["ADMIN_ENTITLEMENTS"])
-                or not current_app.config["ADMIN_ENTITLEMENTS"]
-            )
-        ]
-    )
+    entitlements_key = current_app.config["ENTITLEMENTS_FIELD"]
+    entitlements = set(user_infos.get(entitlements_key, []))
+    admin_entitlements = set(current_app.config["ADMIN_ENTITLEMENTS"])
+    return all([entitlements & admin_entitlements])
 
 
 # Define access levels for the application
