@@ -29,7 +29,7 @@ def body(request, name, description, permissions, public):
 @fixture(scope="class")
 def name(request):
     """Inject and return a name filter."""
-    return request.param if hasattr(request, "param") else None
+    return request.param if hasattr(request, "param") else "new_experiment"
 
 
 @fixture(scope="class")

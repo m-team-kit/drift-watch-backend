@@ -7,21 +7,12 @@ from uuid import UUID
 from pytest import mark
 
 
-@mark.parametrize("auth", ["mock-token"], indirect=True)
-@mark.parametrize("with_database", ["database_1"], indirect=True)
-@mark.usefixtures("with_context", "with_database")
-@mark.usefixtures("accept_authorization")
 class CommonBaseTests:
     """Common tests for the /experiment endpoint."""
 
     def test_status_code(self, response):
         """Test the 201 response."""
         assert response.status_code == 201
-
-    def test_in_database(self, response, db_experiment):
-        """Test the response items are in the database."""
-        assert db_experiment is not None
-        assert response.json == db_experiment
 
     def test_experiment_id(self, response):
         """Test the response item have correct id."""
@@ -44,7 +35,30 @@ class CommonBaseTests:
         assert response.json["name"] == name
 
 
-class WithDescription:
+@mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.usefixtures("with_context", "with_database")
+class WithDatabase(CommonBaseTests):
+    """Base class for tests using database."""
+
+    def test_in_database(self, response, db_experiment):
+        """Test the response items are in the database."""
+        assert db_experiment is not None
+        assert response.json == db_experiment
+
+
+@mark.parametrize("auth", ["mock-token"], indirect=True)
+@mark.usefixtures("accept_authorization")
+class ValidAuth(CommonBaseTests):
+    """Base class for valid authenticated tests."""
+
+
+@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
+class Registered(ValidAuth):
+    """Tests for message response when user is  registered."""
+
+
+@mark.parametrize("description", ["Some description"], indirect=True)
+class WithDescription(WithDatabase):
     """Test the response items with description."""
 
     def test_description(self, response, description):
@@ -53,16 +67,8 @@ class WithDescription:
         assert isinstance(response.json["description"], str)
 
 
-class Permissions:
-    """Test the response items with extra permissions."""
-
-    def test_extra_permissions(self, response, permissions):
-        """Test the response items have extra permissions."""
-        for permission in permissions:
-            assert permission in response.json["permissions"]
-
-
-class IsPublic:
+@mark.parametrize("public", [True], indirect=True)
+class WithPublic(WithDatabase):
     """Test the response items with public permissions."""
 
     def test_public_permissions(self, response):
@@ -71,28 +77,32 @@ class IsPublic:
         assert response.json["public"] is True
 
 
-@mark.parametrize("name", ["experiment_a"], indirect=True)
-class TestSimpleExperiment(CommonBaseTests):
+@mark.parametrize("permissions", [{"group": "Read"}], indirect=True)
+class WithPermissions(WithDatabase):
+    """Test the response items with extra permissions."""
+
+    def test_extra_permissions(self, response, permissions, db_user):
+        """Test the response items have extra permissions."""
+        expected_permissions = permissions.copy()
+        expected_permissions[db_user["id"]] = "Manage"
+        assert response.json["permissions"] == expected_permissions
+
+
+@mark.parametrize("name", ["new_experiment_1"], indirect=True)
+class TestSimpleExperiment(Registered, WithDatabase):
     """Test the /experiment endpoint with simple permissions."""
 
 
-@mark.parametrize("name", ["experiment_b"], indirect=True)
-@mark.parametrize("description", ["a_description"], indirect=True)
-class TestDescriptionExperiment(WithDescription, CommonBaseTests):
+@mark.parametrize("name", ["new_experiment_2"], indirect=True)
+class TestDescriptionExperiment(Registered, WithDescription):
     """Test the /experiment endpoint with simple permissions."""
 
 
-GROUP_1 = "urn:mace:egi.eu:group:vo_example1:role=group1#aai.egi.eu"
-PERMISSIONS_1 = {GROUP_1: "Read"}
-
-
-@mark.parametrize("permissions", [PERMISSIONS_1], indirect=True)
-@mark.parametrize("name", ["experiment_c"], indirect=True)
-class TestSharedExperiment(Permissions, CommonBaseTests):
+@mark.parametrize("name", ["new_experiment_3"], indirect=True)
+class TestSharedExperiment(Registered, WithPermissions):
     """Test the /experiment endpoint with shared permissions."""
 
 
-@mark.parametrize("name", ["experiment_d"], indirect=True)
-@mark.parametrize("public", [True], indirect=True)
-class TestPublicExperiment(IsPublic, CommonBaseTests):
+@mark.parametrize("name", ["new_experiment_4"], indirect=True)
+class TestPublicExperiment(Registered, WithPublic):
     """Test the /experiment endpoint with simple permissions."""
