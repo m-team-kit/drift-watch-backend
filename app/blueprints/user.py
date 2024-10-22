@@ -109,3 +109,26 @@ class Self(MethodView):
         # Check if the user is registered and validate access level.
         # Return the user information.
         return utils.get_user(user_infos)
+
+    @auth.access_level("user")
+    @auth.inject_user_infos()
+    @blp.response(200, schemas.User())
+    def put(self, user_infos):
+        """Updates the user information based on the provided auth token.
+        ---
+        Internal comment not meant to be exposed.
+
+        Args:
+            user_infos (dict): User information from the authentication token.
+
+        Returns:
+            401: If the user is not authenticated or registered.
+        """
+        # Check if the user is registered and validate access level.
+        user = utils.get_user(user_infos)
+
+        # Update the user information and return it.
+        users = current_app.config["db"]["app.users"]
+        user["email"] = user_infos["email"]
+        users.update_one({"_id": user["_id"]}, {"$set": user})
+        return user
