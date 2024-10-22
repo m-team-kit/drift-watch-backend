@@ -149,6 +149,7 @@ class Experiment(MethodView):
             401: If the user is not authenticated or registered.
             403: If the user does not have the required permissions.
             404: If the drift or experiment specified are not found.
+            409: If the a experiment with the same name already exists.
             422: If the JSON query is not in the correct format.
         """
         # Check if the user is registered and validate access level.
@@ -163,6 +164,8 @@ class Experiment(MethodView):
 
         # Replace the drift record in the database.
         experiments = current_app.config["db"]["app.experiments"]
+        if experiments.find_one({"name": json["name"]}):
+            abort(409, "Name conflict.")
         experiments.replace_one({"_id": experiment_id}, experiment)
 
         # Return the updated drift record.
