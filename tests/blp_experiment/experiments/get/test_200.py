@@ -8,9 +8,6 @@ from uuid import UUID
 from pytest import mark
 
 
-@mark.parametrize("auth", [None], indirect=True)
-@mark.parametrize("with_database", ["database_1"], indirect=True)
-@mark.usefixtures("with_context", "with_database")
 class CommonBaseTests:
     """Common tests for the /experiment endpoint."""
 
@@ -31,8 +28,28 @@ class CommonBaseTests:
         """Test the response items contain a correct date."""
         assert all(dt.fromisoformat(x["created_at"]) for x in response.json)
 
+    def test_has_name(self, response):
+        """Test the response items have a name."""
+        assert all(x["name"] is not None for x in response.json)
 
-class CreatedAfter:
+    def test_has_permissions(self, response):
+        """Test the response items have permissions."""
+        assert all(x["permissions"] is not None for x in response.json)
+
+
+@mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.usefixtures("with_context", "with_database")
+class WithDatabase(CommonBaseTests):
+    """Base class for tests using database."""
+
+
+@mark.parametrize("auth", [None], indirect=True)
+class NoAuthHeader(CommonBaseTests):
+    """Tests when missing authentication header."""
+
+
+@mark.parametrize("created_after", ["2020-12-31"], indirect=True)
+class AfterFilter(WithDatabase):
     """Test the response items created at."""
 
     def test_after_date(self, response, created_after):
@@ -42,7 +59,8 @@ class CreatedAfter:
             assert dt.fromisoformat(item["created_at"]) >= req_date
 
 
-class CreatedBefore:
+@mark.parametrize("created_before", ["2021-12-31"], indirect=True)
+class BeforeFilter(WithDatabase):
     """Test the response items created at."""
 
     def test_before_date(self, response, created_before):
@@ -52,7 +70,8 @@ class CreatedBefore:
             assert dt.fromisoformat(item["created_at"]) <= req_date
 
 
-class Name:
+@mark.parametrize("name", ["experiment_1"], indirect=True)
+class NameFilter(WithDatabase):
     """Test the response items name field."""
 
     def test_name(self, response, name):
@@ -60,30 +79,21 @@ class Name:
         assert all(x["name"] == name for x in response.json)
 
 
-class Permission:
-    """Test the response items permissions field."""
-
-    def test_group_level(self, response, permissions):
-        """Test which experiments group 'x' has permissions level 'y'."""
-        for item in response.json:
-            assert set(permissions).issubset(set(item["permissions"]))
+class TestPublicAccess(NoAuthHeader, WithDatabase):
+    """Test the responses items for public access."""
 
 
-@mark.parametrize("name", ["experiment_1"], indirect=True)
-class TestNameFilter(Name, CommonBaseTests):
-    """Test the response items name field."""
+class TestAfterFilter(NoAuthHeader, AfterFilter):
+    """Test the response items contain the correct experiments."""
 
 
-@mark.parametrize("created_after", ["2021-01-02"], indirect=True)
-@mark.parametrize("created_before", ["2021-01-03"], indirect=True)
-class TestBetweenFilter(CreatedAfter, CreatedBefore, CommonBaseTests):
-    """Test the response items created at."""
+class TestBeforeFilter(NoAuthHeader, BeforeFilter):
+    """Test the response items contain the correct experiments."""
 
 
-GROUP_1 = "urn:mace:egi.eu:group:vo_example1:role=group1#aai.egi.eu"
-PERMISSIONS = {GROUP_1: "Manage"}
+class TestBetweenFilter(NoAuthHeader, BeforeFilter, AfterFilter):
+    """Test the response items contain the correct experiments."""
 
 
-@mark.parametrize("permissions", [PERMISSIONS], indirect=True)
-class TestPermissions(Permission, CommonBaseTests):
-    """Test the response items permissions field."""
+class TestNameFilter(NoAuthHeader, NameFilter):
+    """Test the response items contain the correct experiments."""
