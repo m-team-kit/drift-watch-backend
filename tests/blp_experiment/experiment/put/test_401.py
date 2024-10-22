@@ -4,8 +4,6 @@
 from pytest import mark
 
 
-@mark.parametrize("name", ["experiment_a"], indirect=True)
-@mark.parametrize("permissions", [[]], indirect=True)
 class CommonBaseTests:
     """Common tests for the /experiment endpoint."""
 
@@ -15,7 +13,14 @@ class CommonBaseTests:
         assert response.json["code"] == 401
 
 
-class NoAuthHeader:
+@mark.parametrize("with_database", ["database_1"], indirect=True)
+@mark.usefixtures("with_context", "with_database")
+class WithDatabase(CommonBaseTests):
+    """Base class for registered user tests."""
+
+
+@mark.parametrize("auth", [None], indirect=True)
+class NoAuthHeader(CommonBaseTests):
     """Tests when missing authentication header."""
 
     def test_error_msg(self, response):
@@ -24,7 +29,8 @@ class NoAuthHeader:
         assert response.json["message"] == "No authorization header"
 
 
-class UnknownIdentity:
+@mark.parametrize("auth", ["invalid_token"], indirect=True)
+class UnknownIdentity(CommonBaseTests):
     """Test when identity provided is unknown."""
 
     def test_error_msg(self, response):
@@ -36,13 +42,14 @@ class UnknownIdentity:
 EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
 
 
-@mark.parametrize("auth", [None], indirect=True)
 @mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-class TestMissingToken(NoAuthHeader, CommonBaseTests):
+class IsPrivate(CommonBaseTests):
+    """Base class for group with public as false."""
+
+
+class TestMissingToken(NoAuthHeader, IsPrivate):
     """Test the /experiment endpoint with missing token."""
 
 
-@mark.parametrize("auth", ["invalid_token"], indirect=True)
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-class TestInvalidToken(UnknownIdentity, CommonBaseTests):
+class TestInvalidToken(UnknownIdentity, IsPrivate):
     """Test the /experiment endpoint with invalid token."""
