@@ -123,7 +123,7 @@ def accept_authorization(class_mocker, subiss, email, entitlements):
         "iss": subiss[1],
     }
     if entitlements is not None:
-        user_info["eduperson_entitlements"] = entitlements
+        user_info["eduperson_entitlement"] = entitlements
     class_mocker.patch.object(
         authentication.flaat,
         "get_user_infos_from_access_token",
