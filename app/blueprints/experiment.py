@@ -150,15 +150,17 @@ class Experiment(MethodView):
         experiment = utils.get_experiment(experiment_id)
         utils.check_access(experiment, user["_id"], user_infos, level="Manage")
 
+        # Check for conflicts in the database.
+        experiments = current_app.config["db"]["app.experiments"]
+        if "name" in json and json["name"] != experiment["name"]:
+            if experiments.find_one({"name": json["name"]}):
+                abort(409, "Name conflict.")
+
         # Modify the JSON object to include the user ID and permissions.
         experiment.update(json)
         json["permissions"][user["_id"]] = "Manage"
 
         # Replace the drift record in the database.
-        experiments = current_app.config["db"]["app.experiments"]
-        if "name" in json and json["name"] != experiment["name"]:
-            if experiments.find_one({"name": json["name"]}):
-                abort(409, "Name conflict.")
         experiments.replace_one({"_id": experiment_id}, experiment)
 
         # Return the updated drift record.
