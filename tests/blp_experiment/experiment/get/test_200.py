@@ -60,6 +60,11 @@ class Registered(ValidAuth, WithDatabase):
     """Tests for message response when user is  registered."""
 
 
+@mark.parametrize("subiss", [("unknown", "issuer.1")], indirect=True)
+class NotRegistered(ValidAuth):
+    """Tests for message response when user is not registered."""
+
+
 EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
 EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
 
@@ -77,21 +82,20 @@ class IsPublic(CommonBaseTests):
 ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
 ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
 ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
-READ_ENTITLEMENTS = [[ENT_MANAGE], [ENT_EDIT], [ENT_READ]]
 
 
-@mark.parametrize("entitlements", READ_ENTITLEMENTS, indirect=True)
-class ReadGroup(ValidAuth, IsPrivate):
+@mark.parametrize("entitlements", [[]], indirect=True)
+class AnyGroup(Registered):
     """Base class for group with manage entitlement tests."""
 
 
-class TestWithAccess(ReadGroup, IsPrivate, WithDatabase):
-    """Test the responses item when user has access."""
-
-
-class TestPublicRegistered(Registered, IsPublic, WithDatabase):
-    """Test the responses items when the experiment is public."""
-
-
-class TestMissingToken(NoAuthHeader, IsPublic, WithDatabase):
+class TestMissingToken(NoAuthHeader, IsPrivate, WithDatabase):
     """Test the response when no token and is public."""
+
+
+class TestNotRegistered(NotRegistered, IsPrivate, WithDatabase):
+    """Test the response when user is not registered."""
+
+
+class TestAnyAccess(AnyGroup, IsPrivate, WithDatabase):
+    """Test the responses item when user has access."""

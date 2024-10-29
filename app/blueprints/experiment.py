@@ -97,32 +97,24 @@ class Experiment(MethodView):
     """Experiment API."""
 
     @auth.access_level("everyone")
-    @auth.inject_user_infos(strict=False)
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(200, schemas.Experiment)
-    def get(self, experiment_id, user_infos=None):
+    def get(self, experiment_id):
         """Retrieve an experiment by its ID from the database.
         ---
         Internal comment not meant to be exposed.
 
         Args:
             experiment_id (str): The ID of the experiment to retrieve.
-            user_infos (dict): User information from the authentication token.
 
         Returns:
             dict: The experiment object.
 
         Raises:
-            403: If the user does not have the required permissions.
             404: If the experiment with the specified ID is not found.
         """
-        # Check if the user is registered and validate access level.
-        user = utils.get_user(user_infos) if user_infos else None
-        user_id = user.get("_id") if user else None
+        # Retrieve the experiment ID as a string.
         experiment_id = str(experiment_id)
-        experiment = utils.get_experiment(experiment_id)
-        utils.check_access(experiment, user_id, user_infos, level="Read")
-
         # Retrieve and return the experiment object from the database.
         return utils.get_experiment(experiment_id)
 
