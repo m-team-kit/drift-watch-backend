@@ -187,9 +187,6 @@ class Experiment(MethodView):
             experiment_id (str): The ID of the experiment to retrieve drifts from.
             user_infos (dict): User information from the authentication token.
 
-        Returns:
-            dict: The updated experiment record.
-
         Raises:
             401: If the user is not authenticated or registered.
             403: If the user does not have the required permissions.
@@ -204,9 +201,6 @@ class Experiment(MethodView):
         # Replace the drift record in the database.
         experiments = current_app.config["db"]["app.experiments"]
         experiments.delete_one({"_id": experiment_id})
-
-        # Return empty response.
-        return None
 
 
 @blp.route("/<uuid:experiment_id>/drift")
