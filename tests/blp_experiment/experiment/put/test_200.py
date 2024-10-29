@@ -89,6 +89,11 @@ class TestPublicExperiment(IsPublic, ManageGroup, WithDatabase):
     """Test the responses items."""
 
 
+@mark.parametrize("name", ["experiment_1"], indirect=True)
+class TestSelfConflict(IsPrivate, ManageGroup, WithDatabase):
+    """Test update does not trigger name conflict."""
+
+
 @mark.parametrize("name", ["new name 1"], indirect=True)
 class TestChangeName(IsPrivate, ManageGroup, WithDatabase):
     """Test changing the name of the experiment."""
@@ -115,7 +120,7 @@ class TestChangePublic(IsPrivate, ManageGroup, WithDatabase):
 
     def test_new_public(self, response):
         """Test the response items have the new public status."""
-        assert response.json["public"] == True
+        assert response.json["public"] is True
 
 
 @mark.parametrize("name", ["new name 4"], indirect=True)

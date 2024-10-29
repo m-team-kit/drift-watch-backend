@@ -164,8 +164,9 @@ class Experiment(MethodView):
 
         # Replace the drift record in the database.
         experiments = current_app.config["db"]["app.experiments"]
-        if experiments.find_one({"name": json["name"]}):
-            abort(409, "Name conflict.")
+        if "name" in json and json["name"] != experiment["name"]:
+            if experiments.find_one({"name": json["name"]}):
+                abort(409, "Name conflict.")
         experiments.replace_one({"_id": experiment_id}, experiment)
 
         # Return the updated drift record.
