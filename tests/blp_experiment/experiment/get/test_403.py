@@ -19,6 +19,16 @@ class WithDatabase(CommonBaseTests):
     """Base class for tests using database."""
 
 
+@mark.parametrize("auth", [None], indirect=True)
+class NoAuthHeader:
+    """Tests when missing authentication header."""
+
+    def test_error_msg(self, response):
+        """Test message contains useful information."""
+        assert response.json["status"] == "Forbidden"
+        assert response.json["message"] == "Resource is not public."
+
+
 @mark.parametrize("auth", ["mock-token"], indirect=True)
 @mark.usefixtures("accept_authorization")
 class ValidAuth(CommonBaseTests):
@@ -79,3 +89,7 @@ class TestNotRegistered(NotRegistered, IsPublic, WithDatabase):
 
 class TestNoAccessPrivate(NoAccess, IsPrivate, WithDatabase):
     """Tests for message response for no permission."""
+
+
+class TestMissingToken(NoAuthHeader, IsPrivate, WithDatabase):
+    """Test the response when no token and is public."""

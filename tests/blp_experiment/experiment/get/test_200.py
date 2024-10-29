@@ -44,6 +44,11 @@ class WithDatabase(CommonBaseTests):
         assert response.json == db_experiment
 
 
+@mark.parametrize("auth", [None], indirect=True)
+class NoAuthHeader:
+    """Tests when missing authentication header."""
+
+
 @mark.parametrize("auth", ["mock-token"], indirect=True)
 @mark.usefixtures("accept_authorization")
 class ValidAuth(CommonBaseTests):
@@ -84,5 +89,9 @@ class TestWithAccess(ReadGroup, IsPrivate, WithDatabase):
     """Test the responses item when user has access."""
 
 
-class TestPublic(Registered, IsPublic, WithDatabase):
+class TestPublicRegistered(Registered, IsPublic, WithDatabase):
     """Test the responses items when the experiment is public."""
+
+
+class TestMissingToken(NoAuthHeader, IsPublic, WithDatabase):
+    """Test the response when no token and is public."""
