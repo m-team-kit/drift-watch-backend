@@ -124,12 +124,12 @@ class TestChangePublic(IsPrivate, ManageGroup, WithDatabase):
 
 
 @mark.parametrize("name", ["new name 4"], indirect=True)
-@mark.parametrize("permissions", [{ENT_READ: "Edit"}], indirect=True)
+@mark.parametrize("permissions", [[{"Edit": ENT_READ}]], indirect=True)
 class TestChangePerm(IsPrivate, AllEntitlements, WithDatabase):
     """Test changing the permissions of the experiment."""
 
     def test_new_permissions(self, response, permissions, db_user):
         """Test the response items have the new permissions."""
         expected_permissions = permissions.copy()
-        expected_permissions[db_user["id"]] = "Manage"
+        expected_permissions.append({"Manage": db_user["id"]})
         assert response.json["permissions"] == expected_permissions

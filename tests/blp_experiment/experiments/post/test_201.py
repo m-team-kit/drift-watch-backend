@@ -28,7 +28,8 @@ class CommonBaseTests:
 
     def test_user_role(self, response, db_user):
         """Test the response item has the correct user role."""
-        assert response.json["permissions"][db_user["id"]] == "Manage"
+        perms = {m[k]: k for m in response.json["permissions"] for k in m}
+        assert perms[db_user["id"]] == "Manage"
 
     def test_name(self, response, name):
         """Test the response item has correct name."""
@@ -77,14 +78,14 @@ class WithPublic(WithDatabase):
         assert response.json["public"] is True
 
 
-@mark.parametrize("permissions", [{"group": "Read"}], indirect=True)
+@mark.parametrize("permissions", [[{"Read": "group"}]], indirect=True)
 class WithPermissions(WithDatabase):
     """Test the response items with extra permissions."""
 
     def test_extra_permissions(self, response, permissions, db_user):
         """Test the response items have extra permissions."""
         expected_permissions = permissions.copy()
-        expected_permissions[db_user["id"]] = "Manage"
+        expected_permissions.append({"Manage": db_user["id"]})
         assert response.json["permissions"] == expected_permissions
 
 

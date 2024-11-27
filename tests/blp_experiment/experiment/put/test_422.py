@@ -80,7 +80,7 @@ class NoListPerm(WithDatabase):
     def test_error_msg(self, response):
         """Test message contains useful information."""
         errors = response.json["errors"]["json"]
-        assert "Not a valid mapping type." in errors["permissions"]
+        assert "Not a valid list." in errors["permissions"]
 
 
 class TestBadBodyKey(UnknownField, IsPrivate, ManageGroup):
