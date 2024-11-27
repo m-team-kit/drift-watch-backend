@@ -62,7 +62,7 @@ class Experiments(MethodView):
         Internal comment not meant to be exposed.
 
         Args:
-            json (dict): The JSON payload containing the experiment information.
+            json (dict): JSON payload containing the experiment information.
             user_infos (dict): User information obtained from the
             authentication token.
 
@@ -80,8 +80,9 @@ class Experiments(MethodView):
         # Modify the JSON object to include the user ID and permissions.
         json["created_at"] = dt.now().isoformat()
         json["_id"] = str(uuid.uuid4())
-        json["permissions"][user["_id"]] = "Manage"
-
+        # Note MongoDB does not allow dots in keys.
+        if utils.get_permission(json, user["_id"], user_infos) != "Manage":
+            json["permissions"].append({"Manage": user["_id"]})
         # Insert it into the database.
         experiments = current_app.config["db"]["app.experiments"]
         if experiments.find_one({"name": json["name"]}):
@@ -158,7 +159,9 @@ class Experiment(MethodView):
 
         # Modify the JSON object to include the user ID and permissions.
         experiment.update(json)
-        json["permissions"][user["_id"]] = "Manage"
+        # Note MongoDB does not allow dots in keys.
+        if utils.get_permission(json, user["_id"], user_infos) != "Manage":
+            json["permissions"].append({"Manage": user["_id"]})
 
         # Replace the drift record in the database.
         experiments.replace_one({"_id": experiment_id}, experiment)
