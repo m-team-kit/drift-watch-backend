@@ -14,7 +14,7 @@ class BaseSchema(ma.Schema):
     created_at = ma.fields.String(dump_only=True)
 
 
-class Permissions(ma.fields.Dict):
+class Permission(ma.fields.Dict):
     """
     Permissions is a dictionary of group_id and role.
     """
@@ -23,8 +23,9 @@ class Permissions(ma.fields.Dict):
 
     def __init__(self, **kwds):
         super().__init__(
-            keys=ma.fields.String(required=True),
-            values=ma.fields.String(validate=self.options),
+            keys=ma.fields.String(required=True, validate=self.options),
+            values=ma.fields.String(required=True),
+            validate=validate.Length(max=1),  # Do not group
             load_default={},
             **kwds,
         )
@@ -49,7 +50,7 @@ class Experiment(BaseSchema):
     name = ma.fields.String(required=True)
     description = ma.fields.String()
     public = ma.fields.Boolean(load_default=False)
-    permissions = Permissions()
+    permissions = ma.fields.List(Permission(), load_default=[])
 
 
 class User(BaseSchema):
