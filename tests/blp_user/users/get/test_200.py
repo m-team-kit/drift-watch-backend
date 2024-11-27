@@ -40,6 +40,10 @@ class CommonBaseTests:
         """Test the response items contain a correct email."""
         assert all(isinstance(x["email"], str) for x in response.json)
 
+    def test_pagination_header(self, response):
+        """Test the response contains the pagination header."""
+        assert "X-Pagination" in response.headers
+
 
 @mark.parametrize("with_database", ["database_1"], indirect=True)
 @mark.usefixtures("with_context", "with_database")
