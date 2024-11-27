@@ -54,3 +54,16 @@ def check_access(resource, user_id, user_infos, level="Read"):
         case "Read" if level == "Read":
             return True
     return abort(403, "Insufficient permissions.")
+
+
+def pagination_header(page, page_size, total):
+    """Generate the pagination header."""
+    return {
+        "total": total,
+        "total_pages": (total + page_size - 1) // page_size,
+        "first_page": 1 if total > 0 else 0,
+        "last_page": (total + page_size - 1) // page_size,
+        "page": page,
+        "previous_page": page - 1 if page > 1 else 0,
+        "next_page": page + 1 if page * page_size < total else None,
+    }

@@ -47,6 +47,10 @@ class Users(MethodView):
         # Return the paginated list of users.
         page = pagination_parameters.page
         page_size = pagination_parameters.page_size
+        item_count = users.count_documents(json)
+
+        # Return the paginated list of users.
+        pagination_parameters.item_count = item_count
         return search.skip((page - 1) * page_size).limit(page_size)
 
     @auth.access_level("user")

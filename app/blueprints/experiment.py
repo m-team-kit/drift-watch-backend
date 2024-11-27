@@ -50,6 +50,10 @@ class Experiments(MethodView):
         # Return the paginated list of experiments.
         page = pagination_parameters.page
         page_size = pagination_parameters.page_size
+        item_count = experiments.count_documents(json)
+
+        # Return the paginated list of experiments.
+        pagination_parameters.item_count = item_count
         return search.skip((page - 1) * page_size).limit(page_size)
 
     @auth.access_level("user")
@@ -244,6 +248,10 @@ class Drifts(MethodView):
         # Return the paginated list of drifts.
         page = pagination_parameters.page
         page_size = pagination_parameters.page_size
+        item_count = drifts.count_documents(json)
+
+        # Return the paginated list of drifts.
+        pagination_parameters.item_count = item_count
         return search.skip((page - 1) * page_size).limit(page_size)
 
     @auth.access_level("user")
