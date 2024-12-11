@@ -1,4 +1,4 @@
-"""Testing module for endpoint methods /drift."""
+"""Testing module for endpoint methods /user."""
 
 # pylint: disable=redefined-outer-name
 from pytest import fixture

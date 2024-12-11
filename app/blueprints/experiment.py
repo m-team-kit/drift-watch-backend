@@ -18,15 +18,15 @@ blp = Blueprint("drift", __name__, description=__doc__)
 auth = Authentication(blueprint=blp)
 
 
-@blp.route("")
-class Experiments(MethodView):
-    """Experiments API."""
+@blp.route("search")
+class ExperimentsSearch(MethodView):
+    """Experiments API Custom method Search."""
 
     @auth.access_level("everyone")
     @blp.arguments(ma.Schema(), location="json", unknown="include")
     @blp.response(200, schemas.Experiment(many=True))
     @blp.paginate()
-    def get(self, json, pagination_parameters):
+    def post(self, json, pagination_parameters):
         """
         Get a paginated list of experiments based on the provided JSON query
         and MongoDB format.
@@ -55,6 +55,11 @@ class Experiments(MethodView):
         # Return the paginated list of experiments.
         pagination_parameters.item_count = item_count
         return search.skip((page - 1) * page_size).limit(page_size)
+
+
+@blp.route("")
+class Experiments(MethodView):
+    """Experiments API."""
 
     @auth.access_level("user")
     @auth.inject_user_infos()
@@ -204,16 +209,16 @@ class Experiment(MethodView):
         experiments.delete_one({"_id": experiment_id})
 
 
-@blp.route("/<uuid:experiment_id>/drift")
-class Drifts(MethodView):
-    """Drifts API."""
+@blp.route("/<uuid:experiment_id>/drift/search")
+class DriftSearch(MethodView):
+    """Drift API Custom method Search."""
 
     @auth.access_level("everyone")
     @auth.inject_user_infos(strict=False)
     @blp.arguments(ma.Schema(), location="json", unknown="include")
     @blp.response(200, schemas.DriftV100(many=True))
     @blp.paginate()
-    def get(self, json, experiment_id, pagination_parameters, user_infos=None):
+    def post(self, json, experiment_id, pagination_parameters, user_infos=None):
         """
         Get a paginated list of drift Jobs based on the provided JSON query
         and MongoDB format.
@@ -253,6 +258,11 @@ class Drifts(MethodView):
         # Return the paginated list of drifts.
         pagination_parameters.item_count = item_count
         return search.skip((page - 1) * page_size).limit(page_size)
+
+
+@blp.route("/<uuid:experiment_id>/drift")
+class Drifts(MethodView):
+    """Drifts API."""
 
     @auth.access_level("user")
     @auth.inject_user_infos()

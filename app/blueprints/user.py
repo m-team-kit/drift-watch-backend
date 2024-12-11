@@ -17,15 +17,15 @@ blp = Blueprint("user", __name__, description=__doc__)
 auth = Authentication(blueprint=blp)
 
 
-@blp.route("")
-class Users(MethodView):
-    """Users API."""
+@blp.route("search")
+class UsersSearch(MethodView):
+    """Users API Custom method Search."""
 
     @auth.access_level("admin")
     @blp.arguments(schemas.ma.Schema(), location="json", unknown="include")
     @blp.response(200, schemas.User(many=True))
     @blp.paginate()
-    def get(self, json, pagination_parameters):
+    def post(self, json, pagination_parameters):
         """Retrieve a paginated list of users based on the provided JSON query
         and MongoDB format.
         ---
@@ -52,6 +52,11 @@ class Users(MethodView):
         # Return the paginated list of users.
         pagination_parameters.item_count = item_count
         return search.skip((page - 1) * page_size).limit(page_size)
+
+
+@blp.route("")
+class Users(MethodView):
+    """Users API."""
 
     @auth.access_level("user")
     @auth.inject_user_infos()

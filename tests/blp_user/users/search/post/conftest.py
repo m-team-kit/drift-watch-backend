@@ -1,4 +1,4 @@
-"""Testing module for endpoint methods /experiment."""
+"""Testing module for endpoint methods /user."""
 
 # pylint: disable=redefined-outer-name
 from pytest import fixture
@@ -7,22 +7,23 @@ from pytest import fixture
 @fixture(scope="class", name="response")
 def request(client, path, request_kwds):
     """Create a request object."""
-    # request_kwds contains the query, body, headers, auth, etc.
-    yield client.get(path, **request_kwds)
+    yield client.post(path, **request_kwds)
 
 
 @fixture(scope="class")
-def body(request, created_at, name, permissions):
+def body(request, created_at, user_info):
     """Inject and return a request body."""
     kwds = request.param if hasattr(request, "param") else {}
     if not isinstance(kwds, dict):
         return kwds  # Return the body as is
     for key, value in [
         ("created_at", created_at),
-        ("name", name),
+        ("subject", user_info.get("subject", None)),
+        ("issuer", user_info.get("issuer", None)),
+        ("email", user_info.get("email", None)),
     ]:
         kwds.update({key: value} if value else {})
-    kwds.update({f"permissions.{k}": r for k, r in permissions.items()})
+    kwds.update(request.param if hasattr(request, "param") else {})
     return kwds if kwds else None
 
 
@@ -48,12 +49,28 @@ def created_at(request, created_after, created_before):
 
 
 @fixture(scope="class")
-def name(request):
-    """Inject and return a name filter."""
+def subject(request):
+    """Inject and return a subject filter."""
     return request.param if hasattr(request, "param") else None
 
 
 @fixture(scope="class")
-def permissions(request):
-    """Inject and return a permissions filter."""
-    return request.param if hasattr(request, "param") else {}
+def issuer(request):
+    """Inject and return a subject filter."""
+    return request.param if hasattr(request, "param") else None
+
+
+@fixture(scope="class")
+def email(request):
+    """Inject and return a subject filter."""
+    return request.param if hasattr(request, "param") else None
+
+
+@fixture(scope="class")
+def user_info(request, subject, issuer, email):
+    """Inject and returns user_info."""
+    info = request.param if hasattr(request, "param") else {}
+    info.update({"subject": subject} if subject else {})
+    info.update({"issuer": issuer} if issuer else {})
+    info.update({"email": email} if email else {})
+    return info

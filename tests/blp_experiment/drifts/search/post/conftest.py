@@ -7,7 +7,7 @@ from pytest import fixture
 @fixture(scope="class", name="response")
 def request(client, path, request_kwds):
     """Create a request object."""
-    yield client.get(path, **request_kwds)
+    yield client.post(path, **request_kwds)
 
 
 @fixture(scope="class")
