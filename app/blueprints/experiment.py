@@ -14,7 +14,7 @@ from app.config import Blueprint
 from app.tools.authentication import Authentication
 from app.tools.database import NOT_FOUND
 
-blp = Blueprint("drift", __name__, description=__doc__)
+blp = Blueprint("Experiments", __name__, description=__doc__)
 auth = Authentication(blueprint=blp)
 
 

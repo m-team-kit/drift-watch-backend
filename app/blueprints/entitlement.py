@@ -2,7 +2,6 @@
 ## API Methods to list, entitlements.
 """
 
-import marshmallow as ma
 from flask import current_app
 from flask.views import MethodView
 
@@ -10,7 +9,7 @@ from app import schemas, utils
 from app.config import Blueprint
 from app.tools.authentication import Authentication
 
-blp = Blueprint("entitlement", __name__, description=__doc__)
+blp = Blueprint("Entitlements", __name__, description=__doc__)
 auth = Authentication(blueprint=blp)
 
 

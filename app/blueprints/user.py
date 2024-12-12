@@ -13,7 +13,7 @@ from app.config import Blueprint
 from app.tools.authentication import Authentication
 from app.tools.database import CONFLICT
 
-blp = Blueprint("user", __name__, description=__doc__)
+blp = Blueprint("Users", __name__, description=__doc__)
 auth = Authentication(blueprint=blp)
 
 
