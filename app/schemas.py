@@ -13,23 +13,6 @@ class _BaseRespSchema(ma.Schema):
     created_at = ma.fields.String(required=True, dump_only=True)
 
 
-class Permission(ma.fields.Dict):
-    """
-    Permissions is a dictionary of group_id and role.
-    """
-
-    options = validate.OneOf(["Read", "Edit", "Manage"])
-
-    def __init__(self, **kwds):
-        super().__init__(
-            keys=ma.fields.String(required=True, validate=self.options),
-            values=ma.fields.String(required=True),
-            validate=validate.Length(max=1),  # Do not group
-            load_default={},
-            **kwds,
-        )
-
-
 class Entitlements(ma.Schema):
     """
     Entitlement is a string of the form "vo#role".
@@ -38,11 +21,26 @@ class Entitlements(ma.Schema):
     items = ma.fields.List(ma.fields.String(), required=True)
 
 
+class Permission(ma.Schema):
+    """
+    Permissions defines the entity and the access level.
+    """
+
+    class Meta:  # pylint: disable=R0903, C0115
+        unknown = ma.RAISE
+
+    entity = ma.fields.String(required=True)
+    level = ma.fields.String(required=True)
+
+
 class _BaseExperiment(ma.Schema):
     name = ma.fields.String(required=True)
     description = ma.fields.String()
     public = ma.fields.Boolean(load_default=False)
-    permissions = ma.fields.List(Permission(), load_default=[])
+    permissions = ma.fields.List(
+        ma.fields.Nested(Permission),
+        load_default=[],
+    )
 
 
 class Experiment(_BaseExperiment, _BaseRespSchema):

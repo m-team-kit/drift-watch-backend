@@ -8,46 +8,46 @@
                 "description": "Experiment 1 description",
                 "public": false,
                 "permissions": [
-                    { "Manage": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
-                    { "Edit": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
-                    { "Read": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
-                    { "Manage": "00000000-0000-0003-0001-000000000001" },
-                    { "Edit": "00000000-0000-0003-0001-000000000002" },
-                    { "Read": "00000000-0000-0003-0001-000000000003" }
+                    { "level": "Manage", "entity": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
+                    { "level": "Edit", "entity": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
+                    { "level": "Read", "entity": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
+                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000001" },
+                    { "level": "Edit", "entity": "00000000-0000-0003-0001-000000000002" },
+                    { "level": "Read", "entity": "00000000-0000-0003-0001-000000000003" }
                 ]
             },
             { "_id": "00000000-0000-0001-0001-000000000002", "created_at": "2021-01-01T00:00:00Z",
                 "name": "experiment_2",
                 "public": true,
                 "permissions": [
-                    { "Manage": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
-                    { "Edit": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
-                    { "Read": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
-                    { "Manage": "00000000-0000-0003-0001-000000000001" },
-                    { "Edit": "00000000-0000-0003-0001-000000000002" },
-                    { "Read": "00000000-0000-0003-0001-000000000003" }
+                    { "level": "Manage", "entity": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
+                    { "level": "Edit", "entity": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
+                    { "level": "Read", "entity": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
+                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000001" },
+                    { "level": "Edit", "entity": "00000000-0000-0003-0001-000000000002" },
+                    { "level": "Read", "entity": "00000000-0000-0003-0001-000000000003" }
                 ]
             },
             { "_id": "00000000-0000-0001-0001-000000000003", "created_at": "2021-01-02T00:00:00Z",
                 "name": "experiment_3",
                 "permissions": [
-                    { "Manage": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
-                    { "Edit": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
-                    { "Read": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
-                    { "Manage": "00000000-0000-0003-0001-000000000001" },
-                    { "Edit": "00000000-0000-0003-0001-000000000002" },
-                    { "Read": "00000000-0000-0003-0001-000000000003" }
+                    { "level": "Manage", "entity": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
+                    { "level": "Edit", "entity": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
+                    { "level": "Read", "entity": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
+                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000001" },
+                    { "level": "Edit", "entity": "00000000-0000-0003-0001-000000000002" },
+                    { "level": "Read", "entity": "00000000-0000-0003-0001-000000000003" }
                 ]
             },
             { "_id": "00000000-0000-0001-0001-000000000004", "created_at": "2022-01-01T00:00:00Z",
                 "name": "experiment_4",
                 "permissions": [
-                    { "Manage": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
-                    { "Edit": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
-                    { "Read": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
-                    { "Manage": "00000000-0000-0003-0001-000000000001" },
-                    { "Edit": "00000000-0000-0003-0001-000000000002" },
-                    { "Read": "00000000-0000-0003-0001-000000000003" }
+                    { "level": "Manage", "entity": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
+                    { "level": "Edit", "entity": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
+                    { "level": "Read", "entity": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
+                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000001" },
+                    { "level": "Edit", "entity": "00000000-0000-0003-0001-000000000002" },
+                    { "level": "Read", "entity": "00000000-0000-0003-0001-000000000003" }
                 ]
             }
         ]

@@ -91,7 +91,8 @@ class Experiments(MethodView):
         json["_id"] = str(uuid.uuid4())
         # Note MongoDB does not allow dots in keys.
         if utils.get_permission(json, user["_id"], user_infos) != "Manage":
-            json["permissions"].append({"Manage": user["_id"]})
+            owner_permission = {"level": "Manage", "entity": user["_id"]}
+            json["permissions"].append(owner_permission)
         # Insert it into the database.
         experiments = current_app.config["db"]["app.experiments"]
         if experiments.find_one({"name": json["name"]}):
@@ -170,7 +171,8 @@ class Experiment(MethodView):
         experiment.update(json)
         # Note MongoDB does not allow dots in keys.
         if utils.get_permission(json, user["_id"], user_infos) != "Manage":
-            json["permissions"].append({"Manage": user["_id"]})
+            owner_permission = {"level": "Manage", "entity": user["_id"]}
+            json["permissions"].append(owner_permission)
 
         # Replace the drift record in the database.
         experiments.replace_one({"_id": experiment_id}, experiment)

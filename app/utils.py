@@ -29,8 +29,8 @@ def get_permission(resource, user_id, user_infos):
     """Check if the user has the required permission on a resource."""
     entitlements_key = current_app.config["ENTITLEMENTS_FIELD"]
     titles = user_infos.get(entitlements_key, []) + [user_id]
-    perms = {m[k]: k for m in resource["permissions"] for k in m}
-    perms = set(r for k, r in perms.items() if k in titles)
+    permissions = resource.get("permissions", [])
+    perms = set(p["level"] for p in permissions if p["entity"] in titles)
     if "Manage" in perms:  # Top level permission
         return "Manage"
     if "Edit" in perms:  # Second level permission
