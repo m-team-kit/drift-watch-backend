@@ -63,7 +63,7 @@ class Experiments(MethodView):
 
     @auth.access_level("user")
     @auth.inject_user_infos()
-    @blp.arguments(schemas.Experiment, location="json", unknown="raise")
+    @blp.arguments(schemas.CreateExperiment, location="json", unknown="raise")
     @blp.response(201, schemas.Experiment)
     def post(self, json, user_infos):
         """Create a new experiment record in the database.
@@ -130,7 +130,7 @@ class Experiment(MethodView):
 
     @auth.access_level("user")
     @auth.inject_user_infos()
-    @blp.arguments(schemas.Experiment, location="json", unknown="raise")
+    @blp.arguments(schemas.CreateExperiment, location="json", unknown="raise")
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(200, schemas.Experiment)
     def put(self, json, experiment_id, user_infos):
@@ -216,7 +216,7 @@ class DriftSearch(MethodView):
     @auth.access_level("everyone")
     @auth.inject_user_infos(strict=False)
     @blp.arguments(ma.Schema(), location="json", unknown="include")
-    @blp.response(200, schemas.DriftV100(many=True))
+    @blp.response(200, schemas.Drift(many=True))
     @blp.paginate()
     def post(self, json, experiment_id, pagination_parameters, user_infos=None):
         """
@@ -266,8 +266,8 @@ class Drifts(MethodView):
 
     @auth.access_level("user")
     @auth.inject_user_infos()
-    @blp.arguments(schemas.DriftV100, location="json", unknown="raise")
-    @blp.response(201, schemas.DriftV100)
+    @blp.arguments(schemas.CreateDrift, location="json", unknown="raise")
+    @blp.response(201, schemas.Drift)
     def post(self, json, experiment_id, user_infos):
         """Create a new drift Job record in the database.
         ---
@@ -310,7 +310,7 @@ class Drift(MethodView):
     @auth.access_level("everyone")
     @auth.inject_user_infos(strict=False)
     @blp.doc(responses={"404": NOT_FOUND})
-    @blp.response(200, schemas.DriftV100)
+    @blp.response(200, schemas.Drift)
     def get(self, experiment_id, drift_id, user_infos=None):
         """Retrieve a drift job by its id from the database.
         ---
@@ -341,9 +341,9 @@ class Drift(MethodView):
 
     @auth.access_level("user")
     @auth.inject_user_infos()
-    @blp.arguments(schemas.DriftV100, location="json", unknown="raise")
+    @blp.arguments(schemas.CreateDrift, location="json", unknown="raise")
     @blp.doc(responses={"404": NOT_FOUND})
-    @blp.response(200, schemas.DriftV100)
+    @blp.response(200, schemas.Drift)
     def put(self, json, experiment_id, drift_id, user_infos):
         """
         Update a drift job record with the given JSON data.
