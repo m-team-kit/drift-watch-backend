@@ -11,13 +11,12 @@ def request(client, path, request_kwds):
 
 
 @fixture(scope="class")
-def body(request, schema_version, created_at, model_info, drifts):
+def body(request, created_at, model_info, drifts):
     """Inject and return a request body."""
     kwds = request.param if hasattr(request, "param") else {}
     if not isinstance(kwds, dict):
         return kwds  # Return the body as is
     for key, value in [
-        ("schema_version", schema_version),
         ("created_at", created_at),
         ("job_status", model_info["job_status"]),
         ("model", model_info["model"]),
@@ -27,12 +26,6 @@ def body(request, schema_version, created_at, model_info, drifts):
         kwds.update({key: value} if value else {})
     kwds.update(request.param if hasattr(request, "param") else {})
     return kwds if kwds else None
-
-
-@fixture(scope="class")
-def schema_version(request):
-    """Inject and return a collection name."""
-    return request.param if hasattr(request, "param") else None
 
 
 @fixture(scope="class")

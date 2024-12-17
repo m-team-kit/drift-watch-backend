@@ -106,8 +106,6 @@ no_drift = {"drift": False, "parameters": {}}
 
 
 class _BaseDriftJob(ma.Schema):
-
-    schema_version = ma.fields.String(load_default="1.0.0")
     job_status = ma.fields.String(required=True, validate=status)
     model = ma.fields.String(required=True)
     concept_drift = ma.fields.Nested(BaseDrift, load_default=no_drift)
@@ -119,6 +117,8 @@ class Drift(_BaseDriftJob, _BaseRespSchema):
     Response Job Schema. A drift is the basic unit of the API.
     It contains the drift information for a specific model and job.
     """
+
+    schema_version = ma.fields.String(required=True, dump_only=True)
 
 
 class CreateDrift(_BaseDriftJob, _BaseReqSchema):

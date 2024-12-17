@@ -139,7 +139,6 @@ class TestStatusFilter(NoAuthHeader, IsPublic, StatusFilter):
     """Test the response items contain the correct drifts."""
 
 
-@mark.parametrize("schema_version", ["1.0.0"], indirect=True)
 class V100Drift(WithDatabase):
     """Tests for using V100 drift schema."""
 

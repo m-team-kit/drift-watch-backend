@@ -131,7 +131,7 @@ class Experiment(MethodView):
 
     @auth.access_level("user")
     @auth.inject_user_infos()
-    @blp.arguments(schemas.CreateExperiment, location="json", unknown="raise")
+    @blp.arguments(schemas.Experiment, location="json", unknown="raise")
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(200, schemas.Experiment)
     def put(self, json, experiment_id, user_infos):
@@ -295,6 +295,9 @@ class Drifts(MethodView):
         experiment = utils.get_experiment(experiment_id)
         utils.check_access(experiment, user["_id"], user_infos, level="Edit")
 
+        # Append the schema version to the drift object.
+        json["schema_version"] = "1.0.0"
+
         # Insert the drift record into the database.
         drifts = current_app.config["db"][f"app.{experiment_id}"]
         json["created_at"] = dt.now().isoformat()
@@ -343,7 +346,7 @@ class Drift(MethodView):
 
     @auth.access_level("user")
     @auth.inject_user_infos()
-    @blp.arguments(schemas.CreateDrift, location="json", unknown="raise")
+    @blp.arguments(schemas.Drift, location="json", unknown="raise")
     @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(200, schemas.Drift)
     def put(self, json, experiment_id, drift_id, user_infos):

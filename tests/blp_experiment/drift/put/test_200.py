@@ -73,7 +73,6 @@ class EditGroup(Registered):
     """Base class for group with manage entitlement tests."""
 
 
-@mark.parametrize("schema_version", ["1.0.0"], indirect=True)
 class V100Edit(CommonBaseTests):
     """Test the response items."""
 
