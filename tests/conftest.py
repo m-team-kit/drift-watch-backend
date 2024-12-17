@@ -46,11 +46,13 @@ def with_database(database):
 
 @fixture(scope="module")
 def client(app):
+    """Create a test client for the app."""
     return app.test_client()
 
 
 @fixture(scope="module")
 def with_context(app):
+    """Return a context for the app."""
     with app.app_context() as context:
         yield context
 
