@@ -93,23 +93,17 @@ class BaseDrift(ma.Schema):
     drift = ma.fields.Bool(required=True)
     parameters = ma.fields.Dict()
 
-    @ma.validates_schema
-    def if_drift_then_parameters(self, data, **_kwds):
-        """If drift is True, then parameters must be included."""
-        if data["drift"]:
-            if "parameters" not in data or not data["parameters"]:
-                raise ma.ValidationError("Include parameters if drift.")
 
-
-status = validate.OneOf(["Running", "Completed", "Failed"])
-no_drift = {"drift": False, "parameters": {}}
+tag = ma.fields.String(validate=validate.Length(min=1, max=20))
+status_options = validate.OneOf(["Running", "Completed", "Failed"])
 
 
 class _BaseDriftJob(ma.Schema):
-    job_status = ma.fields.String(required=True, validate=status)
+    job_status = ma.fields.String(required=True, validate=status_options)
+    tags = ma.fields.List(tag, load_default=[])
     model = ma.fields.String(required=True)
-    concept_drift = ma.fields.Nested(BaseDrift, load_default=no_drift)
-    data_drift = ma.fields.Nested(BaseDrift, load_default=no_drift)
+    drift_detected = ma.fields.Bool(required=True)
+    parameters = ma.fields.Dict(load_default={})
 
 
 class Drift(_BaseDriftJob, _BaseRespSchema):
