@@ -148,15 +148,17 @@ class V100Drift(WithDatabase):
 
     def test_minimal_keys(self, response):
         """Test the response items contain the minimal keys."""
+        assert all("tags" in x for x in response.json)
         assert all("model" in x for x in response.json)
-        assert all("concept_drift" in x for x in response.json)
-        assert all("data_drift" in x for x in response.json)
+        assert all("drift_detected" in x for x in response.json)
+        assert all("parameters" in x for x in response.json)
 
     def test_values_types(self, response):
         """Test the response items contain the correct types."""
+        assert all(isinstance(x["tags"], list) for x in response.json)
         assert all(isinstance(x["model"], str) for x in response.json)
-        assert all(isinstance(x["concept_drift"], dict) for x in response.json)
-        assert all(isinstance(x["data_drift"], dict) for x in response.json)
+        assert all(isinstance(x["drift_detected"], bool) for x in response.json)
+        assert all(isinstance(x["parameters"], dict) for x in response.json)
 
 
 @mark.parametrize("model", ["model_1"], indirect=True)
@@ -168,22 +170,22 @@ class ModelFilter(V100Drift):
         assert all(x["model"] == model for x in response.json)
 
 
-@mark.parametrize("concept_drift", [{"$exists": True}], indirect=True)
+@mark.parametrize("tags", [{"$in": ["concept_drift"]}], indirect=True)
 class ConceptFilter(V100Drift):
     """Test the response items concept drift."""
 
     def test_concept_drift(self, response):
         """Test the response items concept drift."""
-        assert all("concept_drift" in item for item in response.json)
+        assert all("concept_drift" in item["tags"] for item in response.json)
 
 
-@mark.parametrize("data_drift", [{"$exists": True}], indirect=True)
+@mark.parametrize("tags", [{"$in": ["data_drift"]}], indirect=True)
 class DataFilter(V100Drift):
     """Test the response items data drift."""
 
     def test_data_drift(self, response):
         """Test the response items data drift."""
-        assert all("data_drift" in item for item in response.json)
+        assert all("data_drift" in item["tags"] for item in response.json)
 
 
 class TestV100ModelFilter(NoAuthHeader, IsPublic, StatusFilter):

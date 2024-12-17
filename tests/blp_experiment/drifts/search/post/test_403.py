@@ -73,14 +73,11 @@ class NoRead(PermissionDenied):
     """Base class for group without entitlement tests."""
 
 
-DRIFT_1 = {"drift": True, "parameters": {"p_value": 0.1}}
-
-
-@mark.parametrize("concept_drift", [DRIFT_1], indirect=True)
+@mark.parametrize("parameters", [{"p_value": 0.1}], indirect=True)
 class TestNotRegistered(NotRegistered, IsPublic, WithDatabase):
     """Test the authentication response when user not registered."""
 
 
-@mark.parametrize("concept_drift", [DRIFT_1], indirect=True)
+@mark.parametrize("parameters", [{"p_value": 0.1}], indirect=True)
 class TestNoAccessPrivate(NoRead, IsPrivate, WithDatabase):
     """Tests for message response for no permission."""
