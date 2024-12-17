@@ -4,15 +4,13 @@
 import json
 import uuid
 
-import marshmallow as ma
+import mongomock
 from flaat.user_infos import UserInfos
 from pytest import fixture
 from werkzeug.datastructures import Authorization
 
-from app import create_app, schemas
+from app import create_app
 from app.tools import authentication
-import mongomock
-
 
 MOCK_DATABASE_FILE = "tests/fixtures/database.json"
 
