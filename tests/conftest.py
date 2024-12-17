@@ -14,6 +14,9 @@ from app.tools import authentication
 import mongomock
 
 
+MOCK_DATABASE_FILE = "tests/fixtures/database.json"
+
+
 @fixture(scope="session")
 def app():
     """Create and configure a new app instance for each test."""
@@ -34,22 +37,11 @@ def database(app):
 
 
 @fixture(scope="module")
-def with_database(request, database):
+def with_database(database):
     """Loads the database with data from data file."""
-    if hasattr(request, "param") and request.param:
-        file_path = f"tests/fixtures/mongodb/{request.param}.json"
-        with open(file_path, "r", encoding="utf-8") as file:
-            for section in json.load(file):
-                load_section(section, database)
-
-
-def load_section(section, database):
-    """Load a section of the database."""
-    serializer = schemas.__dict__[section["schema"]]
-    serializer = serializer(many=True, unknown=ma.INCLUDE)
-    items = serializer.load(section["items"])
-    if items:
-        database[section["collection"]].insert_many(items)
+    with open(MOCK_DATABASE_FILE, "r", encoding="utf-8") as file:
+        for section in json.load(file):
+            database[section["collection"]].insert_many(section["items"])
 
 
 @fixture(scope="module")

@@ -1,0 +1,371 @@
+[
+    {
+        "collection": "app.experiments",
+        "items": [
+            {
+                "_id": "00000000-0000-0001-0001-000000000001",
+                "created_at": "2020-01-01T00:00:00Z",
+                "name": "experiment_1",
+                "description": "Experiment 1 description",
+                "public": false,
+                "permissions": [
+                    { "level": "Manage", "entity": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
+                    { "level": "Edit", "entity": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
+                    { "level": "Read", "entity": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
+                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000001" },
+                    { "level": "Edit", "entity": "00000000-0000-0003-0001-000000000002" },
+                    { "level": "Read", "entity": "00000000-0000-0003-0001-000000000003" }
+                ]
+            },
+            {
+                "_id": "00000000-0000-0001-0001-000000000002",
+                "created_at": "2021-01-01T00:00:00Z",
+                "name": "experiment_2",
+                "description": "Experiment 2 description",
+                "public": true,
+                "permissions": [
+                    { "level": "Manage", "entity": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
+                    { "level": "Edit", "entity": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
+                    { "level": "Read", "entity": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
+                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000001" },
+                    { "level": "Edit", "entity": "00000000-0000-0003-0001-000000000002" },
+                    { "level": "Read", "entity": "00000000-0000-0003-0001-000000000003" }
+                ]
+            },
+            {
+                "_id": "00000000-0000-0001-0001-000000000003",
+                "created_at": "2021-01-02T00:00:00Z",
+                "name": "experiment_3",
+                "description": "Experiment 3 description",
+                "public": false,
+                "permissions": [
+                    { "level": "Manage", "entity": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
+                    { "level": "Edit", "entity": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
+                    { "level": "Read", "entity": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
+                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000001" },
+                    { "level": "Edit", "entity": "00000000-0000-0003-0001-000000000002" },
+                    { "level": "Read", "entity": "00000000-0000-0003-0001-000000000003" }
+                ]
+            },
+            {
+                "_id": "00000000-0000-0001-0001-000000000004",
+                "created_at": "2022-01-01T00:00:00Z",
+                "name": "experiment_4",
+                "description": "Experiment 4 description",
+                "public": false,
+                "permissions": [
+                    { "level": "Manage", "entity": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
+                    { "level": "Edit", "entity": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
+                    { "level": "Read", "entity": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
+                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000001" },
+                    { "level": "Edit", "entity": "00000000-0000-0003-0001-000000000002" },
+                    { "level": "Read", "entity": "00000000-0000-0003-0001-000000000003" }
+                ]
+            }
+        ]
+    },
+    {
+        "collection": "app.users",
+        "items": [
+            {
+                "_id": "00000000-0000-0003-0001-000000000001",
+                "created_at": "2020-01-01T00:00:00Z",
+                "subject": "user_1", "issuer": "issuer.1",
+                "email": "user_1@issuer.1.com" },
+            {
+                "_id": "00000000-0000-0003-0001-000000000002",
+                "created_at": "2021-01-01T00:00:00Z",
+                "subject": "user_2", "issuer": "issuer.1",
+                "email": "user_2@issuer.1.com"
+            },
+            {
+                "_id": "00000000-0000-0003-0001-000000000003",
+                "created_at": "2021-01-02T00:00:00Z",
+                "subject": "user_3", "issuer": "issuer.1",
+                "email": "user_3@issuer.1.com"
+            },
+            {
+                "_id": "00000000-0000-0003-0001-000000000004",
+                "created_at": "2021-01-03T00:00:00Z",
+                "subject": "user_4", "issuer": "issuer.1",
+                "email": "user_4@issuer.1.com"
+            },
+            {
+                "_id": "00000000-0000-0003-0002-000000000001",
+                "created_at": "2021-01-04T00:00:00Z",
+                "subject": "user_1", "issuer": "issuer.2",
+                "email": "user_1@issuer.2.com"
+            },
+            {
+                "_id": "00000000-0000-0003-0002-000000000002",
+                "created_at": "2021-01-05T00:00:00Z",
+                "subject": "user_2", "issuer": "issuer.2",
+                "email": "user_2@issuer.2.com"
+            },
+            {
+                "_id": "00000000-0000-0003-0002-000000000003",
+                "created_at": "2021-01-06T00:00:00Z",
+                "subject": "user_3", "issuer": "issuer.2",
+                "email": "user_3@issuer.2.com"
+            },
+            {
+                "_id": "00000000-0000-0003-0002-000000000004",
+                "created_at": "2021-01-07T00:00:00Z",
+                "subject": "user_4", "issuer": "issuer.2",
+                "email": "user_4@issuer.2.com"
+            },
+            {
+                "_id": "00000000-0000-0003-0003-000000000001",
+                "created_at": "2021-01-08T00:00:00Z",
+                "subject": "user_1", "issuer": "issuer.3",
+                "email": "user_1@issuer.3.com"
+            },
+            {
+                "_id": "00000000-0000-0003-0003-000000000002",
+                "created_at": "2022-01-01T00:00:00Z",
+                "subject": "user_2", "issuer": "issuer.3",
+                "email": "user_2@issuer.3.com"
+            }
+        ]
+    },
+    {
+        "collection": "app.00000000-0000-0001-0001-000000000001",
+        "items": [
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000001",
+                "created_at": "2021-01-01T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "concept_drift", "KL Divergence" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.05, "feature2": 0.1 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000002",
+                "created_at": "2021-01-02T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "concept_drift", "KL Divergence" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.05, "feature2": 0.1 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000003",
+                "created_at": "2021-01-03T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "data_drift", "KL Divergence" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.02, "feature2": 0.05 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000004",
+                "created_at": "2021-01-04T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "concept_drift", "JS Divergence" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.08, "feature2": 0.15 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000005",
+                "created_at": "2021-01-05T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "data_drift", "KS Test" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.03, "feature2": 0.07 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000006",
+                "created_at": "2021-01-06T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "virtual_drift", "Wasserstein" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.04, "feature2": 0.09 }
+            }
+        ]
+    },
+    {
+        "collection": "app.00000000-0000-0001-0001-000000000002",
+        "items": [
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000001",
+                "created_at": "2021-01-01T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "concept_drift", "KL Divergence" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.05, "feature2": 0.1 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000002",
+                "created_at": "2021-01-02T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "concept_drift", "KL Divergence" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.05, "feature2": 0.1 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000003",
+                "created_at": "2021-01-03T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "virtual_drift", "KS Test" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.02, "feature2": 0.05 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000004",
+                "created_at": "2021-01-04T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "data_drift", "Wasserstein" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.08, "feature2": 0.15 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000005",
+                "created_at": "2021-01-05T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "data_drift", "KL Divergence" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.03, "feature2": 0.07 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000006",
+                "created_at": "2021-01-06T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "concept_drift", "JS Divergence" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.04, "feature2": 0.09 }
+            }
+        ]
+    },
+    {
+        "collection": "app.00000000-0000-0001-0001-000000000003",
+        "items": [
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000001",
+                "created_at": "2021-01-01T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "concept_drift", "KL Divergence" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.05, "feature2": 0.1 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000002",
+                "created_at": "2021-01-02T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "data_drift", "JS Divergence" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.05, "feature2": 0.1 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000003",
+                "created_at": "2021-01-03T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "virtual_drift", "KS Test" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.02, "feature2": 0.05 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000004",
+                "created_at": "2021-01-04T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "data_drift", "Wasserstein" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.08, "feature2": 0.15 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000005",
+                "created_at": "2021-01-05T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "concept_drift", "KL Divergence" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.03, "feature2": 0.07 }
+            }
+        ]
+    },
+    {
+        "collection": "app.00000000-0000-0001-0001-000000000004",
+        "items": [
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000001",
+                "created_at": "2021-01-01T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "virtual_drift", "KS Test" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.05, "feature2": 0.1 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000002",
+                "created_at": "2021-01-02T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "concept_drift", "Wasserstein" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.05, "feature2": 0.1 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000003",
+                "created_at": "2021-01-03T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "data_drift", "KL Divergence" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.02, "feature2": 0.05 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000004",
+                "created_at": "2021-01-04T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "concept_drift", "JS Divergence" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.08, "feature2": 0.15 }
+            },
+            {
+                "schema_version": "1.0.0",
+                "_id": "00000000-0000-0000-0000-000000000005",
+                "created_at": "2021-01-05T00:00:00Z",
+                "job_status": "Completed",
+                "tags": [ "virtual_drift", "KS Test" ],
+                "model": "model_1",
+                "drift_detected": true,
+                "parameters": { "feature1": 0.03, "feature2": 0.07 }
+            }
+        ]
+    }
+]
