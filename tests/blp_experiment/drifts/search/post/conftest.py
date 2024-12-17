@@ -11,7 +11,7 @@ def request(client, path, request_kwds):
 
 
 @fixture(scope="class")
-def body(request, created_at, model_info, drifts):
+def body(request, created_at, model_info, detected, parameters):
     """Inject and return a request body."""
     kwds = request.param if hasattr(request, "param") else {}
     if not isinstance(kwds, dict):
@@ -19,9 +19,10 @@ def body(request, created_at, model_info, drifts):
     for key, value in [
         ("created_at", created_at),
         ("job_status", model_info["job_status"]),
+        ("tags", model_info["tags"]),
         ("model", model_info["model"]),
-        ("concept_drift", drifts["concept_drift"]),
-        ("data_drift", drifts["data_drift"]),
+        ("drift_detected", detected),
+        ("parameters", parameters),
     ]:
         kwds.update({key: value} if value else {})
     kwds.update(request.param if hasattr(request, "param") else {})
@@ -56,30 +57,30 @@ def job_status(request):
 
 
 @fixture(scope="class")
+def tags(request):
+    """Inject and return tags."""
+    return request.param if hasattr(request, "param") else None
+
+
+@fixture(scope="class")
 def model(request):
     """Inject and return a drift detection type."""
     return request.param if hasattr(request, "param") else None
 
 
 @fixture(scope="class")
-def model_info(model, job_status):
+def model_info(job_status, tags, model):
     """Return the model info from the parameters as dict."""
-    return {"model": model, "job_status": job_status}
+    return {"job_status": job_status, "tags": tags, "model": model}
 
 
 @fixture(scope="class")
-def concept_drift(request):
-    """Inject and return a concept drift detection type."""
+def detected(request):
+    """Inject and return a drift detection."""
     return request.param if hasattr(request, "param") else None
 
 
 @fixture(scope="class")
-def data_drift(request):
-    """Inject and return a data drift detection type."""
+def parameters(request):
+    """Inject and return drift parameters."""
     return request.param if hasattr(request, "param") else None
-
-
-@fixture(scope="class")
-def drifts(concept_drift, data_drift):
-    """Return the drifts from the parameters as dict."""
-    return {"concept_drift": concept_drift, "data_drift": data_drift}
