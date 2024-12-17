@@ -45,12 +45,12 @@ EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
 
 
 @mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-class IsPrivate(CommonBaseTests):
+class IsPrivate(WithDatabase):
     """Base class for group with public as false."""
 
 
 @mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
-class IsPublic(CommonBaseTests):
+class IsPublic(WithDatabase):
     """Base class for group with public as true."""
 
 
@@ -73,19 +73,16 @@ class NoEdit(PermissionDenied):
     """Base class for group without entitlement tests."""
 
 
-DRIFT_1 = {"drift": True, "parameters": {"p_value": 0.1}}
-
-
-@mark.parametrize("concept_drift", [DRIFT_1], indirect=True)
+@mark.parametrize("parameters", [{"p_value": 0.1}], indirect=True)
 class TestNotRegistered(NotRegistered, IsPublic, WithDatabase):
     """Test the authentication response when user not registered."""
 
 
-@mark.parametrize("concept_drift", [DRIFT_1], indirect=True)
+@mark.parametrize("parameters", [{"p_value": 0.1}], indirect=True)
 class TestNoAccessPublic(NoEdit, IsPublic, WithDatabase):
     """Tests for message response for no permission."""
 
 
-@mark.parametrize("concept_drift", [DRIFT_1], indirect=True)
+@mark.parametrize("parameters", [{"p_value": 0.1}], indirect=True)
 class TestNoAccessPrivate(NoEdit, IsPrivate, WithDatabase):
     """Tests for message response for no permission."""

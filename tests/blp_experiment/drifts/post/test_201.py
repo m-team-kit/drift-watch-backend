@@ -45,22 +45,16 @@ class ValidAuth(CommonBaseTests):
 
 
 @mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class Registered(ValidAuth):
+class Registered(ValidAuth, WithDatabase):
     """Tests for message response when user is  registered."""
 
 
 EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
 
 
 @mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-class IsPrivate(CommonBaseTests):
+class IsPrivate(WithDatabase):
     """Base class for group with public as false."""
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
-class IsPublic(CommonBaseTests):
-    """Base class for group with public as true."""
 
 
 ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
@@ -84,70 +78,60 @@ class V100Drift(CommonBaseTests):
         """Test the response item contains the minimal keys."""
         assert "schema_version" in response.json
         assert "job_status" in response.json
+        assert "tags" in response.json
         assert "model" in response.json
+        assert "drift_detected" in response.json
 
     def test_values_types(self, response):
         """Test the response item correct types."""
         assert isinstance(response.json["schema_version"], str)
         assert isinstance(response.json["job_status"], str)
+        assert isinstance(response.json["tags"], list)
         assert isinstance(response.json["model"], str)
+        assert isinstance(response.json["drift_detected"], bool)
+
+    def test_drift_values(self, response, detected, parameters):
+        """Test the response item has the correct parameters."""
+        assert response.json["drift_detected"] is detected
+        if parameters is not None:
+            assert response.json["parameters"] == parameters
+        else:
+            assert response.json["parameters"] == {}
 
 
-DRIFT_1 = {"drift": True, "parameters": {"p_value": 0.1}}
-DRIFT_2 = {"drift": True, "parameters": {"p_value": 0.1}}
-
-
-@mark.parametrize("concept_drift", [DRIFT_1], indirect=True)
+@mark.parametrize("tags", [["concept_drift"]], indirect=True)
+@mark.parametrize("parameters", [{"p_value": 0.1}], indirect=True)
+@mark.parametrize("detected", [True], indirect=True)
 class WithConceptDrift(V100Drift):
     """Test the concept drift responses."""
 
-    def test_concept_drift(self, response, concept_drift):
-        """Test the concept drift response."""
-        assert response.json["concept_drift"] == concept_drift
+    def test_tags(self, response):
+        """Test the response item has the correct tags."""
+        assert "concept_drift" in response.json["tags"]
 
 
-class NoConceptDrift(V100Drift):
-    """Test the no concept drift responses."""
-
-    def test_no_concept_drift(self, response):
-        """Test the no concept drift response."""
-        no_drift = {"drift": False, "parameters": {}}
-        assert response.json["concept_drift"] == no_drift
-
-
-@mark.parametrize("data_drift", [DRIFT_1], indirect=True)
+@mark.parametrize("tags", [["data_drift"]], indirect=True)
+@mark.parametrize("parameters", [{"p_value": 0.1}], indirect=True)
+@mark.parametrize("detected", [True], indirect=True)
 class WithDataDrift(V100Drift):
     """Test the data drift responses."""
 
-    def test_data_drift(self, response, data_drift):
-        """Test the data drift response."""
-        assert response.json["data_drift"] == data_drift
-
-
-class NoDataDrift(V100Drift):
-    """Test the no data drift responses."""
-
-    def test_no_data_drift(self, response):
-        """Test the no data drift response."""
-        no_drift = {"drift": False, "parameters": {}}
-        assert response.json["data_drift"] == no_drift
+    def test_tags(self, response):
+        """Test the response item has the correct tags."""
+        assert "data_drift" in response.json["tags"]
 
 
 ALL_STATUS = ["Running", "Completed", "Failed"]
 
 
 @mark.parametrize("job_status", ALL_STATUS, indirect=True)
-class TestV100Status(V100Drift, IsPrivate, EditGroup, WithDatabase):
+class TestV100Status(V100Drift, IsPrivate, EditGroup):
     """Test the responses items."""
 
 
-class TestOnlyConcept(WithConceptDrift, NoDataDrift, IsPrivate, EditGroup):
+class TestConcept(WithConceptDrift, IsPrivate, EditGroup):
     """Test the endpoint with concept drift."""
 
 
-class TestOnlyData(NoConceptDrift, WithDataDrift, IsPrivate, EditGroup):
+class TestData(WithDataDrift, IsPrivate, EditGroup):
     """Test the endpoint with data drift."""
-
-
-class TestDrifts(WithConceptDrift, WithDataDrift, IsPrivate, EditGroup):
-    """Test the endpoint with concept and data drift."""
