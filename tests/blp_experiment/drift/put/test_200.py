@@ -45,7 +45,7 @@ class ValidAuth(CommonBaseTests):
 
 
 @mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class Registered(ValidAuth):
+class Registered(ValidAuth, WithDatabase):
     """Tests for message response when user is  registered."""
 
 
@@ -54,12 +54,12 @@ EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
 
 
 @mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-class IsPrivate(CommonBaseTests):
+class IsPrivate(WithDatabase):
     """Base class for group with public as false."""
 
 
 @mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
-class IsPublic(CommonBaseTests):
+class IsPublic(WithDatabase):
     """Base class for group with public as true."""
 
 
@@ -82,63 +82,49 @@ class V100Edit(CommonBaseTests):
 
     def test_minimal_keys(self, response):
         """Test the response items contain the minimal keys."""
+        assert "job_status" in response.json
+        assert "tags" in response.json
         assert "model" in response.json
-        assert "concept_drift" in response.json
-        assert "data_drift" in response.json
+        assert "drift_detected" in response.json
+        assert "parameters" in response.json
 
     def test_values_types(self, response):
         """Test the response items contain the correct types."""
+        assert isinstance(response.json["job_status"], str)
+        assert isinstance(response.json["tags"], list)
         assert isinstance(response.json["model"], str)
-        assert isinstance(response.json["concept_drift"], dict)
-        assert isinstance(response.json["data_drift"], dict)
-
-    def test_model(self, response, model):
-        """Test the response item has the correct model."""
-        assert response.json["model"] == model
+        assert isinstance(response.json["drift_detected"], bool)
+        assert isinstance(response.json["parameters"], dict)
 
     def test_job_status(self, response, job_status):
         """Test the response item has the correct job status."""
         assert response.json["job_status"] == job_status
 
-    def test_concept_drift(self, response, concept_drift):
-        """Test the response item has the correct concept drift."""
-        assert response.json["concept_drift"] == concept_drift
+    def test_tags(self, response, tags):
+        """Test the response item has the correct tags."""
+        assert response.json["tags"] == tags
 
-    def test_data_drift(self, response, data_drift):
+    def test_model(self, response, model):
+        """Test the response item has the correct model."""
+        assert response.json["model"] == model
+
+    def test_drift_detected(self, response, detected):
+        """Test the response item has the correct drift detected."""
+        assert response.json["drift_detected"] == detected
+
+    def test_parameters(self, response, parameters):
         """Test the response item has the correct data drift."""
-        assert response.json["data_drift"] == data_drift
+        assert response.json["parameters"] == parameters
 
 
 DRIFT_1 = "00000000-0000-0000-0000-000000000001"
 
 
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestPublicV100Drift(V100Edit, IsPublic, EditGroup, WithDatabase):
+class TestPublicV100Drift(V100Edit, IsPublic, EditGroup):
     """Test the responses items."""
 
 
 @mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestPrivateV100Drift(V100Edit, IsPrivate, EditGroup, WithDatabase):
+class TestPrivateV100Drift(V100Edit, IsPrivate, EditGroup):
     """Test the responses items."""
-
-
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-@mark.parametrize("concept_drift", [None], indirect=True)
-class TestRMConceptDrift(V100Edit, IsPrivate, EditGroup, WithDatabase):
-    """Test concept drift removal."""
-
-    def test_concept_drift(self, response, concept_drift):
-        """Test the response item has the correct concept drift."""
-        no_drift = {"drift": False, "parameters": {}}
-        assert response.json["concept_drift"] == no_drift
-
-
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-@mark.parametrize("data_drift", [None], indirect=True)
-class TestRMDataDrift(V100Edit, IsPrivate, EditGroup, WithDatabase):
-    """Test concept drift removal."""
-
-    def test_data_drift(self, response, data_drift):
-        """Test the response item has the correct concept drift."""
-        no_drift = {"drift": False, "parameters": {}}
-        assert response.json["data_drift"] == no_drift

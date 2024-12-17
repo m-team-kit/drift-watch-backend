@@ -4,6 +4,10 @@
 from pytest import mark
 
 
+DRIFT_1 = "00000000-0000-0000-0000-000000000001"
+
+
+@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
 class CommonBaseTests:
     """Common tests for the /drift endpoint."""
 
@@ -54,7 +58,7 @@ class EditGroup(Registered):
 
 
 @mark.parametrize("body", [{"unknown": "val"}], indirect=True)
-class UnknownField(CommonBaseTests):
+class TestUnknownField(WithDatabase, IsPrivate, EditGroup):
     """Test the response message for unknown key in body."""
 
     def test_error_msg(self, response):
@@ -63,47 +67,67 @@ class UnknownField(CommonBaseTests):
         assert ["Unknown field."] in errors
 
 
-NO_BOOL_CD_BODY = {"concept_drift": {"drift": "a", "parameters": {"n": 0}}}
-NO_BOOL_DD_BODY = {"data_drift": {"drift": "a", "parameters": {"n": 0}}}
-
-
-@mark.parametrize("body", [NO_BOOL_CD_BODY, NO_BOOL_DD_BODY], indirect=True)
-class NoBoolDrift(CommonBaseTests):
-    """Test the response message for missing drift boolean."""
+@mark.parametrize("body", [{"job_status": None}], indirect=True)
+class TestMissingJobStatus(WithDatabase, IsPrivate, EditGroup):
+    """Test the response message for missing job status."""
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
-        errors = response.json["errors"]["json"].values()
-        assert {"drift": ["Not a valid boolean."]} in errors
+        assert "job_status" in response.json["errors"]["json"]
+        errors = response.json["errors"]["json"]["job_status"]
+        assert "Field may not be null." in errors
 
 
-NO_PRAM_CD_BODY = {"concept_drift": {"drift": True}}
-NO_PRAM_DD_BODY = {"data_drift": {"drift": True}}
-
-
-@mark.parametrize("body", [NO_PRAM_CD_BODY, NO_PRAM_DD_BODY], indirect=True)
-class MissingParam(CommonBaseTests):
-    """Test the response message for missing drift parameter."""
+@mark.parametrize("body", [{"job_status": "string"}], indirect=True)
+class TestInvalidJobStatus(WithDatabase, IsPrivate, EditGroup):
+    """Test the response message for invalid job status."""
 
     def test_error_msg(self, response):
         """Test message contains useful information."""
-        errors = response.json["errors"]["json"].values()
-        assert {"_schema": ["Include parameters if drift."]} in errors
+        assert "job_status" in response.json["errors"]["json"]
+        errors = response.json["errors"]["json"]["job_status"]
+        assert "Must be one of: Running, Completed, Failed." in errors
 
 
-DRIFT_1 = "00000000-0000-0000-0000-000000000001"
+@mark.parametrize("body", [{"tags": "string"}], indirect=True)
+class TestInvalidTags(WithDatabase, IsPrivate, EditGroup):
+    """Test the response message for invalid tags."""
+
+    def test_error_msg(self, response):
+        """Test message contains useful information."""
+        assert "tags" in response.json["errors"]["json"]
+        errors = response.json["errors"]["json"]["tags"]
+        assert "Not a valid list." in errors
 
 
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestBadBodyKey(UnknownField, IsPrivate, EditGroup, WithDatabase):
-    """Test the unknown key parameter in body."""
+@mark.parametrize("body", [{"drift_detected": None}], indirect=True)
+class TestMissingDetected(WithDatabase, IsPrivate, EditGroup):
+    """Test the response message for missing drift detected."""
+
+    def test_error_msg(self, response):
+        """Test message contains useful information."""
+        assert "drift_detected" in response.json["errors"]["json"]
+        errors = response.json["errors"]["json"]["drift_detected"]
+        assert "Field may not be null." in errors
 
 
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestNoBoolDrift(NoBoolDrift, IsPrivate, EditGroup, WithDatabase):
-    """Test the response when missing concept drift boolean."""
+@mark.parametrize("body", [{"drift_detected": "string"}], indirect=True)
+class TestInvalidDetected(WithDatabase, IsPrivate, EditGroup):
+    """Test the response message for invalid drift detected."""
+
+    def test_error_msg(self, response):
+        """Test message contains useful information."""
+        assert "drift_detected" in response.json["errors"]["json"]
+        errors = response.json["errors"]["json"]["drift_detected"]
+        assert "Not a valid boolean." in errors
 
 
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestMissingParam(MissingParam, IsPrivate, EditGroup, WithDatabase):
-    """Test the response when missing concept drift parameter."""
+@mark.parametrize("body", [{"parameters": None}], indirect=True)
+class TestMissingParam(WithDatabase, IsPrivate, EditGroup):
+    """Test the response message for missing parameters."""
+
+    def test_error_msg(self, response):
+        """Test message contains useful information."""
+        assert "parameters" in response.json["errors"]["json"]
+        errors = response.json["errors"]["json"]["parameters"]
+        assert "Field may not be null." in errors
