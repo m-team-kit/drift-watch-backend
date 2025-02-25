@@ -60,6 +60,20 @@ class NoListPerm(WithDatabase):
         assert "Not a valid list." in errors["permissions"]
 
 
+BAD_PERMISSIONS = [[{"entity": "g1", "level": "bad_level"}]]
+
+
+@mark.parametrize("permissions", [BAD_PERMISSIONS[0]], indirect=True)
+class BadLevel(WithDatabase):
+    """Test the response message for bad permission level."""
+
+    def test_error_msg(self, response):
+        """Test message contains useful information."""
+        errors = response.json["errors"]["json"]
+        level_error = errors["permissions"]["0"]["level"]
+        assert "Must be one of: Read, Write, Manage." in level_error
+
+
 class TestBadBodyKey(Registered, UnknownField):
     """Test the unknown key parameter in body."""
 
@@ -70,3 +84,7 @@ class TestNoBoolPublic(Registered, NoBoolPublic):
 
 class TestNoListPerm(Registered, NoListPerm):
     """Test the response when missing concept experiment parameter."""
+
+
+class TestUnknownLevel(Registered, BadLevel):
+    """Test the response when unknown level in permissions."""

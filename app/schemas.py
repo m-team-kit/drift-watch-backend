@@ -21,6 +21,9 @@ class Entitlements(ma.Schema):
     items = ma.fields.List(ma.fields.String(), required=True)
 
 
+level_options = validate.OneOf(["Read", "Write", "Manage"])
+
+
 class Permission(ma.Schema):
     """
     Permissions defines the entity and the access level.
@@ -30,7 +33,7 @@ class Permission(ma.Schema):
         unknown = ma.RAISE
 
     entity = ma.fields.String(required=True)
-    level = ma.fields.String(required=True)
+    level = ma.fields.String(required=True, validate=level_options)
 
 
 class _BaseExperiment(ma.Schema):
