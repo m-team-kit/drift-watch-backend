@@ -75,6 +75,7 @@ class Users(MethodView):
 
         Raises:
             401: If the user is not authenticated with a valid token.
+            403: If the user does not have the required permissions.
             409: If the user already registered.
         """
         # Check if the user already exists.
@@ -114,6 +115,7 @@ class Self(MethodView):
 
         Returns:
             401: If the user is not authenticated or registered.
+            403: If the user does not have the required permissions.
         """
         # Check if the user is registered and validate access level.
         # Return the user information.
@@ -132,6 +134,7 @@ class Self(MethodView):
 
         Returns:
             401: If the user is not authenticated or registered.
+            403: If the user does not have the required permissions.
         """
         # Check if the user is registered and validate access level.
         user = utils.get_user(user_infos)
