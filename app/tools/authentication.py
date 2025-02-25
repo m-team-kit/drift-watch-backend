@@ -45,40 +45,61 @@ def init_app(app):
     app.config["flaat"].init_app(app)
 
 
-def authentication_doc(description):
-    return {
-        "description": f"{description}",
-        "content": {
-            "application/json": {
-                "schema": {
-                    "type": "object",
-                    "properties": {
-                        "code": {
-                            "type": "integer",
-                            "description": "HTTP status code",
-                        },
-                        "status": {
-                            "type": "string",
-                            "description": "HTTP status message",
-                        },
-                        "message": {
-                            "type": "string",
-                            "description": "Error message",
-                        },
+UNAUTHORIZED = {
+    "description": "Unauthorized",
+    "content": {
+        "application/json": {
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "description": "HTTP status code",
                     },
-                }
+                    "status": {
+                        "type": "string",
+                        "description": "HTTP status message",
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Error message",
+                    },
+                },
             }
-        },
-    }
+        }
+    },
+}
 
 
-extra_responses = {
-    "401": authentication_doc("Unauthorized"),
-    "403": authentication_doc("Forbidden"),
+FORBIDDEN = {
+    "description": "Forbidden",
+    "content": {
+        "application/json": {
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "description": "HTTP status code",
+                    },
+                    "status": {
+                        "type": "string",
+                        "description": "HTTP status message",
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Error message",
+                    },
+                },
+            }
+        }
+    },
 }
 
 
 class Authentication:
+    """Authentication class for the application."""
+
     def __init__(self, blueprint):
         """Initialize the authentication module."""
         self.blueprint = blueprint
@@ -89,7 +110,7 @@ class Authentication:
             case "everyone":
                 return lambda f: f  # Return without modifications
             case "user" | "admin":
-                auth_docs = {k: extra_responses[k] for k in ["401", "403"]}
+                auth_docs = {"401": UNAUTHORIZED, "403": FORBIDDEN}
         auth_decorator = flaat.access_level(
             access_level_name=level,
             on_failure=self.raise_correct_error,
