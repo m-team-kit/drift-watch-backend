@@ -35,7 +35,7 @@ class Entitlements(MethodView):
             403: If the user does not have the required permissions.
         """
         # Search for users based on the provided JSON query.
-        _user = utils.get_user(user_infos)
+        _ = utils.get_user(user_infos)
 
         # Return the paginated list of users.
         entitlements_key = current_app.config["ENTITLEMENTS_FIELD"]
