@@ -34,6 +34,10 @@ NOT_FOUND = {
                         "type": "string",
                         "description": "Error name",
                     },
+                    "message": {
+                        "type": "string",
+                        "description": "Error message",
+                    },
                 },
             }
         }
