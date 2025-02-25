@@ -6,13 +6,12 @@ import uuid
 from datetime import datetime as dt
 
 import marshmallow as ma
-from flask import abort, current_app
-from flask.views import MethodView
-
 from app import schemas, utils
 from app.config import Blueprint
-from app.tools.authentication import Authentication
-from app.tools.database import NOT_FOUND
+from app.tools.authentication import FORBIDDEN, Authentication
+from app.tools.database import CONFLICT, NOT_FOUND
+from flask import abort, current_app
+from flask.views import MethodView
 
 blp = Blueprint("Experiments", __name__, description=__doc__)
 auth = Authentication(blueprint=blp)
@@ -64,6 +63,7 @@ class Experiments(MethodView):
     @auth.access_level("user")
     @auth.inject_user_infos()
     @blp.arguments(schemas.CreateExperiment, location="json", unknown="raise")
+    @blp.doc(responses={"409": CONFLICT})
     @blp.response(201, schemas.Experiment)
     def post(self, json, user_infos):
         """Create a new experiment record in the database.
@@ -80,6 +80,7 @@ class Experiments(MethodView):
 
         Raises:
             401: If the user is not authenticated or registered.
+            403: If the user does not have the required permissions.
             409: If the a experiment with the same name already exists.
             422: If the JSON query is not in the correct format.
         """
@@ -132,7 +133,7 @@ class Experiment(MethodView):
     @auth.access_level("user")
     @auth.inject_user_infos()
     @blp.arguments(schemas.Experiment, location="json", unknown="raise")
-    @blp.doc(responses={"404": NOT_FOUND})
+    @blp.doc(responses={"404": NOT_FOUND, "409": CONFLICT})
     @blp.response(200, schemas.Experiment)
     def put(self, json, experiment_id, user_infos):
         """
@@ -141,8 +142,8 @@ class Experiment(MethodView):
         Internal comment not meant to be exposed.
 
         Args:
-            json (dict): The JSON data containing the updated drift information.
-            experiment_id (str): The ID of the experiment to retrieve drifts from.
+            json (dict): JSON data containing the updated drift information.
+            experiment_id (str): ID of the experiment to retrieve drifts from.
             user_infos (dict): User information from the authentication token.
 
         Returns:
@@ -191,8 +192,8 @@ class Experiment(MethodView):
         Internal comment not meant to be exposed.
 
         Args:
-            json (dict): The JSON data containing the updated drift information.
-            experiment_id (str): The ID of the experiment to retrieve drifts from.
+            json (dict): JSON data containing the updated drift information.
+            experiment_id (str): ID of the experiment to retrieve drifts from.
             user_infos (dict): User information from the authentication token.
 
         Raises:
@@ -218,6 +219,7 @@ class DriftSearch(MethodView):
     @auth.access_level("everyone")
     @auth.inject_user_infos(strict=False)
     @blp.arguments(ma.Schema(), location="json", unknown="include")
+    @blp.doc(responses={"403": FORBIDDEN, "404": NOT_FOUND})
     @blp.response(200, schemas.Drift(many=True))
     @blp.paginate()
     def post(self, json, experiment_id, pagination_parameters, user_infos=None):
@@ -229,8 +231,8 @@ class DriftSearch(MethodView):
 
         Args:
             json: A JSON object representing the query parameters.
-            experiment_id: The ID of the experiment to retrieve drifts from.
-            user_infos: User information obtained from the authentication process.
+            experiment_id: ID of the experiment to retrieve drifts from.
+            user_infos: User information obtained from authentication process.
             pagination_parameters: An object containing pagination parameters.
 
         Returns:
@@ -269,6 +271,7 @@ class Drifts(MethodView):
     @auth.access_level("user")
     @auth.inject_user_infos()
     @blp.arguments(schemas.CreateDrift, location="json", unknown="raise")
+    @blp.doc(responses={"404": NOT_FOUND})
     @blp.response(201, schemas.Drift)
     def post(self, json, experiment_id, user_infos):
         """Create a new drift Job record in the database.
@@ -314,7 +317,7 @@ class Drift(MethodView):
 
     @auth.access_level("everyone")
     @auth.inject_user_infos(strict=False)
-    @blp.doc(responses={"404": NOT_FOUND})
+    @blp.doc(responses={"403": FORBIDDEN, "404": NOT_FOUND})
     @blp.response(200, schemas.Drift)
     def get(self, experiment_id, drift_id, user_infos=None):
         """Retrieve a drift job by its id from the database.
@@ -356,8 +359,8 @@ class Drift(MethodView):
         Internal comment not meant to be exposed.
 
         Args:
-            json (dict): The JSON data containing the updated drift information.
-            experiment_id (str): The ID of the experiment to retrieve drifts from.
+            json (dict): JSON data containing the updated drift information.
+            experiment_id (str): ID of the experiment to retrieve drifts from.
             drift_id (str): The ID of the drift record to be updated.
             user_infos (dict): User information from the authentication token.
 
@@ -368,6 +371,7 @@ class Drift(MethodView):
             401: If the user is not authenticated or registered.
             403: If the user does not have the required permissions.
             404: If the drift or experiment specified are not found.
+            422: If the JSON query is not in the correct format.
         """
         # Check if the user is registered and validate access level.
         user = utils.get_user(user_infos)
@@ -398,8 +402,8 @@ class Drift(MethodView):
         Internal comment not meant to be exposed.
 
         Args:
-            experiment_id (str): The ID of the experiment to retrieve drifts from.
-            drift_id (str): The ID of the drift record to be deleted.
+            experiment_id (str): ID of the experiment to retrieve drifts from.
+            drift_id (str): ID of the drift record to be deleted.
             user_infos (dict): User information from the authentication token.
 
         Returns:
@@ -418,7 +422,7 @@ class Drift(MethodView):
 
         # Collect the drift record from the database.
         drift_id = str(drift_id)
-        _drift = utils.get_drifts(experiment_id, drift_id)
+        _ = utils.get_drifts(experiment_id, drift_id)
 
         # Delete the drift record from the database.
         drifts = current_app.config["db"][f"app.{experiment_id}"]
