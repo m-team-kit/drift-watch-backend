@@ -53,11 +53,15 @@ def authentication_doc(description):
                 "schema": {
                     "type": "object",
                     "properties": {
-                        "error": {
-                            "type": "string",
-                            "description": "Error name",
+                        "code": {
+                            "type": "integer",
+                            "description": "HTTP status code",
                         },
-                        "error_description": {
+                        "status": {
+                            "type": "string",
+                            "description": "HTTP status message",
+                        },
+                        "message": {
                             "type": "string",
                             "description": "Error message",
                         },
