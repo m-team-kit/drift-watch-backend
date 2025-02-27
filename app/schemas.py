@@ -21,7 +21,7 @@ class Entitlements(ma.Schema):
     items = ma.fields.List(ma.fields.String(), required=True)
 
 
-level_options = validate.OneOf(["Read", "Write", "Manage"])
+level_options = validate.OneOf(["Read", "Edit", "Manage"])
 
 
 class Permission(ma.Schema):
