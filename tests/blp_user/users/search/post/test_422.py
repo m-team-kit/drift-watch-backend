@@ -61,5 +61,5 @@ class TestStringBody(Registered, IsAdmin, InvalidInput):
     """Test the response when body is a string."""
 
 
-class TestUnknownQuery(Registered, IsAdmin, InvalidQuery):
-    """Test the response when query arg is unknown."""
+# class TestUnknownQuery(Registered, IsAdmin, InvalidQuery):
+#     """Test the response when query arg is unknown."""

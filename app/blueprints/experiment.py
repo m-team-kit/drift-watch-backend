@@ -24,7 +24,7 @@ class ExperimentsSearch(MethodView):
 
     @auth.access_level("everyone")
     @blp.arguments(ma.Schema(), location="json", unknown="include")
-    @blp.arguments(schemas.SortExperiments, location="query", unknown="raise")
+    @blp.arguments(schemas.SortExperiments, location="query", unknown="include")
     @blp.response(200, schemas.Experiment(many=True))
     @blp.paginate()
     def post(self, json, query_args, pagination_parameters):
@@ -226,7 +226,7 @@ class DriftSearch(MethodView):
     @auth.access_level("everyone")
     @auth.inject_user_infos(strict=False)
     @blp.arguments(ma.Schema(), location="json", unknown="include")
-    @blp.arguments(schemas.SortDrifts, location="query", unknown="raise")
+    @blp.arguments(schemas.SortDrifts, location="query", unknown="include")
     @blp.doc(responses={"403": FORBIDDEN, "404": NOT_FOUND})
     @blp.response(200, schemas.Drift(many=True))
     @blp.paginate()

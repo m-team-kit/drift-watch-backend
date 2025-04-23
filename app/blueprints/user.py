@@ -24,7 +24,7 @@ class UsersSearch(MethodView):
 
     @auth.access_level("admin")
     @blp.arguments(ma.Schema(), location="json", unknown="include")
-    @blp.arguments(schemas.SearchUsers(), location="query", unknown="raise")
+    @blp.arguments(schemas.SearchUsers(), location="query", unknown="include")
     @blp.response(200, schemas.User(many=True))
     @blp.paginate()
     def post(self, json, query_args, pagination_parameters):

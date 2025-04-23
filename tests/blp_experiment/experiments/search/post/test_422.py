@@ -50,5 +50,5 @@ class TestStringBody(NoAuthHeader, InvalidInput):
     """Test the response when body is a string."""
 
 
-class TestUnknownQuery(NoAuthHeader, InvalidQuery):
-    """Test the response when query arg is unknown."""
+# class TestUnknownQuery(NoAuthHeader, InvalidQuery):
+#     """Test the response when query arg is unknown."""

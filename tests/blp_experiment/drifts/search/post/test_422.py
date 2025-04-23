@@ -64,5 +64,5 @@ class TestStringBody(InvalidInput, IsPublic, WithDatabase):
     """Test the response when body is a string."""
 
 
-class TestUnknownQuery(InvalidQuery, IsPublic, WithDatabase):
-    """Test the response when query arg is unknown."""
+# class TestUnknownQuery(InvalidQuery, IsPublic, WithDatabase):
+#     """Test the response when query arg is unknown."""
