@@ -83,6 +83,27 @@ class NameFilter(WithDatabase):
         assert all(x["name"] == name for x in response.json)
 
 
+@mark.parametrize("sort_by", ["created_at", "name", "public"], indirect=True)
+class SortBy(WithDatabase):
+    """Test the response items are sorted by the correct field."""
+
+    @mark.parametrize("order_by", ["asc"], indirect=True)
+    def test_sort_asc(self, response, sort_by):
+        """Test the response items are sorted by the correct field."""
+        assert all(
+            x[sort_by] <= y[sort_by]
+            for x, y in zip(response.json, response.json[1:])
+        )  # fmt: skip
+
+    @mark.parametrize("order_by", ["desc"], indirect=True)
+    def test_sort_desc(self, response, sort_by):
+        """Test the response items are sorted by the correct field."""
+        assert all(
+            x[sort_by] >= y[sort_by]
+            for x, y in zip(response.json, response.json[1:])
+        )  # fmt: skip
+
+
 class TestPublicAccess(NoAuthHeader, WithDatabase):
     """Test the responses items for public access."""
 
@@ -100,4 +121,8 @@ class TestBetweenFilter(NoAuthHeader, BeforeFilter, AfterFilter):
 
 
 class TestNameFilter(NoAuthHeader, NameFilter):
+    """Test the response items contain the correct experiments."""
+
+
+class TestSorting(NoAuthHeader, SortBy):
     """Test the response items contain the correct experiments."""
