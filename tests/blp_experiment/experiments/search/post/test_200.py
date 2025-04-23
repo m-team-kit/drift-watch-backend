@@ -125,4 +125,4 @@ class TestNameFilter(NoAuthHeader, NameFilter):
 
 
 class TestSorting(NoAuthHeader, SortBy):
-    """Test the response items contain the correct experiments."""
+    """Test the response items contain the correct order."""

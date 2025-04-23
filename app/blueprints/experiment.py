@@ -226,10 +226,11 @@ class DriftSearch(MethodView):
     @auth.access_level("everyone")
     @auth.inject_user_infos(strict=False)
     @blp.arguments(ma.Schema(), location="json", unknown="include")
+    @blp.arguments(schemas.SortDrifts, location="query", unknown="raise")
     @blp.doc(responses={"403": FORBIDDEN, "404": NOT_FOUND})
     @blp.response(200, schemas.Drift(many=True))
     @blp.paginate()
-    def post(self, json, experiment_id, pagination_parameters, user_infos=None):
+    def post(self, json, query_args, experiment_id, pagination_parameters, user_infos=None):
         """
         Get a paginated list of drift Jobs based on the provided JSON query
         and MongoDB format.
@@ -238,6 +239,7 @@ class DriftSearch(MethodView):
 
         Args:
             json: A JSON object representing the query parameters.
+            query_args: A dictionary of query parameters.
             experiment_id: ID of the experiment to retrieve drifts from.
             user_infos: User information obtained from authentication process.
             pagination_parameters: An object containing pagination parameters.
@@ -257,9 +259,13 @@ class DriftSearch(MethodView):
         experiment = utils.get_experiment(experiment_id)
         utils.check_access(experiment, user_id, user_infos, level="Read")
 
+        # Extract sort_by and order_by from query_args
+        sort_by, order_by = query_args["sort_by"], query_args["order_by"]
+        sort_order = 1 if order_by == "asc" else -1
+
         # Search for drifts based on the provided JSON query.
         drifts = current_app.config["db"][f"app.{experiment_id}"]
-        search = drifts.find(json)
+        search = drifts.find(json).sort(sort_by, sort_order)
 
         # Return the paginated list of drifts.
         page = pagination_parameters.page

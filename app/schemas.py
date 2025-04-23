@@ -133,3 +133,18 @@ class Drift(_BaseDriftJob, _BaseRespSchema):
 
 class CreateDrift(_BaseDriftJob, _BaseReqSchema):
     """Create Job Schema for job."""
+
+
+class SortDrifts(ma.Schema):
+    """Schema for sorting drift detection instances."""
+
+    sort_by = ma.fields.String(
+        load_default="created_at",
+        validate=validate.OneOf(
+            ["created_at", "job_status", "model", "drift_detected", "schema_version"],
+        ),
+    )
+    order_by = ma.fields.String(
+        load_default="desc",
+        validate=validate.OneOf(["asc", "desc"]),
+    )
