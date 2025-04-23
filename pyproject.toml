@@ -14,3 +14,6 @@ mongodb_fixture_dir = "tests/fixtures/mongodb"
 [tool.mypy]
 ignore_missing_imports = true
 disable_error_code = ["import-untyped"]
+
+[tool.black]
+line-length = 120

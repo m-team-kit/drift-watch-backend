@@ -13,5 +13,12 @@
         "multitenancy",
         "Wasserstein",
         "werkzeug"
+    ],
+    "black-formatter.args": [
+        "--config",
+        "${workspaceFolder}/pyproject.toml"
+    ],
+    "flake8.args": [
+        "--disable=E501"
     ]
 }
