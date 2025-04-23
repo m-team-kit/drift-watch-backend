@@ -94,7 +94,7 @@ class BadLevel(WithDatabase):
         """Test message contains useful information."""
         errors = response.json["errors"]["json"]
         level_error = errors["permissions"]["0"]["level"]
-        assert "Must be one of: Read, Write, Manage." in level_error
+        assert "Must be one of: Read, Edit, Manage." in level_error
 
 
 class TestBadBodyKey(UnknownField, IsPrivate, ManageGroup):
