@@ -23,9 +23,10 @@ class ExperimentsSearch(MethodView):
 
     @auth.access_level("everyone")
     @blp.arguments(ma.Schema(), location="json", unknown="include")
+    @blp.arguments(ma.Schema(), location="query", unknown="include")
     @blp.response(200, schemas.Experiment(many=True))
     @blp.paginate()
-    def post(self, json, pagination_parameters):
+    def post(self, json, query_args, pagination_parameters):
         """
         Get a paginated list of experiments based on the provided JSON query
         and MongoDB format.
@@ -34,6 +35,7 @@ class ExperimentsSearch(MethodView):
 
         Args:
             json: A JSON object representing the query parameters.
+            query_args: A dictionary of query parameters.
             pagination_parameters: An object containing pagination parameters.
 
         Returns:
@@ -42,9 +44,13 @@ class ExperimentsSearch(MethodView):
         Raises:
             422: If the JSON query is not in the correct format.
         """
+        # Extract sort_by and order_by from query_args
+        sort_by, order_by = query_args["sort_by"], query_args["order_by"]
+        sort_order = 1 if order_by == "asc" else -1
+
         # Search for experiments based on the provided JSON query.
         experiments = current_app.config["db"]["app.experiments"]
-        search = experiments.find(json)
+        search = experiments.find(json).sort(sort_by, sort_order)
 
         # Return the paginated list of experiments.
         page = pagination_parameters.page
