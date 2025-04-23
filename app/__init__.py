@@ -1,4 +1,4 @@
-"""Dfit Monitoring Backend Application."""
+"""Drift Monitoring Backend Application."""
 
 from flask import Flask
 
