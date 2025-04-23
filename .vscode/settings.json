@@ -6,14 +6,6 @@
         // "--numprocesses=auto",  To run tests in parallel
         "tests"
     ],
-    "cSpell.words": [
-        "argnames",
-        "dateiso",
-        "datetime",
-        "multitenancy",
-        "Wasserstein",
-        "werkzeug"
-    ],
     "black-formatter.args": [
         "--config",
         "${workspaceFolder}/pyproject.toml"
