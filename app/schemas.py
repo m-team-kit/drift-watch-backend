@@ -1,4 +1,4 @@
-""""This module contains the schema for the API request and response."""
+""" "This module contains the schema for the API request and response."""
 
 import marshmallow as ma
 from marshmallow import validate
@@ -57,6 +57,19 @@ class Experiment(_BaseExperiment, _BaseRespSchema):
 
 class CreateExperiment(_BaseExperiment, _BaseReqSchema):
     """Create Experiment Schema."""
+
+
+class SortExperiments(ma.Schema):
+    """Schema for sorting experiments."""
+
+    sort_by = ma.fields.String(
+        load_default="created_at",
+        validate=validate.OneOf(["created_at", "name", "public"]),
+    )
+    order_by = ma.fields.String(
+        load_default="desc",
+        validate=validate.OneOf(["asc", "desc"]),
+    )
 
 
 class User(_BaseRespSchema):

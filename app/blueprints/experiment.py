@@ -24,7 +24,7 @@ class ExperimentsSearch(MethodView):
 
     @auth.access_level("everyone")
     @blp.arguments(ma.Schema(), location="json", unknown="include")
-    @blp.arguments(ma.Schema(), location="query", unknown="include")
+    @blp.arguments(schemas.SortExperiments, location="query", unknown="raise")
     @blp.response(200, schemas.Experiment(many=True))
     @blp.paginate()
     def post(self, json, query_args, pagination_parameters):
