@@ -103,6 +103,19 @@ class UsersIds(ma.Schema):
     )
 
 
+class SearchUsers(ma.Schema):
+    """Schema for searching users."""
+
+    sort_by = ma.fields.String(
+        load_default="created_at",
+        validate=validate.OneOf(["created_at", "email", "subject", "issuer"]),
+    )
+    order_by = ma.fields.String(
+        load_default="desc",
+        validate=validate.OneOf(["asc", "desc"]),
+    )
+
+
 class BaseDrift(ma.Schema):
     """Base drift schema"""
 

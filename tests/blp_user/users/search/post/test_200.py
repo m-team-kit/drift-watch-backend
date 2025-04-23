@@ -94,6 +94,27 @@ class BeforeFilter(WithDatabase):
             assert dt.fromisoformat(item["created_at"]) <= req_date
 
 
+@mark.parametrize("sort_by", ["created_at", "email", "subject", "issuer"], indirect=True)
+class SortBy(WithDatabase):
+    """Test the response items are sorted by the correct field."""
+
+    @mark.parametrize("order_by", ["asc"], indirect=True)
+    def test_sort_asc(self, response, sort_by):
+        """Test the response items are sorted by the correct field."""
+        assert all(
+            x[sort_by] <= y[sort_by]
+            for x, y in zip(response.json, response.json[1:])
+        )  # fmt: skip
+
+    @mark.parametrize("order_by", ["desc"], indirect=True)
+    def test_sort_desc(self, response, sort_by):
+        """Test the response items are sorted by the correct field."""
+        assert all(
+            x[sort_by] >= y[sort_by]
+            for x, y in zip(response.json, response.json[1:])
+        )  # fmt: skip
+
+
 class TestRegisteredAdmin(Registered, IsAdmin, WithDatabase):
     """Test the responses items for full query."""
 
@@ -108,3 +129,7 @@ class TestAfterFilter(Registered, IsAdmin, AfterFilter):
 
 class TestBeforeFilter(Registered, IsAdmin, BeforeFilter):
     """Test the response items contain the correct users."""
+
+
+class TestSorting(Registered, IsAdmin, SortBy):
+    """Test the response items contain the correct order."""

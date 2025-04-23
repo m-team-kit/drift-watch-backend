@@ -5,6 +5,7 @@
 import uuid
 from datetime import datetime as dt
 
+import marshmallow as ma
 from flask import abort, current_app
 from flask.views import MethodView
 
@@ -22,10 +23,11 @@ class UsersSearch(MethodView):
     """Users API Custom method Search."""
 
     @auth.access_level("admin")
-    @blp.arguments(schemas.ma.Schema(), location="json", unknown="include")
+    @blp.arguments(ma.Schema(), location="json", unknown="include")
+    @blp.arguments(schemas.SearchUsers(), location="query", unknown="raise")
     @blp.response(200, schemas.User(many=True))
     @blp.paginate()
-    def post(self, json, pagination_parameters):
+    def post(self, json, query_args, pagination_parameters):
         """Retrieve a paginated list of users based on the provided JSON query
         and MongoDB format.
         ---
@@ -33,6 +35,7 @@ class UsersSearch(MethodView):
 
         Args:
             json: The JSON query used to filter the users.
+            query_args: A dictionary of query parameters.
             pagination_parameters: The pagination parameters.
 
         Returns:
@@ -40,9 +43,13 @@ class UsersSearch(MethodView):
             403: If the user does not have the required permissions.
             422: If the JSON query is not in the correct format.
         """
+        # Extract sort_by and order_by from query_args
+        sort_by, order_by = query_args["sort_by"], query_args["order_by"]
+        sort_order = 1 if order_by == "asc" else -1
+
         # Search for users based on the provided JSON query.
         users = current_app.config["db"]["app.users"]
-        search = users.find(json)
+        search = users.find(json).sort(sort_by, sort_order)
 
         # Return the paginated list of users.
         page = pagination_parameters.page

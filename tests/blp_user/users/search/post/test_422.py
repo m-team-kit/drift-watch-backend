@@ -46,5 +46,20 @@ class InvalidInput(WithDatabase):
         assert error == ["Invalid input type."]
 
 
+@mark.parametrize("query", [{"bad_arg": 0}], indirect=True)
+class InvalidQuery(WithDatabase):
+    """Test the bad_key parameter."""
+
+    def test_error_msg(self, response):
+        """Test message contains useful information."""
+        assert "bad_arg" in response.json["errors"]["query"]
+        error = response.json["errors"]["query"]["bad_arg"]
+        assert error == ["Unknown field."]
+
+
 class TestStringBody(Registered, IsAdmin, InvalidInput):
     """Test the response when body is a string."""
+
+
+class TestUnknownQuery(Registered, IsAdmin, InvalidQuery):
+    """Test the response when query arg is unknown."""

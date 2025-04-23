@@ -11,6 +11,31 @@ def request(client, path, request_kwds):
 
 
 @fixture(scope="class")
+def query(request, sort_by, order_by):
+    """Inject and return a query string."""
+    query = request.param if hasattr(request, "param") else {}
+    if not isinstance(query, dict):
+        return query
+    if sort_by:
+        query.update({"sort_by": sort_by})
+    if order_by:
+        query.update({"order_by": order_by})
+    return query if query else None  # Return the query as is
+
+
+@fixture(scope="class")
+def sort_by(request):
+    """Inject and return a sort_by string."""
+    return request.param if hasattr(request, "param") else None
+
+
+@fixture(scope="class")
+def order_by(request):
+    """Inject and return an order_by string."""
+    return request.param if hasattr(request, "param") else None
+
+
+@fixture(scope="class")
 def body(request, created_at, user_info):
     """Inject and return a request body."""
     kwds = request.param if hasattr(request, "param") else {}
