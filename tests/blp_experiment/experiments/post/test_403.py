@@ -3,6 +3,8 @@
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /experiment endpoint."""
@@ -25,7 +27,7 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("subiss", [("unknown", "issuer.1")], indirect=True)
+@mark.parametrize("user_info", ["ai4eosc-unregist"], indirect=True)
 class NotRegistered(ValidAuth):
     """Tests for message response when user is not registered."""
 

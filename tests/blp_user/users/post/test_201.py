@@ -6,6 +6,8 @@ from uuid import UUID
 
 from pytest import mark
 
+from tests.constants import *
+
 
 @mark.parametrize("auth", ["mock-token"], indirect=True)
 @mark.parametrize("with_database", ["database_1"], indirect=True)
@@ -31,19 +33,19 @@ class CommonBaseTests:
         """Test the response item has a correct created_at."""
         assert dt.fromisoformat(response.json["created_at"])
 
-    def test_user_subject(self, response, subiss):
+    def test_user_subject(self, response, user_info):
         """Test the response item have correct subject."""
-        assert response.json["subject"] == subiss[0]
+        assert response.json["subject"] == user_info["sub"]
 
-    def test_user_issuer(self, response, subiss):
+    def test_user_issuer(self, response, user_info):
         """Test the response item have correct issuer."""
-        assert response.json["issuer"] == subiss[1]
+        assert response.json["issuer"] == user_info["iss"]
 
-    def test_user_email(self, response, email):
+    def test_user_email(self, response, user_info):
         """Test the response item have correct email."""
-        assert response.json["email"] == email
+        assert response.json["email"] == user_info["email"]
 
 
-@mark.parametrize("subiss", [("user_a", "issuer.a")], indirect=True)
+@mark.parametrize("user_info", ["ai4eosc-unregist"], indirect=True)
 class TestRegister(CommonBaseTests):
     """Test the responses items."""

@@ -3,6 +3,8 @@
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /drifts endpoint."""
@@ -25,26 +27,13 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class Registered(ValidAuth, WithDatabase):
-    """Tests for message response when user is  registered."""
-
-
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+@mark.parametrize("experiment_id", PRIVATE_EXPS, indirect=True)
 class IsPrivate(WithDatabase):
     """Base class for group with public as false."""
 
 
-ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
-ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
-ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
-
-
-@mark.parametrize("entitlements", [[ENT_EDIT]], indirect=True)
-class EditGroup(Registered):
+@mark.parametrize("user_info", CAN_EDIT, indirect=True)
+class CanEdit(ValidAuth, WithDatabase):
     """Base class for group with manage entitlement tests."""
 
 
@@ -113,25 +102,25 @@ class NoBoolDetected(CommonBaseTests):
         assert "Not a valid boolean." in errors
 
 
-class TestBadBodyKey(UnknownField, IsPrivate, EditGroup, WithDatabase):
+class TestBadBodyKey(UnknownField, IsPrivate, CanEdit, WithDatabase):
     """Test the unknown key parameter in body."""
 
 
-class TestMissingJobStatus(MissingJobStatus, IsPrivate, EditGroup):
+class TestMissingJobStatus(MissingJobStatus, IsPrivate, CanEdit):
     """Test the response when missing concept drift boolean."""
 
 
-class TestInvalidJobStatus(InvalidJobStatus, IsPrivate, EditGroup):
+class TestInvalidJobStatus(InvalidJobStatus, IsPrivate, CanEdit):
     """Test the response when invalid concept drift boolean."""
 
 
-class TestMissingModel(MissingModel, IsPrivate, EditGroup):
+class TestMissingModel(MissingModel, IsPrivate, CanEdit):
     """Test the response when missing drift parameter."""
 
 
-class TestMissingDetected(MissingDetected, IsPrivate, EditGroup):
+class TestMissingDetected(MissingDetected, IsPrivate, CanEdit):
     """Test the response when missing drift boolean."""
 
 
-class TestNoBoolDetected(NoBoolDetected, IsPrivate, EditGroup):
+class TestNoBoolDetected(NoBoolDetected, IsPrivate, CanEdit):
     """Test the response when missing drift boolean."""

@@ -1,0 +1,22 @@
+{
+    "eduperson_assurance": [
+        "https://refeds.org/assurance",
+        "https://refeds.org/assurance/ID/unique",
+        "https://refeds.org/assurance/IAP/low",
+        "https://aarc-community.org/policy/authn-assurance/assam",
+        "https://aai.egi.eu/LoA#Low"
+    ],
+    "eduperson_entitlement": [ ],
+    "eduperson_unique_id": "000000000000000000000000000000000000000000000000000000000000NULL@egi.eu",
+    "email": "null@egi.com",
+    "email_verified": true,
+    "family_name": "Surname1 Surnamr2",
+    "given_name": "Null",
+    "iss": "https://aai.egi.eu/auth/realms/egi",
+    "name": "Null Surname1 Surname2",
+    "preferred_username": "usernullexample",
+    "sub": "000000000000000000000000000000000000000000000000000000000000NULL@egi.eu",
+    "voperson_verified_email": [
+        "null@egi.com"
+    ]
+}

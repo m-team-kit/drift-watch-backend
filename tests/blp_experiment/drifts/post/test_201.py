@@ -6,6 +6,8 @@ from uuid import UUID
 
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /drift endpoint."""
@@ -44,26 +46,13 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class Registered(ValidAuth, WithDatabase):
-    """Tests for message response when user is  registered."""
-
-
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+@mark.parametrize("experiment_id", PRIVATE_EXPS, indirect=True)
 class IsPrivate(WithDatabase):
     """Base class for group with public as false."""
 
 
-ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
-ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
-ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
-
-
-@mark.parametrize("entitlements", [[ENT_MANAGE], [ENT_EDIT]], indirect=True)
-class EditGroup(Registered):
+@mark.parametrize("user_info", CAN_EDIT, indirect=True)
+class CanEdit(ValidAuth, WithDatabase):
     """Base class for group with manage entitlement tests."""
 
 
@@ -121,17 +110,14 @@ class WithDataDrift(V100Drift):
         assert "data_drift" in response.json["tags"]
 
 
-ALL_STATUS = ["Running", "Completed", "Failed"]
-
-
 @mark.parametrize("job_status", ALL_STATUS, indirect=True)
-class TestV100Status(V100Drift, IsPrivate, EditGroup):
+class TestV100Status(V100Drift, IsPrivate, CanEdit):
     """Test the responses items."""
 
 
-class TestConcept(WithConceptDrift, IsPrivate, EditGroup):
+class TestConcept(WithConceptDrift, IsPrivate, CanEdit):
     """Test the endpoint with concept drift."""
 
 
-class TestData(WithDataDrift, IsPrivate, EditGroup):
+class TestData(WithDataDrift, IsPrivate, CanEdit):
     """Test the endpoint with data drift."""

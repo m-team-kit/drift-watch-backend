@@ -1,0 +1,32 @@
+{
+    "address": {
+        "country": "Germany"
+    },
+    "email": "unregist@ai4eosc.com",
+    "email_verified": true,
+    "family_name": "Surname1 Surname2",
+    "given_name": "Unregist",
+    "group_membership": [
+        "/Developer Access/vo.ai4eosc.eu",
+        "/Platform Access/vo.ai4eosc.eu"
+    ],
+    "groups": [ ],
+    "iss": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
+    "name": "Unregist Surname1 Surname2",
+    "preferred_username": "unregist@ai4eosc.com",
+    "realm_access": {
+        "roles": [ 
+            "platform-access"
+         ]
+    },
+    "resource_access": {
+        "account": {
+            "roles": [ ]
+        },
+        "realm-management": {
+            "roles": [ ]
+        }
+    },
+    "sub": "00000000-0000-0000-0000-0000UNREGIST",
+    "upn": "unregist@ai4eosc.com"
+}

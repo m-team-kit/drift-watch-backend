@@ -2,6 +2,8 @@
 
 from flask import abort, current_app
 
+from app.tools import authentication
+
 
 def get_user(user_infos):
     """Retrieve a user from the database from token information."""
@@ -44,8 +46,10 @@ def check_access(resource, user_id, user_infos, level="Read"):
     """Check if the user has the required permission on the resource."""
     if resource.get("public", False) and level == "Read":
         return True
-    if not user_infos:
+    if not user_infos or not authentication.is_user(user_infos):
         return abort(403, "Resource is not public.")
+    if authentication.is_admin(user_infos):
+        return True
     match get_permission(resource, user_id, user_infos):
         case "Manage":
             return True

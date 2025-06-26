@@ -5,6 +5,8 @@ from datetime import datetime as dt
 
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /drift endpoint."""
@@ -44,32 +46,18 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class Registered(ValidAuth, WithDatabase):
-    """Tests for message response when user is  registered."""
-
-
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+@mark.parametrize("experiment_id", PRIVATE_EXPS, indirect=True)
 class IsPrivate(WithDatabase):
     """Base class for group with public as false."""
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
+@mark.parametrize("experiment_id", PUBLIC_EXPS, indirect=True)
 class IsPublic(WithDatabase):
     """Base class for group with public as true."""
 
 
-ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
-ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
-ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
-
-
-@mark.parametrize("entitlements", [[ENT_MANAGE], [ENT_EDIT]], indirect=True)
-class EditGroup(Registered):
+@mark.parametrize("user_info", CAN_EDIT, indirect=True)
+class CanEdit(ValidAuth, WithDatabase):
     """Base class for group with manage entitlement tests."""
 
 
@@ -117,14 +105,11 @@ class V100Edit(CommonBaseTests):
         assert response.json["parameters"] == parameters
 
 
-DRIFT_1 = "00000000-0000-0000-0000-000000000001"
-
-
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestPublicV100Drift(V100Edit, IsPublic, EditGroup):
+@mark.parametrize("drift_id", DRIFTS, indirect=True)
+class TestPublicV100Drift(V100Edit, IsPublic, CanEdit):
     """Test the responses items."""
 
 
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestPrivateV100Drift(V100Edit, IsPrivate, EditGroup):
+@mark.parametrize("drift_id", DRIFTS, indirect=True)
+class TestPrivateV100Drift(V100Edit, IsPrivate, CanEdit):
     """Test the responses items."""

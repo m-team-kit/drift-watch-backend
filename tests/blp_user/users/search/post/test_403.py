@@ -25,18 +25,8 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class Registered(ValidAuth):
-    """Tests for message response when user is  registered."""
-
-
-@mark.parametrize("subiss", [("unknown", "issuer.1")], indirect=True)
-class NotRegistered(ValidAuth):
-    """Tests for message response when user is not registered."""
-
-
-@mark.parametrize("entitlements", [None], indirect=True)
-class NotAdmin:
+@mark.parametrize("user_info", ["ai4eosc-null", "ai4eosc-unregist"], indirect=True)
+class NotAdmin(ValidAuth):
     """Tests for message response when user is not admin."""
 
     def test_error_msg(self, response):
@@ -45,9 +35,5 @@ class NotAdmin:
         assert "does not meet requirements" in response.json["message"]
 
 
-class TestRegisteredUser(Registered, NotAdmin, CommonBaseTests):
-    """Tests for message response when user has not the entitlements."""
-
-
-class TestUnknownUser(NotRegistered, NotAdmin, CommonBaseTests):
+class TestNotAdmin(NotAdmin, CommonBaseTests):
     """Tests for message response when user has not the entitlements."""

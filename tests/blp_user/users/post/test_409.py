@@ -3,6 +3,8 @@
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
+from tests.constants import *
+
 
 @mark.parametrize("auth", ["mock-token"], indirect=True)
 @mark.parametrize("with_database", ["database_1"], indirect=True)
@@ -26,6 +28,6 @@ class ConflictSubIss:
         assert response.json["message"] == "User already exists."
 
 
-@mark.parametrize("subiss", [("user_1", "issuer.1")], indirect=True)
+@mark.parametrize("user_info", ["ai4eosc-null"], indirect=True)
 class TestRegisterAgain(ConflictSubIss, CommonBaseTests):
     """Test the response if registering again parameter."""

@@ -1,0 +1,24 @@
+{
+    "eduperson_assurance": [
+        "https://refeds.org/assurance",
+        "https://refeds.org/assurance/ID/unique",
+        "https://refeds.org/assurance/IAP/low",
+        "https://aarc-community.org/policy/authn-assurance/assam",
+        "https://aai.egi.eu/LoA#Low"
+    ],
+    "eduperson_entitlement": [
+        "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
+    ],
+    "eduperson_unique_id": "0000000000000000000000000000000000000000000000000000000000MANAGE@egi.eu",
+    "email": "manage@egi.com",
+    "email_verified": true,
+    "family_name": "Surname1 Surnamr2",
+    "given_name": "Manage",
+    "iss": "https://aai.egi.eu/auth/realms/egi",
+    "name": "Manage Surname1 Surname2",
+    "preferred_username": "manageexample",
+    "sub": "0000000000000000000000000000000000000000000000000000000000MANAGE@egi.eu",
+    "voperson_verified_email": [
+        "manage@egi.com"
+    ]
+}

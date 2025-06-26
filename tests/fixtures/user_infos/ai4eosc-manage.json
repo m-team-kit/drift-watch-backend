@@ -1,0 +1,33 @@
+{
+    "address": {
+        "country": "Germany"
+    },
+    "email": "manage@ai4eosc.com",
+    "email_verified": true,
+    "family_name": "Surname1 Surname2",
+    "given_name": "Manage",
+    "group_membership": [
+        "/Developer Access/vo.ai4eosc.eu",
+        "/Platform Access/vo.ai4eosc.eu"
+    ],
+    "groups": [
+        "platform-access",
+        "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
+    ],
+    "iss": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
+    "name": "Manage Surname1 Surname2",
+    "preferred_username": "manage@ai4eosc.com",
+    "realm_access": {
+        "roles": [ ]
+    },
+    "resource_access": {
+        "account": {
+            "roles": [ ]
+        },
+        "realm-management": {
+            "roles": [ ]
+        }
+    },
+    "sub": "00000000-0000-0000-0000-000000MANAGE",
+    "upn": "manage@ai4eosc.com"
+}

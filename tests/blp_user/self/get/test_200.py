@@ -6,6 +6,8 @@ from uuid import UUID
 
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /user/self endpoint."""
@@ -46,15 +48,10 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("email", ["email@example.com"], indirect=True)
-class ValidEmail(CommonBaseTests):
-    """Tests for message response when user is registered."""
-
-
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
+@mark.parametrize("user_info", ["ai4eosc-null"], indirect=True)
 class Registered(ValidAuth):
     """Tests for message response when user is  registered."""
 
 
-class TestSimpleInfo(Registered, ValidEmail, WithDatabase):
+class TestSimpleInfo(Registered, WithDatabase):
     """Test the response when user is registered."""

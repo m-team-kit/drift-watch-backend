@@ -3,6 +3,8 @@
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /drift endpoint."""
@@ -29,7 +31,7 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("subiss", [("unknown", "issuer.1")], indirect=True)
+@mark.parametrize("user_info", ["ai4eosc-unregist"], indirect=True)
 class NotRegistered(ValidAuth):
     """Tests for message response when user is not registered."""
 
@@ -39,12 +41,8 @@ class NotRegistered(ValidAuth):
         assert response.json["message"] == "User not registered."
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class Registered(ValidAuth, WithDatabase):
-    """Tests for message response when user is  registered."""
-
-
-class PermissionDenied(Registered):
+@mark.parametrize("user_info", NO_EDIT, indirect=True)
+class PermissionDenied(ValidAuth, WithDatabase):
     """Tests for message response when user does not have permission."""
 
     def test_error_msg(self, response):
@@ -53,44 +51,11 @@ class PermissionDenied(Registered):
         assert response.json["message"] == "Insufficient permissions."
 
 
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
+@mark.parametrize("experiment_id", PRIVATE_EXPS + PUBLIC_EXPS, indirect=True)
+class AnyExperiment(CommonBaseTests):
+    """Base class for tests with any experiment."""
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-class IsPrivate(CommonBaseTests):
-    """Base class for group with public as false."""
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
-class IsPublic(CommonBaseTests):
-    """Base class for group with public as true."""
-
-
-ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
-ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
-ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
-NO_EDIT_ENTITLEMENTS = [[ENT_READ], []]
-
-
-@mark.parametrize("entitlements", NO_EDIT_ENTITLEMENTS, indirect=True)
-class NoEditGroup(IsPrivate):
-    """Base class for group with read entitlement tests."""
-
-
-DRIFT_1 = "00000000-0000-0000-0000-000000000001"
-
-
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestNotRegistered(NotRegistered, IsPublic, WithDatabase):
-    """Test the authentication response when user not registered."""
-
-
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestIsPublic(PermissionDenied, IsPublic, WithDatabase):
-    """Tests for message response for no permission."""
-
-
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestNoEditAccess(PermissionDenied, NoEditGroup, WithDatabase):
+@mark.parametrize("drift_id", DRIFTS, indirect=True)
+class TestNoEditAccess(PermissionDenied, AnyExperiment, WithDatabase):
     """Tests for message response for read permissions."""

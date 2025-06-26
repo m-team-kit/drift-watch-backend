@@ -3,6 +3,8 @@
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /experiment endpoint."""
@@ -30,30 +32,18 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class Registered(ValidAuth):
-    """Tests for message response when user is  registered."""
-
-
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-class IsPrivate(CommonBaseTests):
+@mark.parametrize("experiment_id", PRIVATE_EXPS + PUBLIC_EXPS, indirect=True)
+class AnyExperiment(CommonBaseTests):
     """Base class for group with public as false."""
 
 
-ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
-ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
-ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
-
-
-@mark.parametrize("entitlements", [[ENT_MANAGE]], indirect=True)
-class ManageGroup(Registered):
+# TODO: @mark.parametrize("user_info", CAN_MANAGE, indirect=True)
+@mark.parametrize("user_info", ["ai4eosc-manage"], indirect=True)
+class CanManage(ValidAuth):
     """Base class for group with manage entitlement tests."""
 
 
-@mark.parametrize("name", ["experiment_2"], indirect=True)
+@mark.parametrize("name", ["conflict_exp"], indirect=True)
 class ConflictName(WithDatabase):
     """Test response message contains name conflict."""
 
@@ -63,5 +53,5 @@ class ConflictName(WithDatabase):
         assert response.json["message"] == "Name conflict."
 
 
-class TestRepeatedName(ManageGroup, IsPrivate, ConflictName):
+class TestRepeatedName(CanManage, AnyExperiment, ConflictName):
     """Test the response when name exists in database."""

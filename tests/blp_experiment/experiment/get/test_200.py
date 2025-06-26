@@ -6,6 +6,8 @@ from uuid import UUID
 
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the experiment/<id> endpoint."""
@@ -55,47 +57,19 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class Registered(ValidAuth, WithDatabase):
+@mark.parametrize("user_info", CAN_READ + ["ai4eosc-unregist"], indirect=True)
+class AnyUser(ValidAuth, WithDatabase):
     """Tests for message response when user is  registered."""
 
 
-@mark.parametrize("subiss", [("unknown", "issuer.1")], indirect=True)
-class NotRegistered(ValidAuth):
-    """Tests for message response when user is not registered."""
-
-
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-class IsPrivate(CommonBaseTests):
+@mark.parametrize("experiment_id", PRIVATE_EXPS + PUBLIC_EXPS, indirect=True)
+class AnyExperiment(WithDatabase):
     """Base class for group with manage entitlement tests."""
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
-class IsPublic(CommonBaseTests):
-    """Base class for group with manage entitlement tests."""
-
-
-ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
-ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
-ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
-
-
-@mark.parametrize("entitlements", [[]], indirect=True)
-class AnyGroup(Registered):
-    """Base class for group with manage entitlement tests."""
-
-
-class TestMissingToken(NoAuthHeader, IsPrivate, WithDatabase):
+class TestMissingToken(NoAuthHeader, AnyExperiment):
     """Test the response when no token and is public."""
 
 
-class TestNotRegistered(NotRegistered, IsPrivate, WithDatabase):
-    """Test the response when user is not registered."""
-
-
-class TestAnyAccess(AnyGroup, IsPrivate, WithDatabase):
+class TestAnyAccess(AnyUser, AnyExperiment):
     """Test the responses item when user has access."""

@@ -7,6 +7,8 @@ from uuid import UUID
 
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /drift endpoint."""
@@ -46,38 +48,18 @@ class NoAuthHeader(CommonBaseTests):
     """Tests when missing authentication header."""
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class Registered(ValidAuth):
-    """Tests for message response when user is  registered."""
-
-
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+@mark.parametrize("experiment_id", PRIVATE_EXPS, indirect=True)
 class IsPrivate(CommonBaseTests):
     """Base class for group with public as false."""
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
+@mark.parametrize("experiment_id", PUBLIC_EXPS, indirect=True)
 class IsPublic(CommonBaseTests):
     """Base class for group with public as true."""
 
 
-ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
-ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
-ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
-GROUPS_WITH_READ_RIGHTS = [[ENT_READ], [ENT_EDIT], [ENT_MANAGE]]
-
-
-@mark.parametrize("entitlements", GROUPS_WITH_READ_RIGHTS, indirect=True)
-class ReadGroup(Registered):
-    """Base class for group with manage entitlement tests."""
-
-
-@mark.parametrize("entitlements", [[]], indirect=True)
-class NoGroup(Registered):
+@mark.parametrize("user_info", CAN_READ, indirect=True)
+class CanRead(ValidAuth):
     """Base class for group with manage entitlement tests."""
 
 
@@ -101,9 +83,6 @@ class BeforeFilter(WithDatabase):
         req_date = dt.fromisoformat(created_before).replace(tzinfo=tz.utc)
         for item in response.json:
             assert dt.fromisoformat(item["created_at"]) <= req_date
-
-
-ALL_STATUS = ["Running", "Completed", "Failed"]
 
 
 @mark.parametrize("job_status", ALL_STATUS, indirect=True)
@@ -144,7 +123,7 @@ class TestPublicAccess(NoAuthHeader, IsPublic, WithDatabase):
     """Test the responses items for public access."""
 
 
-class TestReadAccess(ReadGroup, IsPrivate, WithDatabase):
+class TestReadAccess(CanRead, IsPrivate, WithDatabase):
     """Test the responses items for private access."""
 
 

@@ -84,53 +84,51 @@ def body(request):
 
 
 @fixture(scope="class")
-def subiss(request):
-    """Inject and return a request subiss."""
-    if not hasattr(request, "param"):
-        return "user_1", "issuer.1"
-    return request.param
-
-
-@fixture(scope="class")
-def entitlements(request):
-    """Inject and return a request entitlements."""
+def issuer(request):
+    """Inject and return a request issuer in the token info."""
     return request.param if hasattr(request, "param") else None
 
 
-@fixture(scope="class")
-def email(request, subiss):
-    """Inject and return a request email."""
+@fixture(scope="class", params=["ai4eosc-null"])
+def user_info(request):
+    """User information send by the OP endpoint."""
     if not hasattr(request, "param"):
-        return f"{subiss[0]}@{subiss[1]}.com"
-    return request.param
+        return None
+    config_path = f"tests/fixtures/user_infos/{request.param}.json"
+    with open(config_path, "r", encoding="utf-8") as file:
+        return json.load(file)
 
 
 @fixture(scope="class")
-def accept_authorization(class_mocker, subiss, email, entitlements):
+def accept_authorization(class_mocker, user_info, issuer):
     """Patches flaat to edit provided user_infos."""
-    user_info = {
-        "email": email,
-        "email_verified": bool(email) and email != "bad-email",
-        "sub": subiss[0],
-        "iss": subiss[1],
-    }
-    if entitlements is not None:
-        user_info["eduperson_entitlement"] = entitlements
+    user_infos = UserInfos(
+        access_token_info={"issuer": issuer} if issuer else None,
+        user_info=user_info if user_info else {},
+        introspection_info=None,
+    )
     class_mocker.patch.object(
         authentication.flaat,
         "get_user_infos_from_access_token",
-        return_value=UserInfos(
-            access_token_info=None,
-            user_info=user_info,
-            introspection_info=None,
-        ),
+        return_value=user_infos,
     )
 
 
 @fixture(scope="class")
-def db_user(response, database, subiss):
+def entitlements_field(request, app):
+    """Edit app config with entitlements field."""
+    original_value = app.config.get("entitlements_field")
+    app.config["entitlements_field"] = request.param
+    try:
+        yield request.param
+    finally:
+        app.config["entitlements_field"] = original_value
+
+
+@fixture(scope="class")
+def db_user(response, database, user_info):
     """Returns user from database after response."""
-    db_filter = {"subject": subiss[0], "issuer": subiss[1]}
+    db_filter = {"subject": user_info["sub"], "issuer": user_info["iss"]}
     user = database["app.users"].find_one(db_filter)
     if user is not None:
         user["id"] = user.pop("_id")
