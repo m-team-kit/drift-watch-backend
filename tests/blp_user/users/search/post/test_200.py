@@ -57,18 +57,8 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class Registered(ValidAuth):
-    """Tests for message response when user is  registered."""
-
-
-@mark.parametrize("subiss", [("unknown", "issuer.1")], indirect=True)
-class NotRegistered(ValidAuth):
-    """Tests for message response when user is not registered."""
-
-
-@mark.parametrize("entitlements", [["iam:admin"]], indirect=True)
-class IsAdmin(CommonBaseTests):
+@mark.parametrize("user_info", ["egi-admin"], indirect=True)
+class IsAdmin(ValidAuth):
     """Base class for group with admin entitlement tests."""
 
 
@@ -115,21 +105,13 @@ class SortBy(WithDatabase):
         )  # fmt: skip
 
 
-class TestRegisteredAdmin(Registered, IsAdmin, WithDatabase):
-    """Test the responses items for full query."""
-
-
-class TestUnknownAdmin(NotRegistered, IsAdmin, WithDatabase):
+class TestAfterFilter(IsAdmin, AfterFilter):
     """Test the response items contain the correct users."""
 
 
-class TestAfterFilter(Registered, IsAdmin, AfterFilter):
+class TestBeforeFilter(IsAdmin, BeforeFilter):
     """Test the response items contain the correct users."""
 
 
-class TestBeforeFilter(Registered, IsAdmin, BeforeFilter):
-    """Test the response items contain the correct users."""
-
-
-class TestSorting(Registered, IsAdmin, SortBy):
+class TestSorting(IsAdmin, SortBy):
     """Test the response items contain the correct order."""

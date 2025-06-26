@@ -7,6 +7,8 @@ from uuid import UUID
 
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /experiment endpoint."""
@@ -74,7 +76,7 @@ class BeforeFilter(WithDatabase):
             assert dt.fromisoformat(item["created_at"]) <= req_date
 
 
-@mark.parametrize("name", ["experiment_1"], indirect=True)
+@mark.parametrize("name", ["private_exp"], indirect=True)
 class NameFilter(WithDatabase):
     """Test the response items name field."""
 

@@ -5,7 +5,7 @@ testpaths = ["tests"]
 pythonpath = ["."]
 env_files = [".env"]
 env = [
-    'APP_ADMIN_ENTITLEMENTS=["iam:admin","iam:dev"]',
+    'APP_ADMIN_ENTITLEMENTS=["iam:admin"]',
     'APP_TRUSTED_OP_LIST=[]',
     'APP_SECRETS_DIR=tests/fixtures/secrets',
 ]

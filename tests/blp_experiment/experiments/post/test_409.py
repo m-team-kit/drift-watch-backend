@@ -3,6 +3,8 @@
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /experiment endpoint."""
@@ -25,12 +27,12 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
+@mark.parametrize("user_info", ["egi-null"], indirect=True)
 class Registered(ValidAuth):
     """Tests for message response when user is  registered."""
 
 
-@mark.parametrize("name", ["experiment_2"], indirect=True)
+@mark.parametrize("name", ["conflict_exp"], indirect=True)
 class ConflictName(WithDatabase):
     """Test response message contains name conflict."""
 

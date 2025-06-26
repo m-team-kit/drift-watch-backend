@@ -6,6 +6,8 @@ from uuid import UUID
 
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /experiment/<id> endpoint."""
@@ -51,52 +53,15 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class Registered(ValidAuth):
-    """Tests for message response when user is  registered."""
-
-
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-class IsPrivate(CommonBaseTests):
-    """Base class for group with public as false."""
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
-class IsPublic(CommonBaseTests):
-    """Base class for group with public as true."""
-
-
-ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
-ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
-ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
-GROUP_WITH_ALL_ENTITLEMENTS = [ENT_MANAGE, ENT_EDIT, ENT_READ]
-
-
-@mark.parametrize("entitlements", [[ENT_MANAGE]], indirect=True)
-class ManageGroup(Registered):
+# TODO: @mark.parametrize("user_info", CAN_MANAGE, indirect=True)
+@mark.parametrize("user_info", ["egi-manage"], indirect=True)
+class CanManage(ValidAuth):
     """Base class for group with manage entitlement tests."""
 
 
-@mark.parametrize("entitlements", [GROUP_WITH_ALL_ENTITLEMENTS], indirect=True)
-class AllEntitlements(Registered):
-    """Base class for group with all entitlement tests."""
-
-
-class TestPublicExperiment(IsPublic, ManageGroup, WithDatabase):
-    """Test the responses items."""
-
-
-@mark.parametrize("name", ["experiment_1"], indirect=True)
-class TestSelfConflict(IsPrivate, ManageGroup, WithDatabase):
-    """Test update does not trigger name conflict."""
-
-
 @mark.parametrize("name", ["new name 1"], indirect=True)
-class TestChangeName(IsPrivate, ManageGroup, WithDatabase):
+@mark.parametrize("experiment_id", [EDITABLE_EXPS[0]], indirect=True)
+class TestChangeName(CanManage, WithDatabase):
     """Test changing the name of the experiment."""
 
     def test_new_name(self, response, name):
@@ -106,7 +71,8 @@ class TestChangeName(IsPrivate, ManageGroup, WithDatabase):
 
 @mark.parametrize("name", ["new name 2"], indirect=True)
 @mark.parametrize("description", ["new description"], indirect=True)
-class TestChangeDescription(IsPrivate, ManageGroup, WithDatabase):
+@mark.parametrize("experiment_id", [EDITABLE_EXPS[1]], indirect=True)
+class TestChangeDescription(CanManage, WithDatabase):
     """Test changing the description of the experiment."""
 
     def test_new_description(self, response, description):
@@ -116,7 +82,8 @@ class TestChangeDescription(IsPrivate, ManageGroup, WithDatabase):
 
 @mark.parametrize("name", ["new name 3"], indirect=True)
 @mark.parametrize("public", [True], indirect=True)
-class TestChangePublic(IsPrivate, ManageGroup, WithDatabase):
+@mark.parametrize("experiment_id", [EDITABLE_EXPS[2]], indirect=True)
+class TestChangePublic(CanManage, WithDatabase):
     """Test changing the public status of the experiment."""
 
     def test_new_public(self, response):
@@ -124,12 +91,10 @@ class TestChangePublic(IsPrivate, ManageGroup, WithDatabase):
         assert response.json["public"] is True
 
 
-new_permissions = [{"level": "Read", "entity": ENT_READ}]
-
-
 @mark.parametrize("name", ["new name 4"], indirect=True)
-@mark.parametrize("permissions", [new_permissions], indirect=True)
-class TestChangePerm(IsPrivate, AllEntitlements, WithDatabase):
+@mark.parametrize("permissions", [[{"level": "Read", "entity": "a"}]], indirect=True)
+@mark.parametrize("experiment_id", [EDITABLE_EXPS[3]], indirect=True)
+class TestChangePerm(CanManage, WithDatabase):
     """Test changing the permissions of the experiment."""
 
     def test_new_permissions(self, response, permissions, db_user):

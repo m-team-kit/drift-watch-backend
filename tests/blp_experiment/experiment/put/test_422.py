@@ -3,6 +3,8 @@
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /experiment endpoint."""
@@ -30,26 +32,13 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class Registered(ValidAuth):
-    """Tests for message response when user is  registered."""
-
-
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+@mark.parametrize("experiment_id", PRIVATE_EXPS, indirect=True)
 class IsPrivate(CommonBaseTests):
     """Base class for group with public as false."""
 
 
-ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
-ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
-ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
-
-
-@mark.parametrize("entitlements", [[ENT_MANAGE]], indirect=True)
-class ManageGroup(Registered):
+@mark.parametrize("user_info", CAN_MANAGE, indirect=True)
+class CanManage(ValidAuth):
     """Base class for group with manage entitlement tests."""
 
 
@@ -83,10 +72,7 @@ class NoListPerm(WithDatabase):
         assert "Not a valid list." in errors["permissions"]
 
 
-BAD_PERMISSIONS = [[{"entity": "g1", "level": "bad_level"}]]
-
-
-@mark.parametrize("permissions", [BAD_PERMISSIONS[0]], indirect=True)
+@mark.parametrize("permissions", BAD_PERMISSIONS, indirect=True)
 class BadLevel(WithDatabase):
     """Test the response message for bad permission level."""
 
@@ -97,17 +83,17 @@ class BadLevel(WithDatabase):
         assert "Must be one of: Read, Edit, Manage." in level_error
 
 
-class TestBadBodyKey(UnknownField, IsPrivate, ManageGroup):
+class TestBadBodyKey(UnknownField, IsPrivate, CanManage):
     """Test the unknown key parameter in body."""
 
 
-class TestNoBoolPublic(NoBoolPublic, IsPrivate, ManageGroup):
+class TestNoBoolPublic(NoBoolPublic, IsPrivate, CanManage):
     """Test the response when missing concept experiment boolean."""
 
 
-class TestNoListPerm(NoListPerm, IsPrivate, ManageGroup):
+class TestNoListPerm(NoListPerm, IsPrivate, CanManage):
     """Test the response when missing concept experiment parameter."""
 
 
-class TestUnknownLevel(BadLevel, ManageGroup, IsPrivate):
+class TestUnknownLevel(BadLevel, CanManage, IsPrivate):
     """Test the response when unknown level in permissions."""

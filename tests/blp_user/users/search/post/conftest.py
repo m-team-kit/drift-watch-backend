@@ -36,16 +36,16 @@ def order_by(request):
 
 
 @fixture(scope="class")
-def body(request, created_at, user_info):
+def body(request, created_at, filter_info):
     """Inject and return a request body."""
     kwds = request.param if hasattr(request, "param") else {}
     if not isinstance(kwds, dict):
         return kwds  # Return the body as is
     for key, value in [
         ("created_at", created_at),
-        ("subject", user_info.get("subject", None)),
-        ("issuer", user_info.get("issuer", None)),
-        ("email", user_info.get("email", None)),
+        ("subject", filter_info.get("subject", None)),
+        ("issuer", filter_info.get("issuer", None)),
+        ("email", filter_info.get("email", None)),
     ]:
         kwds.update({key: value} if value else {})
     kwds.update(request.param if hasattr(request, "param") else {})
@@ -92,7 +92,7 @@ def email(request):
 
 
 @fixture(scope="class")
-def user_info(request, subject, issuer, email):
+def filter_info(request, subject, issuer, email):
     """Inject and returns user_info."""
     info = request.param if hasattr(request, "param") else {}
     info.update({"subject": subject} if subject else {})

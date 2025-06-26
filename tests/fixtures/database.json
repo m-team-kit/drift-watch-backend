@@ -5,61 +5,92 @@
             {
                 "_id": "00000000-0000-0001-0001-000000000001",
                 "created_at": "2020-01-01T00:00:00Z",
-                "name": "experiment_1",
+                "name": "private_exp",
                 "description": "Experiment 1 description",
                 "public": false,
                 "permissions": [
                     { "level": "Manage", "entity": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
                     { "level": "Edit", "entity": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
                     { "level": "Read", "entity": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
-                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000001" },
-                    { "level": "Edit", "entity": "00000000-0000-0003-0001-000000000002" },
-                    { "level": "Read", "entity": "00000000-0000-0003-0001-000000000003" }
+                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000005" }
                 ]
             },
             {
                 "_id": "00000000-0000-0001-0001-000000000002",
                 "created_at": "2021-01-01T00:00:00Z",
-                "name": "experiment_2",
+                "name": "public_exp",
                 "description": "Experiment 2 description",
                 "public": true,
                 "permissions": [
                     { "level": "Manage", "entity": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
                     { "level": "Edit", "entity": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
                     { "level": "Read", "entity": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
-                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000001" },
-                    { "level": "Edit", "entity": "00000000-0000-0003-0001-000000000002" },
-                    { "level": "Read", "entity": "00000000-0000-0003-0001-000000000003" }
+                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000005" }
                 ]
             },
             {
                 "_id": "00000000-0000-0001-0001-000000000003",
                 "created_at": "2021-01-02T00:00:00Z",
-                "name": "experiment_3",
+                "name": "conflict_exp",
                 "description": "Experiment 3 description",
                 "public": false,
                 "permissions": [
                     { "level": "Manage", "entity": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
                     { "level": "Edit", "entity": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
                     { "level": "Read", "entity": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
-                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000001" },
-                    { "level": "Edit", "entity": "00000000-0000-0003-0001-000000000002" },
-                    { "level": "Read", "entity": "00000000-0000-0003-0001-000000000003" }
+                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000005" }
                 ]
             },
             {
-                "_id": "00000000-0000-0001-0001-000000000004",
+                "_id": "00000000-0000-0001-0002-000000000001",
                 "created_at": "2022-01-01T00:00:00Z",
-                "name": "experiment_4",
-                "description": "Experiment 4 description",
+                "name": "editable_1",
+                "description": "Experiment editable 1 description",
                 "public": false,
                 "permissions": [
                     { "level": "Manage", "entity": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
                     { "level": "Edit", "entity": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
                     { "level": "Read", "entity": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
-                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000001" },
-                    { "level": "Edit", "entity": "00000000-0000-0003-0001-000000000002" },
-                    { "level": "Read", "entity": "00000000-0000-0003-0001-000000000003" }
+                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000005" }
+                ]
+            },
+            {
+                "_id": "00000000-0000-0001-0002-000000000002",
+                "created_at": "2022-01-01T00:00:00Z",
+                "name": "editable_2",
+                "description": "Experiment editable 2 description",
+                "public": false,
+                "permissions": [
+                    { "level": "Manage", "entity": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
+                    { "level": "Edit", "entity": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
+                    { "level": "Read", "entity": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
+                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000005" }
+                ]
+            },
+            {
+                "_id": "00000000-0000-0001-0002-000000000003",
+                "created_at": "2022-01-01T00:00:00Z",
+                "name": "editable_3",
+                "description": "Experiment editable 3 description",
+                "public": false,
+                "permissions": [
+                    { "level": "Manage", "entity": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
+                    { "level": "Edit", "entity": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
+                    { "level": "Read", "entity": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
+                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000005" }
+                ]
+            },
+            {
+                "_id": "00000000-0000-0001-0002-000000000004",
+                "created_at": "2022-01-01T00:00:00Z",
+                "name": "editable_4",
+                "description": "Experiment editable 4 description",
+                "public": false,
+                "permissions": [
+                    { "level": "Manage", "entity": "urn:mace:egi.eu:group:vo_example1:role=manage#x.0" },
+                    { "level": "Edit", "entity": "urn:mace:egi.eu:group:vo_example1:role=edit#x.0" },
+                    { "level": "Read", "entity": "urn:mace:egi.eu:group:vo_example1:role=read#x.0" },
+                    { "level": "Manage", "entity": "00000000-0000-0003-0001-000000000005" }
                 ]
             }
         ]
@@ -70,49 +101,67 @@
             {
                 "_id": "00000000-0000-0003-0001-000000000001",
                 "created_at": "2020-01-01T00:00:00Z",
-                "subject": "user_1", "issuer": "issuer.1",
-                "email": "user_1@issuer.1.com" },
+                "subject": "00000000000000000000000000000000000000000000000000000000000ADMIN@egi.eu", 
+                "issuer": "https://aai.egi.eu/auth/realms/egi",
+                "email": "admin@egi.com" },
             {
                 "_id": "00000000-0000-0003-0001-000000000002",
                 "created_at": "2021-01-01T00:00:00Z",
-                "subject": "user_2", "issuer": "issuer.1",
-                "email": "user_2@issuer.1.com"
+                "subject": "000000000000000000000000000000000000000000000000000000000000EDIT@egi.eu",
+                "issuer": "https://aai.egi.eu/auth/realms/egi",
+                "email": "edit@egi.com"
             },
             {
                 "_id": "00000000-0000-0003-0001-000000000003",
                 "created_at": "2021-01-02T00:00:00Z",
-                "subject": "user_3", "issuer": "issuer.1",
-                "email": "user_3@issuer.1.com"
+                "subject": "0000000000000000000000000000000000000000000000000000000000MANAGE@egi.eu",
+                "issuer": "https://aai.egi.eu/auth/realms/egi",
+                "email": "manage@egi.com"
             },
             {
                 "_id": "00000000-0000-0003-0001-000000000004",
-                "created_at": "2021-01-03T00:00:00Z",
-                "subject": "user_4", "issuer": "issuer.1",
-                "email": "user_4@issuer.1.com"
+                "created_at": "2021-01-02T00:00:00Z",
+                "subject": "000000000000000000000000000000000000000000000000000000000000NULL@egi.eu",
+                "issuer": "https://aai.egi.eu/auth/realms/egi",
+                "email": "null@egi.com"
+            },
+            {
+                "_id": "00000000-0000-0003-0001-000000000005",
+                "created_at": "2021-01-02T00:00:00Z",
+                "subject": "00000000000000000000000000000000000000000000000000000000000OWNER@egi.eu",
+                "issuer": "https://aai.egi.eu/auth/realms/egi",
+                "email": "owner@egi.com"
+            },
+            {
+                "_id": "00000000-0000-0003-0001-000000000006",
+                "created_at": "2021-01-02T00:00:00Z",
+                "subject": "000000000000000000000000000000000000000000000000000000000000READ@egi.eu",
+                "issuer": "https://aai.egi.eu/auth/realms/egi",
+                "email": "read@egi.com"
             },
             {
                 "_id": "00000000-0000-0003-0002-000000000001",
                 "created_at": "2021-01-04T00:00:00Z",
-                "subject": "user_1", "issuer": "issuer.2",
-                "email": "user_1@issuer.2.com"
+                "subject": "@egi.eu", "issuer": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
+                "email": "user_1@ai4eosc.com"
             },
             {
                 "_id": "00000000-0000-0003-0002-000000000002",
                 "created_at": "2021-01-05T00:00:00Z",
-                "subject": "user_2", "issuer": "issuer.2",
-                "email": "user_2@issuer.2.com"
+                "subject": "user_2", "issuer": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
+                "email": "user_2@ai4eosc.com"
             },
             {
                 "_id": "00000000-0000-0003-0002-000000000003",
                 "created_at": "2021-01-06T00:00:00Z",
-                "subject": "user_3", "issuer": "issuer.2",
-                "email": "user_3@issuer.2.com"
+                "subject": "user_3", "issuer": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
+                "email": "user_3@ai4eosc.com"
             },
             {
                 "_id": "00000000-0000-0003-0002-000000000004",
                 "created_at": "2021-01-07T00:00:00Z",
-                "subject": "user_4", "issuer": "issuer.2",
-                "email": "user_4@issuer.2.com"
+                "subject": "user_4", "issuer": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
+                "email": "user_4@ai4eosc.com"
             },
             {
                 "_id": "00000000-0000-0003-0003-000000000001",

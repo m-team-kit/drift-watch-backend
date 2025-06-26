@@ -6,6 +6,8 @@ from uuid import UUID
 
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the drift/<drift_id> endpoint."""
@@ -51,40 +53,26 @@ class NoAuthHeader:
     """Tests when missing authentication header."""
 
 
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+@mark.parametrize("experiment_id", PRIVATE_EXPS, indirect=True)
 class IsPrivate(CommonBaseTests):
     """Base class for group with manage entitlement tests."""
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
+@mark.parametrize("experiment_id", PUBLIC_EXPS, indirect=True)
 class IsPublic(CommonBaseTests):
     """Base class for group with manage entitlement tests."""
 
 
-ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
-ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
-ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
-GROUPS_WITH_READ_RIGHTS = [[ENT_READ], [ENT_EDIT], [ENT_MANAGE]]
-
-
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-@mark.parametrize("entitlements", GROUPS_WITH_READ_RIGHTS, indirect=True)
+@mark.parametrize("user_info", CAN_READ, indirect=True)
 class CanRead(ValidAuth):
     """Base class for group with manage entitlement tests."""
 
 
-DRIFT_1 = "00000000-0000-0000-0000-000000000001"
-
-
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
+@mark.parametrize("drift_id", DRIFTS, indirect=True)
 class TestWithAccess(IsPrivate, CanRead, WithDatabase):
     """Test the responses item when user has access."""
 
 
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
+@mark.parametrize("drift_id", DRIFTS, indirect=True)
 class TestPublic(IsPublic, NoAuthHeader, WithDatabase):
     """Test the responses items when the drift is public."""

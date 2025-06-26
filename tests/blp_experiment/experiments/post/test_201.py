@@ -6,6 +6,8 @@ from uuid import UUID
 
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /experiment endpoint."""
@@ -53,7 +55,7 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
+@mark.parametrize("user_info", ["egi-null"], indirect=True)
 class Registered(ValidAuth):
     """Tests for message response when user is  registered."""
 
@@ -78,10 +80,7 @@ class WithPublic(WithDatabase):
         assert response.json["public"] is True
 
 
-new_permission = [{"level": "Read", "entity": "group"}]
-
-
-@mark.parametrize("permissions", [new_permission], indirect=True)
+@mark.parametrize("permissions", NEW_PERMISSIONS, indirect=True)
 class WithPermissions(WithDatabase):
     """Test the response items with extra permissions."""
 
@@ -93,21 +92,21 @@ class WithPermissions(WithDatabase):
         assert response.json["permissions"] == expected_permissions
 
 
-@mark.parametrize("name", ["new_experiment_1"], indirect=True)
+@mark.parametrize("name", ["new_simple_exp"], indirect=True)
 class TestSimpleExperiment(Registered, WithDatabase):
     """Test the /experiment endpoint with simple permissions."""
 
 
-@mark.parametrize("name", ["new_experiment_2"], indirect=True)
+@mark.parametrize("name", ["new_descrip_exp"], indirect=True)
 class TestDescriptionExperiment(Registered, WithDescription):
     """Test the /experiment endpoint with simple permissions."""
 
 
-@mark.parametrize("name", ["new_experiment_3"], indirect=True)
+@mark.parametrize("name", ["new_shared_exp"], indirect=True)
 class TestSharedExperiment(Registered, WithPermissions):
     """Test the /experiment endpoint with shared permissions."""
 
 
-@mark.parametrize("name", ["new_experiment_4"], indirect=True)
+@mark.parametrize("name", ["new_public_exp"], indirect=True)
 class TestPublicExperiment(Registered, WithPublic):
     """Test the /experiment endpoint with simple permissions."""

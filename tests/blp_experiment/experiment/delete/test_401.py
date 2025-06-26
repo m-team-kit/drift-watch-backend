@@ -3,6 +3,8 @@
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /experiment endpoint."""
@@ -43,14 +45,11 @@ class UnknownIdentity:
         assert response.json["message"] == "User identity could not be determined"
 
 
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+@mark.parametrize("experiment_id", PRIVATE_EXPS, indirect=True)
 class TestMissingToken(NoAuthHeader, CommonBaseTests):
     """Test the /experiment endpoint with missing token."""
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+@mark.parametrize("experiment_id", PRIVATE_EXPS, indirect=True)
 class TestInvalidToken(UnknownIdentity, CommonBaseTests):
     """Test the /experiment endpoint with invalid token."""

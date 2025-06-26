@@ -3,6 +3,8 @@
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /drift endpoint."""
@@ -35,7 +37,7 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("subiss", [("unknown", "issuer.1")], indirect=True)
+@mark.parametrize("user_info", ["egi-unknown"], indirect=True)
 class NotRegistered(ValidAuth):
     """Tests for message response when user is not registered."""
 
@@ -45,17 +47,8 @@ class NotRegistered(ValidAuth):
         assert response.json["message"] == "User not registered."
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class Registered(ValidAuth):
-    """Tests for message response when user is  registered."""
-
-
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
-ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
-
-
-class PermissionDenied(Registered):
+@mark.parametrize("user_info", NO_READ, indirect=True)
+class PermissionDenied(ValidAuth):
     """Tests for message response when user does not have permission."""
 
     def test_error_msg(self, response):
@@ -64,34 +57,26 @@ class PermissionDenied(Registered):
         assert response.json["message"] == "Insufficient permissions."
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+@mark.parametrize("experiment_id", PRIVATE_EXPS, indirect=True)
 class IsPrivate(CommonBaseTests):
     """Base class for group with public as false."""
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
+@mark.parametrize("experiment_id", PUBLIC_EXPS, indirect=True)
 class IsPublic(CommonBaseTests):
     """Base class for group with public as true."""
 
 
-@mark.parametrize("entitlements", [[]], indirect=True)
-class NoAccess(PermissionDenied):
-    """Base class for group without entitlement tests."""
-
-
-DRIFT_1 = "00000000-0000-0000-0000-000000000001"
-
-
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
+@mark.parametrize("drift_id", DRIFTS, indirect=True)
 class TestNotRegistered(NotRegistered, IsPublic, WithDatabase):
     """Test the authentication response when user not registered."""
 
 
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
-class TestNoAccessPrivate(NoAccess, IsPrivate, WithDatabase):
+@mark.parametrize("drift_id", DRIFTS, indirect=True)
+class TestNoAccessPrivate(PermissionDenied, IsPrivate, WithDatabase):
     """Tests for message response for no permission."""
 
 
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
+@mark.parametrize("drift_id", DRIFTS, indirect=True)
 class TestMissingToken(NoAuthHeader, IsPrivate, WithDatabase):
     """Test the response when no token and is public."""

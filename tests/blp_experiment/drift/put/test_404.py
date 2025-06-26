@@ -3,6 +3,8 @@
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /drift/<id> endpoint."""
@@ -25,14 +27,8 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-EXPERIMENT_X = "00000000-0000-0001-0001-999999999999"
-DRIFT_1 = "00000000-0000-0004-0001-000000000001"
-DRIFT_X = "00000000-0000-0001-0001-999999999999"
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_X], indirect=True)
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
+@mark.parametrize("experiment_id", UNKNOWN_EXPS, indirect=True)
+@mark.parametrize("drift_id", DRIFTS, indirect=True)
 class ExperimentNotFound(WithDatabase):
     """Test the when experiment Id is not in database."""
 
@@ -42,8 +38,13 @@ class ExperimentNotFound(WithDatabase):
         assert response.json["message"] == "Experiment not found."
 
 
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
-@mark.parametrize("drift_id", [DRIFT_X], indirect=True)
+@mark.parametrize("user_info", CAN_EDIT, indirect=True)
+class CanEdit(ValidAuth, WithDatabase):
+    """Base class for tests with edit permissions."""
+
+
+@mark.parametrize("experiment_id", PRIVATE_EXPS, indirect=True)
+@mark.parametrize("drift_id", UNKNWON_DRIFTS, indirect=True)
 class DriftNotFound(WithDatabase):
     """Test the when drift Id is not in database."""
 
@@ -57,5 +58,5 @@ class TestExperimentNotInDB(ValidAuth, ExperimentNotFound):
     """Test the when experiment Id is not in database."""
 
 
-class TestDriftNotInDB(ValidAuth, DriftNotFound):
+class TestDriftNotInDB(CanEdit, DriftNotFound):
     """Test the when drift Id is not in database."""

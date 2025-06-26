@@ -3,6 +3,8 @@
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /drift endpoint."""
@@ -25,15 +27,12 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
+@mark.parametrize("user_info", ["egi-manage"], indirect=True)
 class Registered(ValidAuth):
     """Tests for message response when user is  registered."""
 
 
-EXPERIMENT_2 = "00000000-0000-0001-0001-000000000002"
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_2], indirect=True)
+@mark.parametrize("experiment_id", PUBLIC_EXPS, indirect=True)
 class IsPublic(Registered):
     """Base class for group with public as false."""
 

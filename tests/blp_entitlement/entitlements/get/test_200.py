@@ -3,6 +3,8 @@
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /entitlement endpoint."""
@@ -29,17 +31,15 @@ class Registered(CommonBaseTests):
     """Base class for registered user tests."""
 
 
-ENTITLEMENTS_1 = ["entitlements_1:vo#admin", "entitlements_1:vo:group1"]
-ENTITLEMENTS = [ENTITLEMENTS_1]
-
-
-@mark.parametrize("entitlements", ENTITLEMENTS, indirect=True)
+@mark.parametrize("user_info", ["egi-read"], indirect=True)
+@mark.parametrize("entitlements_field", ["eduperson_entitlement"], indirect=True)
+@mark.usefixtures("entitlements_field")
 class Entitlements(ValidAuth, Registered):
     """Test the response items are correct entitlements."""
 
-    def test_correct_titles(self, response, entitlements):
+    def test_correct_titles(self, response, user_info, entitlements_field):
         """Test the response has correct entitlements."""
-        assert response.json["items"] == entitlements
+        assert response.json["items"] == user_info[entitlements_field]
 
 
 class TestEmptyRequest(Entitlements):

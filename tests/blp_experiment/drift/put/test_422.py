@@ -3,11 +3,10 @@
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
+from tests.constants import *
 
-DRIFT_1 = "00000000-0000-0000-0000-000000000001"
 
-
-@mark.parametrize("drift_id", [DRIFT_1], indirect=True)
+@mark.parametrize("drift_id", DRIFTS, indirect=True)
 class CommonBaseTests:
     """Common tests for the /drift endpoint."""
 
@@ -34,31 +33,18 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class Registered(ValidAuth):
-    """Tests for message response when user is  registered."""
-
-
-EXPERIMENT_1 = "00000000-0000-0001-0001-000000000001"
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_1], indirect=True)
+@mark.parametrize("experiment_id", PRIVATE_EXPS, indirect=True)
 class IsPrivate(CommonBaseTests):
     """Base class for group with public as false."""
 
 
-ENT_MANAGE = "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
-ENT_EDIT = "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
-ENT_READ = "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
-
-
-@mark.parametrize("entitlements", [[ENT_EDIT]], indirect=True)
-class EditGroup(Registered):
+@mark.parametrize("user_info", CAN_EDIT, indirect=True)
+class CanEdit(ValidAuth):
     """Base class for group with manage entitlement tests."""
 
 
 @mark.parametrize("body", [{"unknown": "val"}], indirect=True)
-class TestUnknownField(WithDatabase, IsPrivate, EditGroup):
+class TestUnknownField(WithDatabase, IsPrivate, CanEdit):
     """Test the response message for unknown key in body."""
 
     def test_error_msg(self, response):
@@ -68,7 +54,7 @@ class TestUnknownField(WithDatabase, IsPrivate, EditGroup):
 
 
 @mark.parametrize("body", [{"job_status": None}], indirect=True)
-class TestMissingJobStatus(WithDatabase, IsPrivate, EditGroup):
+class TestMissingJobStatus(WithDatabase, IsPrivate, CanEdit):
     """Test the response message for missing job status."""
 
     def test_error_msg(self, response):
@@ -79,7 +65,7 @@ class TestMissingJobStatus(WithDatabase, IsPrivate, EditGroup):
 
 
 @mark.parametrize("body", [{"job_status": "string"}], indirect=True)
-class TestInvalidJobStatus(WithDatabase, IsPrivate, EditGroup):
+class TestInvalidJobStatus(WithDatabase, IsPrivate, CanEdit):
     """Test the response message for invalid job status."""
 
     def test_error_msg(self, response):
@@ -90,7 +76,7 @@ class TestInvalidJobStatus(WithDatabase, IsPrivate, EditGroup):
 
 
 @mark.parametrize("body", [{"tags": "string"}], indirect=True)
-class TestInvalidTags(WithDatabase, IsPrivate, EditGroup):
+class TestInvalidTags(WithDatabase, IsPrivate, CanEdit):
     """Test the response message for invalid tags."""
 
     def test_error_msg(self, response):
@@ -101,7 +87,7 @@ class TestInvalidTags(WithDatabase, IsPrivate, EditGroup):
 
 
 @mark.parametrize("body", [{"drift_detected": None}], indirect=True)
-class TestMissingDetected(WithDatabase, IsPrivate, EditGroup):
+class TestMissingDetected(WithDatabase, IsPrivate, CanEdit):
     """Test the response message for missing drift detected."""
 
     def test_error_msg(self, response):
@@ -112,7 +98,7 @@ class TestMissingDetected(WithDatabase, IsPrivate, EditGroup):
 
 
 @mark.parametrize("body", [{"drift_detected": "string"}], indirect=True)
-class TestInvalidDetected(WithDatabase, IsPrivate, EditGroup):
+class TestInvalidDetected(WithDatabase, IsPrivate, CanEdit):
     """Test the response message for invalid drift detected."""
 
     def test_error_msg(self, response):
@@ -123,7 +109,7 @@ class TestInvalidDetected(WithDatabase, IsPrivate, EditGroup):
 
 
 @mark.parametrize("body", [{"parameters": None}], indirect=True)
-class TestMissingParam(WithDatabase, IsPrivate, EditGroup):
+class TestMissingParam(WithDatabase, IsPrivate, CanEdit):
     """Test the response message for missing parameters."""
 
     def test_error_msg(self, response):

@@ -3,6 +3,8 @@
 # pylint: disable=redefined-outer-name
 from pytest import mark
 
+from tests.constants import *
+
 
 class CommonBaseTests:
     """Common tests for the /drifts endpoint."""
@@ -25,10 +27,7 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-EXPERIMENT_X = "00000000-0000-0001-0001-999999999999"
-
-
-@mark.parametrize("experiment_id", [EXPERIMENT_X], indirect=True)
+@mark.parametrize("experiment_id", UNKNOWN_EXPS, indirect=True)
 class ExperimentNotFound(WithDatabase):
     """Test the when experiment Id is not in database."""
 

@@ -25,13 +25,8 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("subiss", [("user_4", "issuer.1")], indirect=True)
-class Registered(ValidAuth):
-    """Tests for message response when user is  registered."""
-
-
-@mark.parametrize("entitlements", [["iam:admin"]], indirect=True)
-class IsAdmin(CommonBaseTests):
+@mark.parametrize("user_info", ["egi-admin"], indirect=True)
+class IsAdmin(ValidAuth):
     """Base class for group with admin entitlement tests."""
 
 
@@ -57,9 +52,9 @@ class InvalidQuery(WithDatabase):
         assert error == ["Unknown field."]
 
 
-class TestStringBody(Registered, IsAdmin, InvalidInput):
+class TestStringBody(IsAdmin, InvalidInput):
     """Test the response when body is a string."""
 
 
-# class TestUnknownQuery(Registered, IsAdmin, InvalidQuery):
+# class TestUnknownQuery(IsAdmin, InvalidQuery):
 #     """Test the response when query arg is unknown."""
