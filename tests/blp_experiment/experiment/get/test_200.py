@@ -57,7 +57,7 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("user_info", CAN_READ + ["ai4eosc-unknown"], indirect=True)
+@mark.parametrize("user_info", CAN_READ + ["ai4eosc-unregist"], indirect=True)
 class AnyUser(ValidAuth, WithDatabase):
     """Tests for message response when user is  registered."""
 

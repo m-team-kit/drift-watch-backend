@@ -46,6 +46,6 @@ class CommonBaseTests:
         assert response.json["email"] == user_info["email"]
 
 
-@mark.parametrize("user_info", ["ai4eosc-unknown"], indirect=True)
+@mark.parametrize("user_info", ["ai4eosc-unregist"], indirect=True)
 class TestRegister(CommonBaseTests):
     """Test the responses items."""

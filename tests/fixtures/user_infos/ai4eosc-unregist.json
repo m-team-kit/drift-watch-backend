@@ -2,23 +2,22 @@
     "address": {
         "country": "Germany"
     },
-    "email": "edit@ai4eosc.com",
+    "email": "unregist@ai4eosc.com",
     "email_verified": true,
     "family_name": "Surname1 Surname2",
-    "given_name": "Edit",
+    "given_name": "Unregist",
     "group_membership": [
         "/Developer Access/vo.ai4eosc.eu",
         "/Platform Access/vo.ai4eosc.eu"
     ],
-    "groups": [
-        "platform-access",
-        "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
-    ],
+    "groups": [ ],
     "iss": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
-    "name": "Edit Surname1 Surname2",
-    "preferred_username": "edit@ai4eosc.com",
+    "name": "Unregist Surname1 Surname2",
+    "preferred_username": "unregist@ai4eosc.com",
     "realm_access": {
-        "roles": [ ]
+        "roles": [ 
+            "platform-access"
+         ]
     },
     "resource_access": {
         "account": {
@@ -28,6 +27,6 @@
             "roles": [ ]
         }
     },
-    "sub": "00000000-0000-0000-0000-00000000EDIT",
-    "upn": "edit@ai4eosc.com"
+    "sub": "00000000-0000-0000-0000-0000UNREGIST",
+    "upn": "unregist@ai4eosc.com"
 }
