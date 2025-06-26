@@ -11,6 +11,7 @@ from flask.views import MethodView
 
 from app import schemas, utils
 from app.config import Blueprint
+from app.tools import authentication
 from app.tools.authentication import Authentication
 from app.tools.database import CONFLICT
 
@@ -90,6 +91,9 @@ class Users(MethodView):
         sub, iss = user_infos["sub"], user_infos["iss"]
         if users.find_one({"subject": sub, "issuer": iss}):
             abort(409, "User already exists.")
+
+        if not authentication.is_user(user_infos):
+            abort(403, "Insufficient permissions.")
 
         # Create the new user from the token information.
         user = {

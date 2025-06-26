@@ -21,6 +21,14 @@ def valid_user_infos(user_infos):
     )
 
 
+def is_user(user_infos):
+    """Assert user is registered."""
+    entitlements_key = current_app.config["ENTITLEMENTS_FIELD"]
+    entitlements = set(user_infos.get(entitlements_key, []))
+    user_entitlements = set(current_app.config["USERS_ENTITLEMENTS"])
+    return all([entitlements & user_entitlements])
+
+
 def is_admin(user_infos):
     """Assert registration and entitlements."""
     entitlements_key = current_app.config["ENTITLEMENTS_FIELD"]

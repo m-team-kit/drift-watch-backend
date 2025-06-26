@@ -46,7 +46,7 @@ def check_access(resource, user_id, user_infos, level="Read"):
     """Check if the user has the required permission on the resource."""
     if resource.get("public", False) and level == "Read":
         return True
-    if not user_infos:
+    if not user_infos or not authentication.is_user(user_infos):
         return abort(403, "Resource is not public.")
     if authentication.is_admin(user_infos):
         return True

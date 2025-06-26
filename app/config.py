@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     OPENAPI_URL_PREFIX: str = "/"
 
     ENTITLEMENTS_FIELD: str = "groups"
+    USERS_ENTITLEMENTS: list[str]
     ADMIN_ENTITLEMENTS: list[str]
     TRUSTED_OP_LIST: list[str]
 
