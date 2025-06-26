@@ -6,7 +6,9 @@
         "https://aarc-community.org/policy/authn-assurance/assam",
         "https://aai.egi.eu/LoA#Low"
     ],
-    "eduperson_entitlement": [ "iam:admin" ],
+    "eduperson_entitlement": [
+        "urn:mace:egi.eu:group:vo_example1:role=admin#x.0"
+    ],
     "eduperson_unique_id": "00000000000000000000000000000000000000000000000000000000000ADMIN@egi.eu",
     "email": "admin@egi.com",
     "email_verified": true,

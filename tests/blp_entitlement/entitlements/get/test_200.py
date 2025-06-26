@@ -31,8 +31,8 @@ class Registered(CommonBaseTests):
     """Base class for registered user tests."""
 
 
-@mark.parametrize("user_info", ["egi-read"], indirect=True)
-@mark.parametrize("entitlements_field", ["eduperson_entitlement"], indirect=True)
+@mark.parametrize("user_info", ["ai4eosc-read"], indirect=True)
+@mark.parametrize("entitlements_field", ["groups"], indirect=True)
 @mark.usefixtures("entitlements_field")
 class Entitlements(ValidAuth, Registered):
     """Test the response items are correct entitlements."""

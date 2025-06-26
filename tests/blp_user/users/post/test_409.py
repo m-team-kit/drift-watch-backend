@@ -28,6 +28,6 @@ class ConflictSubIss:
         assert response.json["message"] == "User already exists."
 
 
-@mark.parametrize("user_info", ["egi-null"], indirect=True)
+@mark.parametrize("user_info", ["ai4eosc-null"], indirect=True)
 class TestRegisterAgain(ConflictSubIss, CommonBaseTests):
     """Test the response if registering again parameter."""

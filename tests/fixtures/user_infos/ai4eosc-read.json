@@ -12,7 +12,7 @@
     ],
     "groups": [
         "platform-access",
-        "developer-access:read"
+        "urn:mace:egi.eu:group:vo_example1:role=read#x.0"
     ],
     "iss": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
     "name": "Read Surname1 Surname2",

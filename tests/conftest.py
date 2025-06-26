@@ -89,7 +89,7 @@ def issuer(request):
     return request.param if hasattr(request, "param") else None
 
 
-@fixture(scope="class", params=["egi-null"])
+@fixture(scope="class", params=["ai4eosc-null"])
 def user_info(request):
     """User information send by the OP endpoint."""
     if not hasattr(request, "param"):

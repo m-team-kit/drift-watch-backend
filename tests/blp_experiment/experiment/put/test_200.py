@@ -54,7 +54,7 @@ class ValidAuth(CommonBaseTests):
 
 
 # TODO: @mark.parametrize("user_info", CAN_MANAGE, indirect=True)
-@mark.parametrize("user_info", ["egi-manage"], indirect=True)
+@mark.parametrize("user_info", ["ai4eosc-manage"], indirect=True)
 class CanManage(ValidAuth):
     """Base class for group with manage entitlement tests."""
 

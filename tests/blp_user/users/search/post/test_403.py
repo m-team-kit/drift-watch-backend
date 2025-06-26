@@ -25,7 +25,7 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("user_info", ["egi-null", "egi-unknown"], indirect=True)
+@mark.parametrize("user_info", ["ai4eosc-null", "ai4eosc-unknown"], indirect=True)
 class NotAdmin(ValidAuth):
     """Tests for message response when user is not admin."""
 

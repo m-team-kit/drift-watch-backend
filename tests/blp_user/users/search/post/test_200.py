@@ -57,7 +57,7 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("user_info", ["egi-admin"], indirect=True)
+@mark.parametrize("user_info", ["ai4eosc-admin"], indirect=True)
 class IsAdmin(ValidAuth):
     """Base class for group with admin entitlement tests."""
 

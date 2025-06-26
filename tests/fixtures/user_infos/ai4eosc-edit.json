@@ -12,7 +12,7 @@
     ],
     "groups": [
         "platform-access:edit",
-        "developer-access:edit"
+        "urn:mace:egi.eu:group:vo_example1:role=edit#x.0"
     ],
     "iss": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
     "name": "Edit Surname1 Surname2",

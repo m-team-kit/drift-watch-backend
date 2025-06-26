@@ -3,10 +3,10 @@
 # https://docs.pydantic.dev/latest/concepts/pydantic_settings/
 import os
 
+import flask_smorest
+from marshmallow import INCLUDE, RAISE
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from webargs.flaskparser import FlaskParser
-from marshmallow import INCLUDE, RAISE
-import flask_smorest
 
 
 class Settings(BaseSettings):
@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     OPENAPI_JSON_PATH: str = "specification.json"
     OPENAPI_URL_PREFIX: str = "/"
 
-    ENTITLEMENTS_FIELD: str = "eduperson_entitlement"
+    ENTITLEMENTS_FIELD: str = "groups"
     ADMIN_ENTITLEMENTS: list[str]
     TRUSTED_OP_LIST: list[str]
 

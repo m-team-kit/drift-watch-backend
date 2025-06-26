@@ -27,7 +27,7 @@ class ValidAuth(CommonBaseTests):
     """Base class for valid authenticated tests."""
 
 
-@mark.parametrize("user_info", ["egi-manage"], indirect=True)
+@mark.parametrize("user_info", ["ai4eosc-manage"], indirect=True)
 class Registered(ValidAuth):
     """Tests for message response when user is  registered."""
 

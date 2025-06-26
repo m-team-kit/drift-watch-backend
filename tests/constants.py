@@ -15,14 +15,14 @@ UNKNWON_DRIFTS = ["00000000-0000-0000-0000-999999999999"]
 ALL_STATUS = ["Running", "Completed", "Failed"]
 
 # User access and entitlements
-CAN_READ = ["egi-read", "egi-edit", "egi-manage", "egi-admin", "egi-owner"]
-CAN_EDIT = ["egi-edit", "egi-manage", "egi-admin", "egi-owner"]
-CAN_MANAGE = ["egi-manage", "egi-admin", "egi-owner"]
+CAN_READ = ["ai4eosc-read", "ai4eosc-edit", "ai4eosc-manage", "ai4eosc-admin", "ai4eosc-owner"]
+CAN_EDIT = ["ai4eosc-edit", "ai4eosc-manage", "ai4eosc-admin", "ai4eosc-owner"]
+CAN_MANAGE = ["ai4eosc-manage", "ai4eosc-admin", "ai4eosc-owner"]
 
 # User negative access
-NO_READ = ["egi-null"]
-NO_EDIT = ["egi-null", "egi-read"]
-NO_MANAGE = ["egi-null", "egi-read", "egi-edit"]
+NO_READ = ["ai4eosc-null"]
+NO_EDIT = ["ai4eosc-null", "ai4eosc-read"]
+NO_MANAGE = ["ai4eosc-null", "ai4eosc-read", "ai4eosc-edit"]
 
 # Permissions for experiments
 NEW_PERMISSIONS = [[{"level": "Read", "entity": "group"}]]

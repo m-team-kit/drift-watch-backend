@@ -12,7 +12,7 @@
     ],
     "groups": [
         "platform-access",
-        "developer-access:manage"
+        "urn:mace:egi.eu:group:vo_example1:role=manage#x.0"
     ],
     "iss": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
     "name": "Manage Surname1 Surname2",
