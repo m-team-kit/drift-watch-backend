@@ -139,29 +139,52 @@
                 "issuer": "https://aai.egi.eu/auth/realms/egi",
                 "email": "read@egi.com"
             },
+
+
+
+
+
             {
                 "_id": "00000000-0000-0003-0002-000000000001",
                 "created_at": "2021-01-04T00:00:00Z",
-                "subject": "@egi.eu", "issuer": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
-                "email": "user_1@ai4eosc.com"
+                "subject": "00000000-0000-0000-0000-0000000ADMIN",
+                "issuer": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
+                "email": "admin@ai4eosc.com"
             },
             {
                 "_id": "00000000-0000-0003-0002-000000000002",
                 "created_at": "2021-01-05T00:00:00Z",
-                "subject": "user_2", "issuer": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
-                "email": "user_2@ai4eosc.com"
+                "subject": "00000000-0000-0000-0000-00000000EDIT",
+                "issuer": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
+                "email": "edit@ai4eosc.com"
             },
             {
                 "_id": "00000000-0000-0003-0002-000000000003",
                 "created_at": "2021-01-06T00:00:00Z",
-                "subject": "user_3", "issuer": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
-                "email": "user_3@ai4eosc.com"
+                "subject": "00000000-0000-0000-0000-000000MANAGE",
+                "issuer": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
+                "email": "manage@ai4eosc.com"
             },
             {
                 "_id": "00000000-0000-0003-0002-000000000004",
                 "created_at": "2021-01-07T00:00:00Z",
-                "subject": "user_4", "issuer": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
-                "email": "user_4@ai4eosc.com"
+                "subject": "00000000-0000-0000-0000-00000000NULL",
+                "issuer": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
+                "email": "null@ai4eosc.com"
+            },
+            {
+                "_id": "00000000-0000-0003-0002-000000000005",
+                "created_at": "2021-01-07T00:00:00Z",
+                "subject": "00000000-0000-0000-0000-0000000OWNER",
+                "issuer": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
+                "email": "owner@ai4eosc.com"
+            },
+            {
+                "_id": "00000000-0000-0003-0002-000000000006",
+                "created_at": "2021-01-07T00:00:00Z",
+                "subject": "00000000-0000-0000-0000-00000000READ",
+                "issuer": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
+                "email": "read@ai4eosc.com"
             },
             {
                 "_id": "00000000-0000-0003-0003-000000000001",

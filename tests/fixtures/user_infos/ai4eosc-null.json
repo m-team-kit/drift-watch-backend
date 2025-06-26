@@ -1,0 +1,32 @@
+{
+    "address": {
+        "country": "Germany"
+    },
+    "email": "null@ai4eosc.com",
+    "email_verified": true,
+    "family_name": "Surname1 Surname2",
+    "given_name": "Null",
+    "group_membership": [
+        "/Developer Access/vo.ai4eosc.eu",
+        "/Platform Access/vo.ai4eosc.eu"
+    ],
+    "groups": [ 
+        "platform-access"
+    ],
+    "iss": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
+    "name": "Null Surname1 Surname2",
+    "preferred_username": "null@ai4eosc.com",
+    "realm_access": {
+        "roles": [ ]
+    },
+    "resource_access": {
+        "account": {
+            "roles": [ ]
+        },
+        "realm-management": {
+            "roles": [ ]
+        }
+    },
+    "sub": "00000000-0000-0000-0000-00000000NULL",
+    "upn": "null@ai4eosc.com"
+}
