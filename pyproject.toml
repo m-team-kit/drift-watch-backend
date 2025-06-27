@@ -6,7 +6,7 @@ pythonpath = ["."]
 env_files = [".env"]
 env = [
     'APP_TRUSTED_OP_LIST=[]',
-    'APP_ENTITLEMENTS_FIELD=groups',
+    'APP_ENTITLEMENTS_PATH=realm_access/roles',
     'APP_USERS_ENTITLEMENTS=["platform-access"]',
     'APP_ADMIN_ENTITLEMENTS=["urn:mace:egi.eu:group:vo_example1:role=admin#x.0"]',
     'APP_SECRETS_DIR=tests/fixtures/secrets',

@@ -32,14 +32,12 @@ class Registered(CommonBaseTests):
 
 
 @mark.parametrize("user_info", ["ai4eosc-read"], indirect=True)
-@mark.parametrize("entitlements_field", ["groups"], indirect=True)
-@mark.usefixtures("entitlements_field")
 class Entitlements(ValidAuth, Registered):
     """Test the response items are correct entitlements."""
 
-    def test_correct_titles(self, response, user_info, entitlements_field):
+    def test_correct_titles(self, response, user_info):
         """Test the response has correct entitlements."""
-        assert response.json["items"] == user_info[entitlements_field]
+        assert response.json["items"] == user_info["realm_access"]["roles"]
 
 
 class TestEmptyRequest(Entitlements):

@@ -115,17 +115,6 @@ def accept_authorization(class_mocker, user_info, issuer):
 
 
 @fixture(scope="class")
-def entitlements_field(request, app):
-    """Edit app config with entitlements field."""
-    original_value = app.config.get("entitlements_field")
-    app.config["entitlements_field"] = request.param
-    try:
-        yield request.param
-    finally:
-        app.config["entitlements_field"] = original_value
-
-
-@fixture(scope="class")
 def db_user(response, database, user_info):
     """Returns user from database after response."""
     db_filter = {"subject": user_info["sub"], "issuer": user_info["iss"]}

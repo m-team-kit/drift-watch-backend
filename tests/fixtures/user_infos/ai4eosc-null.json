@@ -10,14 +10,14 @@
         "/Developer Access/vo.ai4eosc.eu",
         "/Platform Access/vo.ai4eosc.eu"
     ],
-    "groups": [ 
-        "platform-access"
-    ],
+    "groups": [ ],
     "iss": "https://login.cloud.ai4eosc.eu/realms/ai4eosc",
     "name": "Null Surname1 Surname2",
     "preferred_username": "null@ai4eosc.com",
     "realm_access": {
-        "roles": [ ]
+        "roles": [ 
+            "platform-access"
+         ]
     },
     "resource_access": {
         "account": {
