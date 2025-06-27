@@ -1,5 +1,6 @@
 """Authentication module."""
 
+from functools import reduce
 from typing import Callable
 
 from flaat.config import AccessLevel  # type: ignore
@@ -21,20 +22,28 @@ def valid_user_infos(user_infos):
     )
 
 
+def get_entitlements(user_infos):
+    """Retrieve the entitlements from user information."""
+    entitlements_path = current_app.config["ENTITLEMENTS_PATH"]
+    # split entitlements key by '/' if it is a path
+    entitlements_path = entitlements_path.split("/")
+    # reduce the path to get the entitlements
+    entitlements = reduce(lambda d, k: d.get(k, []), entitlements_path, user_infos)
+    return set(entitlements)
+
+
 def is_user(user_infos):
     """Assert user is registered."""
-    entitlements_key = current_app.config["ENTITLEMENTS_FIELD"]
-    entitlements = set(user_infos.get(entitlements_key, []))
+    entitlements = get_entitlements(user_infos)
     user_entitlements = set(current_app.config["USERS_ENTITLEMENTS"])
-    return all([entitlements & user_entitlements])
+    return bool(entitlements & user_entitlements)
 
 
 def is_admin(user_infos):
     """Assert registration and entitlements."""
-    entitlements_key = current_app.config["ENTITLEMENTS_FIELD"]
-    entitlements = set(user_infos.get(entitlements_key, []))
+    entitlements = get_entitlements(user_infos)
     admin_entitlements = set(current_app.config["ADMIN_ENTITLEMENTS"])
-    return all([entitlements & admin_entitlements])
+    return bool(entitlements & admin_entitlements)
 
 
 # Define access levels for the application

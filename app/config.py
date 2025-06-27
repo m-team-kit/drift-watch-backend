@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     OPENAPI_JSON_PATH: str = "specification.json"
     OPENAPI_URL_PREFIX: str = "/"
 
-    ENTITLEMENTS_FIELD: str = "groups"
+    ENTITLEMENTS_PATH: str = "realm_access/roles"
     USERS_ENTITLEMENTS: list[str]
     ADMIN_ENTITLEMENTS: list[str]
     TRUSTED_OP_LIST: list[str]

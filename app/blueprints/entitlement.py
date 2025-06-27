@@ -7,6 +7,7 @@ from flask.views import MethodView
 
 from app import schemas, utils
 from app.config import Blueprint
+from app.tools import authentication
 from app.tools.authentication import Authentication
 
 blp = Blueprint("Entitlements", __name__, description=__doc__)
@@ -38,5 +39,4 @@ class Entitlements(MethodView):
         _ = utils.get_user(user_infos)
 
         # Return the paginated list of users.
-        entitlements_key = current_app.config["ENTITLEMENTS_FIELD"]
-        return {"items": user_infos.user_info.get(entitlements_key, [])}
+        return {"items": authentication.get_entitlements(user_infos)}

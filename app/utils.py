@@ -1,5 +1,7 @@
 """Utilities for the application."""
 
+from functools import reduce
+
 from flask import abort, current_app
 
 from app.tools import authentication
@@ -29,8 +31,7 @@ def get_drifts(experiment_id, drift_id):
 
 def get_permission(resource, user_id, user_infos):
     """Check if the user has the required permission on a resource."""
-    entitlements_key = current_app.config["ENTITLEMENTS_FIELD"]
-    titles = user_infos.get(entitlements_key, []) + [user_id]
+    titles = authentication.get_entitlements(user_infos).union({user_id})
     permissions = resource.get("permissions", [])
     perms = set(p["level"] for p in permissions if p["entity"] in titles)
     if "Manage" in perms:  # Top level permission
