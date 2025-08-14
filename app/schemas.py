@@ -1,4 +1,42 @@
-""" "This module contains the schema for the API request and response."""
+"""
+API request and response schema definitions using Marshmallow.
+
+This module defines all the data schemas used for API request validation and
+response serialization. The schemas provide type safety, validation rules,
+and automatic OpenAPI documentation generation for all API endpoints.
+
+Schema Categories:
+
+Base Schemas:
+- _BaseReqSchema: Common fields for request schemas
+- _BaseRespSchema: Common fields for response schemas (ID, timestamps)
+
+User Management:
+- User: User profile information
+- UsersEmails/UsersIds: Bulk user operations
+- SearchUsers: User search and sorting parameters
+
+Experiment Management:  
+- Experiment: Complete experiment metadata
+- CreateExperiment: Experiment creation request
+- Permission: Access control permissions
+- SortExperiments: Experiment search and sorting
+
+Drift Detection:
+- Drift: Complete drift record with metadata
+- CreateDrift: Drift creation request  
+- SortDrifts: Drift search and sorting parameters
+
+Entitlements:
+- Entitlements: User role and permission information
+
+The schemas use Marshmallow for validation and serialization, providing:
+- Type validation and coercion
+- Field-level validation rules  
+- Custom error messages
+- Automatic OpenAPI schema generation
+- Request/response data transformation
+"""
 
 import marshmallow as ma
 from marshmallow import validate
